@@ -1,3 +1,0 @@
--   [Home](/)
--   [Analysis](/Analysis.md)
--   [Database](/Database..md)
