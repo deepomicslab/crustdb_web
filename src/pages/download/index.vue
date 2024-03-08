@@ -1,108 +1,136 @@
 <template>
     <n-anchor show-rail affix :top="150" class="ml-15 w-55" show-background :bound="124">
-        <n-anchor-link title="sidebar 1 fasta dataset Download" href="#fasta" class="text-xl" />
-        <n-anchor-link title="sidebar 2 meta dataset Download" href="#meta" />
-        <n-anchor-link title="sidebar 3 CCC dataset Download" href="#CCC" />
+        <n-anchor-link title="10DPI_1.cckIN_4XZR Download" href="#10DPI_1" class="text-xl" />
+        <n-anchor-link title="10DPI_3.wntEGC_Q7HN Download" href="#10DPI_3" />
+        <n-anchor-link title="15DPI_3.rIPC2_TQG2 Download" href="#15DPI_3" />
+        <n-anchor-link title="20DPI_2.obNBL_DVO6 Download" href="#20DPI_2" />
     </n-anchor>
 
     <div class="flex flex-col w-full h-2220 justify-start items-center">
-        <div id="fasta">
+        <div id="10DPI_1">
             <div class="w-280 mt-20 border-b-1 border-[#34498E] pb-3">
-                <div class="text-[40px] text-[#34498E] font-600">
-                    sidebar 1 fasta dataset Download
-                </div>
+                <div class="text-[40px] text-[#34498E] font-600">10DPI_1.cckIN_4XZR Download</div>
             </div>
             <div class="w-280 mt-10">
                 <div class="w-280 bg-[#34498E] text-gray-50 p-4 text-[20px] font-600">
-                    <div>fasta dataset Download</div>
+                    <div>10DPI_1.cckIN_4XZR Download</div>
                     <div></div>
                 </div>
                 <div class="w-280 border-1 border-gray-700">
                     <downloadItem
-                        description="1_1_1"
-                        link="http://localhost:8354/fasta/layer1/sublayer1_1/subsublayer1_1_1/1_1_1.csv"
+                        description="adata.h5ad"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_1.cckIN_4XZR/adata.h5ad"
                     ></downloadItem>
                     <downloadItem
-                        description="1_1_2"
-                        link="http://localhost:8354/fasta/layer1/sublayer1_1/subsublayer1_1_2/1_1_2.csv"
+                        description="10DPI_1.cckIN_updated1times_chrchr9p.pdb"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_1.cckIN_4XZR/10DPI_1.cckIN_updated1times_chrchr9p.pdb"
                     ></downloadItem>
                     <downloadItem
-                        description="1_2"
-                        link="http://localhost:8354/fasta/layer1/sublayer1_2/1_2.csv"
+                        description="10DPI_1.cckIN_updated11times_chrchr9p.pdb"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_1.cckIN_4XZR/10DPI_1.cckIN_updated11times_chrchr9p.pdb"
+                    ></downloadItem>
+                    <downloadItem
+                        description="10DPI_1.cckIN_updated21times_chrchr9p.pdb"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_1.cckIN_4XZR/10DPI_1.cckIN_updated21times_chrchr9p.pdb"
                     ></downloadItem>
                 </div>
             </div>
         </div>
-        <div id="meta">
+        <div id="10DPI_3">
             <div class="w-280 mt-20 border-b-1 border-[#34498E] pb-3">
-                <div class="text-[40px] text-[#34498E] font-600">
-                    sidebar 2 meta dataset Download
-                </div>
+                <div class="text-[40px] text-[#34498E] font-600">10DPI_3.wntEGC_Q7HN Download</div>
             </div>
             <div class="w-280 mt-10">
                 <div class="w-280 bg-[#34498E] text-gray-50 p-4 text-[20px] font-600">
-                    <div>meta dataset Download</div>
+                    <div>10DPI_3.wntEGC_Q7HN Download</div>
                     <div></div>
                 </div>
                 <div class="w-280 border-1 border-gray-700">
                     <downloadItem
-                        description="2_1"
-                        link="http://localhost:8354/files/layer2/sublayer2_1/2_1.csv"
+                        description="adata.h5ad"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/adata.h5ad"
                     ></downloadItem>
                     <downloadItem
-                        description="2_2"
-                        link="http://localhost:8354/files/layer2/sublayer2_2/2_2.csv"
+                        description="10DPI_3.wntEGC_Q7HN.log"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/10DPI_3.wntEGC_Q7HN.log"
                     ></downloadItem>
                     <downloadItem
-                        description="2_2"
-                        link="http://localhost:8354/files/layer2/sublayer2_3/2_3.csv"
+                        description="10DPI_3.wntEGC_updated1times_chrchr9p.pdb"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/10DPI_3.wntEGC_updated1times_chrchr9p.pdb"
                     ></downloadItem>
                     <downloadItem
-                        description="3_1"
-                        link="http://localhost:8354/files/layer3/sublayer3_1/3_1.csv"
+                        description="10DPI_3.wntEGC_updated11times_chrchr9p.pdb"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/10DPI_3.wntEGC_updated11times_chrchr9p.pdb"
                     ></downloadItem>
                     <downloadItem
-                        description="3_2"
-                        link="http://localhost:8354/files/layer3/sublayer3_2/3_2.csv"
-                    ></downloadItem>
-                    <downloadItem
-                        description="3_3"
-                        link="http://localhost:8354/files/layer3/sublayer3_3/3_3.csv"
+                        description="10DPI_3.wntEGC_updated21times_chrchr9p.pdb"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/10DPI_3.wntEGC_updated21times_chrchr9p.pdb"
                     ></downloadItem>
                 </div>
             </div>
         </div>
-        <div id="CCC">
+        <div id="15DPI_3">
             <div class="w-280 mt-20 border-b-1 border-[#34498E] pb-3">
-                <div class="text-[40px] text-[#34498E] font-600">
-                    sidebar 3 CCC dataset Download
-                </div>
+                <div class="text-[40px] text-[#34498E] font-600">15DPI_3.rIPC2_TQG2 Download</div>
             </div>
             <div class="w-280 mt-10">
                 <div class="w-280 bg-[#34498E] text-gray-50 p-4 text-[20px] font-600">
-                    <div>CCC dataset Download</div>
+                    <div>15DPI_3.rIPC2_TQG2 Download</div>
                     <div></div>
                 </div>
                 <div class="w-280 border-1 border-gray-700">
                     <downloadItem
-                        description="CCC dataset 1"
-                        link="https://phageapi.deepomics.org/fasta/phage_sequence/phage_gff3/CHVD.gff3"
+                        description="adata.h5ad"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/adata.h5ad"
                     ></downloadItem>
                     <downloadItem
-                        description="CCC dataset 2"
-                        link="https://phageapi.deepomics.org/fasta/phage_sequence/phage_gff3/IGVD.gff3"
+                        description="15DPI_3.rIPC2_TQG2.log"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/15DPI_3.rIPC2_TQG2.log"
                     ></downloadItem>
                     <downloadItem
-                        description="CCC dataset 3"
-                        link="https://phageapi.deepomics.org/fasta/phage_sequence/phage_gff3/IMG_VR.gff3"
+                        description="15DPI_3.rIPC2_updated11times_chrchr9p.pdb"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/15DPI_3.rIPC2_updated11times_chrchr9p.pdb"
                     ></downloadItem>
                     <downloadItem
-                        description="CCC dataset 4"
-                        link="https://phageapi.deepomics.org/fasta/phage_sequence/phage_gff3/GOV2.gff3"
+                        description="15DPI_3.rIPC2_updated1times_chrchr9p.pdb"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/15DPI_3.rIPC2_updated1times_chrchr9p.pdb"
                     ></downloadItem>
                     <downloadItem
-                        description="CCC dataset 5"
-                        link="https://phageapi.deepomics.org/fasta/phage_sequence/phage_gff3/STV.gff3"
+                        description="15DPI_3.rIPC2_updated21times_chrchr9p.pdb"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/15DPI_3.rIPC2_updated21times_chrchr9p.pdb"
+                    ></downloadItem>
+                </div>
+            </div>
+        </div>
+        <div id="20DPI_2">
+            <div class="w-280 mt-20 border-b-1 border-[#34498E] pb-3">
+                <div class="text-[40px] text-[#34498E] font-600">20DPI_2.obNBL_DVO6 Download</div>
+            </div>
+            <div class="w-280 mt-10">
+                <div class="w-280 bg-[#34498E] text-gray-50 p-4 text-[20px] font-600">
+                    <div>20DPI_2.obNBL_DVO6 Download</div>
+                    <div></div>
+                </div>
+                <div class="w-280 border-1 border-gray-700">
+                    <downloadItem
+                        description="adata.h5ad"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/adata.h5ad"
+                    ></downloadItem>
+                    <downloadItem
+                        description="15DPI_3.rIPC2_TQG2.log"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/20DPI_2.obNBL_DVO6/.log"
+                    ></downloadItem>
+                    <downloadItem
+                        description="20DPI_2.obNBL_updated11times_chrchr9p.pdb"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/20DPI_2.obNBL_updated11times_chrchr9p.pdb"
+                    ></downloadItem>
+                    <downloadItem
+                        description="20DPI_2.obNBL_updated1times_chrchr9p.pdb"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/20DPI_2.obNBL_updated1times_chrchr9p.pdb"
+                    ></downloadItem>
+                    <downloadItem
+                        description="20DPI_2.obNBL_updated21times_chrchr9p.pdb"
+                        link="https://crustdbapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/20DPI_2.obNBL_updated21times_chrchr9p.pdb"
                     ></downloadItem>
                 </div>
             </div>
