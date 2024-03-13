@@ -14,6 +14,7 @@
                     </el-button>
                 </div>
             </div>
+            <!-- Phage Informatin table -->
             <el-descriptions class="w-350 text-xl mt-8" :column="2" size="large" border v-loading="loaddata">
                 <el-descriptions-item>
                     <template #label>
@@ -138,7 +139,9 @@
                 </el-descriptions-item>
             </el-descriptions>
         </div>
-        <div class="w-330 mt-15 ml-10">
+
+        <!-- Gene Annotation -->
+        <!-- <div class="w-330 mt-15 ml-10">
             <div class="flex flex-row w-350 border-b-2 border-gray-300">
                 <div class="text-4xl font-500 mb-8">Gene Annotation</div>
             </div>
@@ -151,20 +154,15 @@
                     </template>
                     Download Gene Annotation Data
                 </el-button>
-
-                <!-- <el-input class="w-50" size="small">
-                    <template #append>
-                        <el-button :icon="Search" />
-                    </template>
-                </el-input> -->
             </div>
             <div class="w-350" v-loading="loaddata">
                 <n-data-table :data="proteinList" :columns="columns" :pagination="pagination" :max-height="250"
                     :row-key="rowKey" />
             </div>
-        </div>
+        </div> -->
 
-        <div class="mt-5 ml-15">
+        <!-- Annotated Genome Map -->
+        <!-- <div class="mt-5 ml-15">
             <div class="flex flex-row w-200">
                 <div class="text-2xl font-500 mb-5">Annotated Genome Map</div>
                 <div class="mt-1.5 ml-10">
@@ -196,7 +194,7 @@
         </div>
         <div class="mt-20 ml-10 mb-20" v-show="phageStore.phagetransprotein.length !== 0">
             <transprotein />
-        </div>
+        </div> -->
     </div>
 
     <el-dialog v-model="proteinVisible" title="Protein Detail" width="90%">

@@ -173,6 +173,7 @@
                 <!-- <el-checkbox label="Download FASTA Data" /> -->
                 <!-- <el-checkbox label="Download GBK Data" /> -->
                 <el-checkbox label="Download ADATA" />
+                <el-checkbox label="Download Zip Data" />
                 <!-- <el-checkbox label="Download Meta Data" /> -->
             </el-checkbox-group>
         </div>
@@ -377,6 +378,10 @@ const downloadrequest = async () => {
             // e.g. https://crustdb.deepomics.org/api/phage/fasta/?phageid=2
             // window.open(`/api/phage/gff/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
             window.open(`/api/crustdb_main/adata/?crustid=${checkedRowKeysRef.value[0]}`, '_blank')
+        }
+        if (checkList.value.includes('Download Zip Data')) {
+            // ==================
+            window.open(`/api/crustdb_main/zip/?crustid=${checkedRowKeysRef.value[0]}`, '_blank')
         }
         if (checkList.value.includes('Download GBK Data')) {
             window.open(`/api/phage/gbk/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
