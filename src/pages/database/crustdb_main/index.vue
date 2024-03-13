@@ -170,10 +170,10 @@
     >
         <div>
             <el-checkbox-group v-model="checkList" :max="1">
-                <el-checkbox label="Download FASTA Data" />
+                <!-- <el-checkbox label="Download FASTA Data" /> -->
                 <!-- <el-checkbox label="Download GBK Data" /> -->
-                <el-checkbox label="Download GFF3 Data" />
-                <el-checkbox label="Download Meta Data" />
+                <el-checkbox label="Download ADATA" />
+                <!-- <el-checkbox label="Download Meta Data" /> -->
             </el-checkbox-group>
         </div>
         <template #footer>
@@ -354,7 +354,7 @@ const downloadrequest = async () => {
         if (checkList.value.includes('Download FASTA Data')) {
             window.open(`/api/phage/fasta/?phageids=${checkedRowKeysRef.value}`, '_blank')
         }
-        if (checkList.value.includes('Download GFF3 Data')) {
+        if (checkList.value.includes('Download ADATA')) {
             console.log('88888')
             window.open(`/api/phage/gff/?phageids=${checkedRowKeysRef.value}`, '_blank')
         }
@@ -369,14 +369,14 @@ const downloadrequest = async () => {
         if (checkList.value.includes('Download Meta Data')) {
             window.open(`/api/phage/meta/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
         }
-        if (checkList.value.includes('Download (adata) Data')) {
-            // ==================
-            // e.g. https://crustdb.deepomics.org/api/phage/fasta/?phageid=2
-            // window.open(`/api/crust/adata/?crustid=${checkedRowKeysRef.value[0]}`, '_blank')
+        if (checkList.value.includes('Download FASTA Data')) {
             window.open(`/api/phage/fasta/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
         }
-        if (checkList.value.includes('Download GFF3 Data')) {
-            window.open(`/api/phage/gff/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
+        if (checkList.value.includes('Download ADATA')) {
+            // ==================
+            // e.g. https://crustdb.deepomics.org/api/phage/fasta/?phageid=2
+            // window.open(`/api/phage/gff/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
+            window.open(`/api/crustdb_main/adata/?crustid=${checkedRowKeysRef.value[0]}`, '_blank')
         }
         if (checkList.value.includes('Download GBK Data')) {
             window.open(`/api/phage/gbk/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
@@ -388,7 +388,7 @@ const downloadrequest = async () => {
         if (checkList.value.includes('Download FASTA Data')) {
             window.open(`/api/phage/fasta/`, '_blank')
         }
-        if (checkList.value.includes('Download GFF3 Data')) {
+        if (checkList.value.includes('Download ADATA')) {
             window.open(`/api/phage/gff/`, '_blank')
         }
         if (checkList.value.includes('Download GBK Data')) {
@@ -417,17 +417,33 @@ const download = (row: any) => {
     checkedRowKeysRef.value = [row.id]
 }
 
+// type RowData = {
+//     id: number
+//     Acession_ID: string
+//     Data_Sets: string
+//     length: string
+//     gc_content: any
+//     host: string
+//     completeness: string
+//     taxonomy: string
+//     cluster: string
+//     subcluster: string
+// }
 type RowData = {
-    id: number
-    Acession_ID: string
-    Data_Sets: string
-    length: string
-    gc_content: any
-    host: string
-    completeness: string
-    taxonomy: string
-    cluster: string
-    subcluster: string
+    data_uid: string
+    cell_type: string
+    slice_id: string
+    ST_platform: string
+    species: string
+    developmental_stage: string
+    disease_steps: string
+    sex: string
+    slice_name: string
+    cell_num: number
+    gene_num: number
+    gene_filter_threshold: number
+    anchor_gene_proportion: number
+    inferred_trans_center_num: string
 }
 const renderTooltip = (trigger: any, content: any) => {
     return h(NTooltip, null, {
@@ -801,11 +817,11 @@ const createColumns = (): DataTableColumns<RowData> => {
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'Threshold for Gene Filter' }),
-                    'threshold for gene filter'
+                    h('div', null, { default: () => 'Cell Number' }),
+                    'cell number'
                 )
             },
-            key: 'gene_filter_threshold',
+            key: 'cell_num',
             align: 'center',
             ellipsis: {
                 tooltip: true,
@@ -815,17 +831,19 @@ const createColumns = (): DataTableColumns<RowData> => {
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'Proportion of Anchor Gene' }),
-                    'proportion of anchor gene'
+                    h('div', null, { default: () => 'Gene Number' }),
+                    'gene number'
                 )
             },
-            key: 'anchor_gene_proportion',
+            key: 'gene_num',
             align: 'center',
             ellipsis: {
                 tooltip: true,
             },
             width: 110,
         },
+        // gene_filter_threshold
+        // anchor_gene_proportion
         // inferred_trans_center_num
         {
             title: 'Action',
