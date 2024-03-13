@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col py-5 px-20">
         <div class="flex flex-row ml-1 my-7">
-            <div class="text-4xl font-600">Phage Information</div>
+            <div class="text-4xl font-600">CrustDB Information</div>
             <el-button round color="#34498E" class="ml-5 mt-2" @click="godatahelper">
                 Database Helper
             </el-button>
@@ -206,12 +206,13 @@ import { Search, RefreshRight, ArrowDown, InfoFilled, Switch } from '@element-pl
 import _ from 'lodash'
 import axios from 'axios'
 import filterview from '../filter/index.vue'
-import { datasetDict, datasetList } from '@/utils/phage'
+// import { datasetDict, datasetList } from '@/utils/phage'
+import { datasetDict } from '@/utils/phage'
 
 const showredundancy = ref('Show Redundancy')
 const pagevalue = ref(1)
 const pageSize = ref(30)
-const datasets = ref('phage')
+const datasets = ref('crustdb_main')
 const seqnum = ref('873,718')
 const loading = ref(false)
 const searchinput = ref('')
@@ -219,7 +220,7 @@ const searchinput = ref('')
 // const phagedata = useRequest(() => phageService.getPhageList(pagevalue.value, pageSize.value)).data
 const phagedata = ref()
 
-const phageurl = ref(`/phage/`)
+const crusturl = ref(`/crustdb_main/`)
 const route = useRoute()
 const redundancyoptions = [
     {
@@ -235,10 +236,10 @@ const redundancyoptions = [
 onBeforeMount(async () => {
     if (route.query?.dataset) {
         datasets.value = route.query?.dataset as string
-        phageurl.value = `/${route.query?.dataset}/`
+        crusturl.value = `/${route.query?.dataset}/`
     }
     loading.value = true
-    const response = await axios.get(phageurl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
@@ -255,7 +256,7 @@ onBeforeMount(async () => {
 const phageList = computed(() => {
     return _.map(phagedata.value?.results, (row: any) => {
         // eslint-disable-next-line
-        row.gc_content = Number(parseFloat(row.gc_content).toFixed(2))
+        // row.gc_content = Number(parseFloat(row.gc_content).toFixed(2))
         return row
     })
 })
@@ -264,7 +265,7 @@ const count = computed(() => phagedata.value?.count)
 
 const nextPage = async () => {
     loading.value = true
-    const response = await axios.get(phageurl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
@@ -280,7 +281,7 @@ const nextPage = async () => {
 
 const prevPage = async () => {
     loading.value = true
-    const response = await axios.get(phageurl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
@@ -295,7 +296,7 @@ const prevPage = async () => {
 }
 const pagechange = async () => {
     loading.value = true
-    const response = await axios.get(phageurl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
@@ -310,7 +311,7 @@ const pagechange = async () => {
 }
 const pagesizechange = async () => {
     loading.value = true
-    const response = await axios.get(phageurl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
@@ -364,10 +365,14 @@ const downloadrequest = async () => {
             window.open(`/api/phage/meta/?phageids=${checkedRowKeysRef.value}`, '_blank')
         }
     } else if (downloadtype.value === 'single') {
+        // DB -> download -> single file download
         if (checkList.value.includes('Download Meta Data')) {
             window.open(`/api/phage/meta/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
         }
-        if (checkList.value.includes('Download FASTA Data')) {
+        if (checkList.value.includes('Download (adata) Data')) {
+            // ==================
+            // e.g. https://crustdb.deepomics.org/api/phage/fasta/?phageid=2
+            // window.open(`/api/crust/adata/?crustid=${checkedRowKeysRef.value[0]}`, '_blank')
             window.open(`/api/phage/fasta/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
         }
         if (checkList.value.includes('Download GFF3 Data')) {
@@ -433,23 +438,47 @@ const renderTooltip = (trigger: any, content: any) => {
 const rowKey = (row: RowData) => {
     return row.id
 }
-const complete = (comp: any) => {
-    if (comp === 'Medium-quality') {
+// const complete = (comp: any) => {
+//     if (comp === 'Medium-quality') {
+//         return 'info'
+//     }
+//     if (comp === 'High-quality') {
+//         return 'success'
+//     }
+//     if (comp === 'Low-quality') {
+//         return 'warning'
+//     }
+//     if (comp === 'Complete') {
+//         return 'success'
+//     }
+//     return 'warning'
+// }
+const developmentalStageColor = (stage: any) => {
+    console.log('stage: ')
+    console.log(stage)
+    if (stage === 'Stage 44') {
         return 'info'
     }
-    if (comp === 'High-quality') {
+    if (stage === 'Stage 54') {
         return 'success'
     }
-    if (comp === 'Low-quality') {
+    if (stage === 'Stage 57') {
         return 'warning'
     }
-    if (comp === 'Complete') {
+    if (stage === 'Juvenile') {
         return 'success'
     }
     return 'warning'
 }
-const lifestyleColor = (style: any) => {
-    if (style === 'virulent') {
+// const lifestyleColor = (style: any) => {
+//     if (style === 'virulent') {
+//         return 'error'
+//     }
+//     return 'info'
+// }
+const STPlatformColor = (style: any) => {
+    if (style === 'Axolotl') {
+        // wait to see how many colors needed
         return 'error'
     }
     return 'info'
@@ -457,8 +486,8 @@ const lifestyleColor = (style: any) => {
 
 const filtersearch = async () => {
     loading.value = true
-    phageurl.value = 'phage/search/'
-    const response = await axios.get(phageurl.value, {
+    crusturl.value = 'phage/search/'
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
@@ -471,10 +500,10 @@ const filtersearch = async () => {
     loading.value = false
 }
 const resetsearch = async () => {
-    phageurl.value = '/phage/'
+    crusturl.value = '/phage/'
     searchinput.value = ''
     loading.value = true
-    const response = await axios.get(phageurl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
@@ -494,14 +523,17 @@ const createColumns = (): DataTableColumns<RowData> => {
         },
         {
             title() {
-                return renderTooltip(h('div', null, { default: () => 'Phage ID' }), 'phage ID')
+                return renderTooltip(h('div', null, { default: () => 'Data UID' }), 'data UID') // directly display; hover on then display
             },
-            key: 'Acession_ID',
+            key: 'data_uid',
             align: 'center',
             fixed: 'left',
             width: 125,
+            ellipsis: {
+                tooltip: true,
+            },
             render(row: any) {
-                return h('div', null, [
+                return h('div', {}, [
                     h(
                         NButton,
                         {
@@ -516,7 +548,12 @@ const createColumns = (): DataTableColumns<RowData> => {
                         [
                             h(NEllipsis, null, {
                                 default: () => {
-                                    return row.Acession_ID
+                                    console.log('row.cell_type')
+                                    console.log(row.cell_type)
+                                    console.log('row.data_uid')
+                                    console.log(row.data_uid)
+                                    console.log(row)
+                                    return row.data_uid
                                 },
                             }),
                         ]
@@ -526,14 +563,11 @@ const createColumns = (): DataTableColumns<RowData> => {
         },
         {
             title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Data Source' }),
-                    'phage source dataset'
-                )
+                return renderTooltip(h('div', null, { default: () => 'Cell Type' }), 'cell type')
             },
-            key: 'Data_Sets',
+            key: 'cell_type',
             align: 'center',
-            width: 110,
+            width: 70,
             filterOptions: datasetDict,
             filter(value: any, row: any) {
                 return row.Data_Sets === value
@@ -549,7 +583,7 @@ const createColumns = (): DataTableColumns<RowData> => {
                         },
                         {
                             default: () => {
-                                return datasetList[row.Data_Sets - 1]
+                                return row.cell_type
                             },
                         }
                     ),
@@ -558,29 +592,25 @@ const createColumns = (): DataTableColumns<RowData> => {
         },
         {
             title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Taxonomy' }),
-                    'phage taxonomy'
-                )
+                return renderTooltip(h('div', null, { default: () => 'Slice ID' }), 'slice ID')
             },
-            key: 'taxonomy',
+            key: 'slice_id',
             align: 'center',
             ellipsis: {
                 tooltip: true,
             },
-            width: 95,
+            width: 250,
         },
-
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'Host' }),
-                    'phage host taxonomy'
+                    h('div', null, { default: () => 'ST Platform' }),
+                    'ST Platform'
                 )
             },
-            key: 'host',
+            key: 'ST_platform',
             align: 'center',
-            width: 180,
+            width: 120,
             ellipsis: {
                 tooltip: true,
             },
@@ -594,7 +624,7 @@ const createColumns = (): DataTableColumns<RowData> => {
                             size: 'small',
                             onClick: () => {
                                 router.push({
-                                    path: `/database/host/list`,
+                                    path: `/database/host/list`, // wait to be modified
                                     query: {
                                         rank: 'host',
                                         node: row.host,
@@ -604,7 +634,7 @@ const createColumns = (): DataTableColumns<RowData> => {
                         },
                         {
                             default: () => {
-                                return row.host
+                                return row.ST_platform
                             },
                         }
                     ),
@@ -613,12 +643,9 @@ const createColumns = (): DataTableColumns<RowData> => {
         },
         {
             title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Lifestyle' }),
-                    'phage lifestyle'
-                )
+                return renderTooltip(h('div', null, { default: () => 'Species' }), 'species')
             },
-            key: 'lifestyle',
+            key: 'species',
             align: 'center',
             width: 100,
             ellipsis: {
@@ -626,27 +653,27 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             filterOptions: [
                 {
-                    label: 'Virulent',
-                    value: 'virulent',
+                    label: 'Axolotl',
+                    value: 'Axolotl',
                 },
                 {
-                    label: 'Temperate',
-                    value: 'temperate',
+                    label: 'Not Axolotl',
+                    value: 'Not_Axolotl',
                 },
             ],
             filter(value: any, row: any) {
-                return row.lifestyle === value
+                return row.ST_platform === value
             },
             render(row: any) {
                 return h('div', {}, [
                     h(
                         NTag,
                         {
-                            type: lifestyleColor(row.lifestyle),
+                            type: STPlatformColor(row.ST_platform),
                             size: 'small',
                         },
                         {
-                            default: () => row.lifestyle,
+                            default: () => row.species,
                         }
                     ),
                 ])
@@ -655,48 +682,52 @@ const createColumns = (): DataTableColumns<RowData> => {
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'Completeness' }),
-                    'genome completeness'
+                    h('div', null, { default: () => 'Developmental Stage' }),
+                    'developmental stage'
                 )
             },
-            key: 'completeness',
+            key: 'developmental_stage',
             align: 'center',
             width: 140,
             filterOptions: [
                 {
-                    label: 'Medium-quality',
-                    value: 'Medium-quality',
+                    label: 'Stage_44',
+                    value: 'Stage 44',
                 },
                 {
-                    label: 'High-quality',
-                    value: 'High-quality',
+                    label: 'Stage_54',
+                    value: 'Stage 54',
                 },
                 {
-                    label: 'Low-quality',
-                    value: 'Low-quality',
+                    label: 'Stage_57',
+                    value: 'Stage 57',
                 },
                 {
-                    label: 'Complete',
-                    value: 'Complete',
+                    label: 'Juvenile',
+                    value: 'Juvenile',
                 },
                 {
-                    label: 'Not-determined',
-                    value: 'Not-determined',
+                    label: 'Adult',
+                    value: 'Adult',
+                },
+                {
+                    label: 'Metamorphosis',
+                    value: 'Metamorphosis',
                 },
             ],
             filter(value: any, row: any) {
-                return row.completeness === value
+                return row.developmental_stage === value
             },
             render(row: any) {
                 return h('div', {}, [
                     h(
                         NTag,
                         {
-                            type: complete(row.completeness),
+                            type: developmentalStageColor(row.developmental_stage),
                             size: 'small',
                         },
                         {
-                            default: () => row.completeness,
+                            default: () => row.developmental_stage,
                         }
                     ),
                 ])
@@ -705,32 +736,29 @@ const createColumns = (): DataTableColumns<RowData> => {
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'Genome Length (bp)' }),
-                    'phage genome length'
+                    h('div', null, { default: () => 'Disease Stage' }),
+                    'disease stage'
                 )
             },
-            key: 'length',
+            key: 'disease_steps',
             sorter: 'default',
             align: 'center',
             width: 90,
         },
         {
             title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'GC Content (%)' }),
-                    'phage GC content'
-                )
+                return renderTooltip(h('div', null, { default: () => 'Sex' }), 'sex')
             },
-            key: 'gc_content',
+            key: 'sex',
             sorter: 'default',
             align: 'center',
             width: 90,
         },
         {
             title() {
-                return renderTooltip(h('div', null, { default: () => 'Clusters' }), 'cluster ID')
+                return renderTooltip(h('div', null, { default: () => 'Slice Name' }), 'slice name')
             },
-            key: 'cluster',
+            key: 'slice_name',
             align: 'center',
             ellipsis: {
                 tooltip: true,
@@ -768,20 +796,37 @@ const createColumns = (): DataTableColumns<RowData> => {
             //     ])
             // },
         },
+        // cell num
+        // gene num
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'Subclusters' }),
-                    'subcluster ID'
+                    h('div', null, { default: () => 'Threshold for Gene Filter' }),
+                    'threshold for gene filter'
                 )
             },
-            key: 'subcluster',
+            key: 'gene_filter_threshold',
             align: 'center',
             ellipsis: {
                 tooltip: true,
             },
             width: 110,
         },
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Proportion of Anchor Gene' }),
+                    'proportion of anchor gene'
+                )
+            },
+            key: 'anchor_gene_proportion',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: 110,
+        },
+        // inferred_trans_center_num
         {
             title: 'Action',
             key: 'actions',
@@ -840,10 +885,10 @@ const paginationReactive = reactive({
     },
 })
 const handleSelectSet = async (value: any) => {
-    phageurl.value = `/${value}/`
+    crusturl.value = `/${value}/`
 
     loading.value = true
-    const response = await axios.get(phageurl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
@@ -865,7 +910,7 @@ const godatahelper = () => {
 
 const redundchange = async () => {
     loading.value = true
-    const response = await axios.get(phageurl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {

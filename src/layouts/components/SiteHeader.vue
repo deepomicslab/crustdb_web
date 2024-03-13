@@ -80,6 +80,10 @@ const menuOptions: MenuOption[] = [
                 key: '/database/phage',
             },
             {
+                label: 'Crust List',
+                key: '/database/crustdb_main',
+            },
+            {
                 label: 'Host List',
                 key: '/database/host',
             },
@@ -299,6 +303,7 @@ const changeMenu = (_: string, option: MenuOption) => {
 .c-main-menu {
     @apply flex justify-between items-center;
     @apply text-base;
+
     .n-menu-item {
         @apply flex flex-grow;
     }

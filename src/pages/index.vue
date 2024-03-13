@@ -32,6 +32,7 @@
                 </div>
             </div>
         </n-layout-sider>
+
         <el-scrollbar ref="scrollbarRef" class="w-full">
             <div class="w-full flex flex-col justify-start h-700 bg-[#f8f9fa]">
                 <div class="h-220 flex flex-col">
@@ -305,6 +306,7 @@
                         </div>
                         <div class="flex flex-col">
                             <a class="text-xl mb-3" href="/database">Database</a>
+                            <p><a href="/database/crustdb_main">Crust List</a></p>
                             <p><a href="/database/phage">Phage List</a></p>
                             <p><a href="/database/host">Host List</a></p>
                             <p><a href="/database/cluster">Cluster List</a></p>
@@ -332,6 +334,7 @@
                 </el-footer>
             </div>
         </el-scrollbar>
+
         <admin v-show="false" />
     </div>
     <el-dialog v-model="dialogVisible" title="Tips" width="30%">
@@ -398,11 +401,13 @@ const confirmcookie = () => {
 :deep(.el-carousel__arrow) {
     background-color: rgb(31 45 61 / 59%);
 }
+
 :deep(.el-carousel__indicators--outside button) {
     height: 10px;
     width: 60px;
     background-color: #070708;
 }
+
 // :deep(.el-carousel__indicators--outside) {
 //     z-index: 500 !important;
 //     position: absolute;
