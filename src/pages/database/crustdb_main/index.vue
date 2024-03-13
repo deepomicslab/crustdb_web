@@ -208,7 +208,7 @@ import _ from 'lodash'
 import axios from 'axios'
 import filterview from '../filter/index.vue'
 // import { datasetDict, datasetList } from '@/utils/phage'
-import { datasetDict } from '@/utils/phage'
+import { celltypeDict } from '@/utils/phage'
 
 const showredundancy = ref('Show Redundancy')
 const pagevalue = ref(1)
@@ -474,35 +474,38 @@ const rowKey = (row: RowData) => {
 //     }
 //     return 'warning'
 // }
-const developmentalStageColor = (stage: any) => {
-    console.log('stage: ')
-    console.log(stage)
-    if (stage === 'Stage 44') {
-        return 'info'
-    }
-    if (stage === 'Stage 54') {
-        return 'success'
-    }
-    if (stage === 'Stage 57') {
-        return 'warning'
-    }
-    if (stage === 'Juvenile') {
-        return 'success'
-    }
-    return 'warning'
-}
 // const lifestyleColor = (style: any) => {
 //     if (style === 'virulent') {
 //         return 'error'
 //     }
 //     return 'info'
 // }
-const STPlatformColor = (style: any) => {
+// const STPlatformColor = (style: any) => {
+//     if (style === 'Axolotl') {
+//         // wait to see how many colors needed
+//         return 'error'
+//     }
+//     return 'info'
+// }
+const SpeciesColor = (style: any) => {
     if (style === 'Axolotl') {
         // wait to see how many colors needed
         return 'error'
     }
     return 'info'
+}
+const STPlatformColor = (style: any) => {
+    if (style === 'Stereo-Seq') {
+        // wait to see how many colors needed
+        return 'error'
+    }
+    return 'info'
+}
+const DiseaseStageColor = (style: any) => {
+    if (style === 'Normal') {
+        return 'info'
+    }
+    return 'error'
 }
 
 const filtersearch = async () => {
@@ -569,11 +572,6 @@ const createColumns = (): DataTableColumns<RowData> => {
                         [
                             h(NEllipsis, null, {
                                 default: () => {
-                                    console.log('row.cell_type')
-                                    console.log(row.cell_type)
-                                    console.log('row.data_uid')
-                                    console.log(row.data_uid)
-                                    console.log(row)
                                     return row.data_uid
                                 },
                             }),
@@ -588,10 +586,10 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'cell_type',
             align: 'center',
-            width: 70,
-            filterOptions: datasetDict,
+            width: 130,
+            filterOptions: celltypeDict,
             filter(value: any, row: any) {
-                return row.Data_Sets === value
+                return row.cell_type === value
             },
             render(row: any) {
                 return h('div', { style: { width: '100px' } }, [
@@ -635,28 +633,29 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
+            filterOptions: [
+                {
+                    label: 'Stereo-Seq',
+                    value: 'Stereo-Seq',
+                },
+                {
+                    label: 'Wait for other label',
+                    value: 'Wait for other label',
+                },
+            ],
+            filter(value: any, row: any) {
+                return row.ST_platform === value
+            },
             render(row: any) {
                 return h('div', {}, [
                     h(
-                        NButton,
+                        NTag,
                         {
-                            type: 'info',
-                            text: true,
+                            type: STPlatformColor(row.ST_platform),
                             size: 'small',
-                            onClick: () => {
-                                router.push({
-                                    path: `/database/host/list`, // wait to be modified
-                                    query: {
-                                        rank: 'host',
-                                        node: row.host,
-                                    },
-                                })
-                            },
                         },
                         {
-                            default: () => {
-                                return row.ST_platform
-                            },
+                            default: () => row.ST_platform,
                         }
                     ),
                 ])
@@ -683,14 +682,14 @@ const createColumns = (): DataTableColumns<RowData> => {
                 },
             ],
             filter(value: any, row: any) {
-                return row.ST_platform === value
+                return row.species === value
             },
             render(row: any) {
                 return h('div', {}, [
                     h(
                         NTag,
                         {
-                            type: STPlatformColor(row.ST_platform),
+                            type: SpeciesColor(row.species),
                             size: 'small',
                         },
                         {
@@ -704,55 +703,15 @@ const createColumns = (): DataTableColumns<RowData> => {
             title() {
                 return renderTooltip(
                     h('div', null, { default: () => 'Developmental Stage' }),
-                    'developmental stage'
+                    'developmental stageslice name'
                 )
             },
             key: 'developmental_stage',
             align: 'center',
-            width: 140,
-            filterOptions: [
-                {
-                    label: 'Stage_44',
-                    value: 'Stage 44',
-                },
-                {
-                    label: 'Stage_54',
-                    value: 'Stage 54',
-                },
-                {
-                    label: 'Stage_57',
-                    value: 'Stage 57',
-                },
-                {
-                    label: 'Juvenile',
-                    value: 'Juvenile',
-                },
-                {
-                    label: 'Adult',
-                    value: 'Adult',
-                },
-                {
-                    label: 'Metamorphosis',
-                    value: 'Metamorphosis',
-                },
-            ],
-            filter(value: any, row: any) {
-                return row.developmental_stage === value
+            ellipsis: {
+                tooltip: true,
             },
-            render(row: any) {
-                return h('div', {}, [
-                    h(
-                        NTag,
-                        {
-                            type: developmentalStageColor(row.developmental_stage),
-                            size: 'small',
-                        },
-                        {
-                            default: () => row.developmental_stage,
-                        }
-                    ),
-                ])
-            },
+            width: 110,
         },
         {
             title() {
@@ -762,16 +721,44 @@ const createColumns = (): DataTableColumns<RowData> => {
                 )
             },
             key: 'disease_steps',
-            sorter: 'default',
             align: 'center',
-            width: 90,
+            width: 100,
+            ellipsis: {
+                tooltip: true,
+            },
+            filterOptions: [
+                {
+                    label: 'wait for other label', //
+                    value: 'wait for other label',
+                },
+                {
+                    label: 'Normal',
+                    value: 'Normal',
+                },
+            ],
+            filter(value: any, row: any) {
+                return row.disease_steps === value
+            },
+            render(row: any) {
+                return h('div', {}, [
+                    h(
+                        NTag,
+                        {
+                            type: DiseaseStageColor(row.disease_steps),
+                            size: 'small',
+                        },
+                        {
+                            default: () => row.disease_steps,
+                        }
+                    ),
+                ])
+            },
         },
         {
             title() {
                 return renderTooltip(h('div', null, { default: () => 'Sex' }), 'sex')
             },
             key: 'sex',
-            sorter: 'default',
             align: 'center',
             width: 90,
         },
@@ -785,40 +772,7 @@ const createColumns = (): DataTableColumns<RowData> => {
                 tooltip: true,
             },
             width: 110,
-            // render(row: any) {
-            //     return h('div', {}, [
-            //         h(
-            //             NButton,
-            //             {
-            //                 type: 'info',
-            //                 text: true,
-            //                 size: 'small',
-            //                 onClick: async () => {
-            //                     const response = await axios.get(`/cluster/detail`, {
-            //                         baseURL: '/api',
-            //                         timeout: 10000,
-            //                         params: {
-            //                             clusterid: row.cluster,
-            //                         },
-            //                     })
-            //                     const { id } = response.data
-            //                     router.push({
-            //                         path: '/database/cluster/detail',
-            //                         query: { clusterid: id },
-            //                     })
-            //                 },
-            //             },
-            //             {
-            //                 default: () => {
-            //                     return row.cluster
-            //                 },
-            //             }
-            //         ),
-            //     ])
-            // },
         },
-        // cell num
-        // gene num
         {
             title() {
                 return renderTooltip(
@@ -828,6 +782,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'cell_num',
             align: 'center',
+            sorter: 'default',
             ellipsis: {
                 tooltip: true,
             },
@@ -842,6 +797,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'gene_num',
             align: 'center',
+            sorter: 'default',
             ellipsis: {
                 tooltip: true,
             },
