@@ -108,7 +108,7 @@
                 <el-menu-item index="phage_STV" class="text-lg">STV</el-menu-item>
             </el-menu>
             <div class="flex flex-row mt-7 text-[16px] font-400">
-                <div># Phage Sequences</div>
+                <div># CrustDB Sequences (TBD)</div>
                 <div class="ml-5">{{ seqnum }}</div>
             </div>
         </div>
