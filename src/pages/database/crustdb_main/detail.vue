@@ -15,7 +15,13 @@
                 </div>
             </div>
             <!-- Phage Informatin table -->
-            <el-descriptions class="w-350 text-xl mt-8" :column="2" size="large" border v-loading="loaddata">
+            <el-descriptions
+                class="w-350 text-xl mt-8"
+                :column="2"
+                size="large"
+                border
+                v-loading="loaddata"
+            >
                 <el-descriptions-item>
                     <template #label>
                         <div class="cell-item">Phage ID</div>
@@ -200,7 +206,12 @@
     <el-dialog v-model="proteinVisible" title="Protein Detail" width="90%">
         <proteindetail v-model:proteinInfo="proteinInfo" v-model:dataset="datasets" />
     </el-dialog>
-    <el-dialog v-model="downloadphagedialogVisible" title="Select download data type" width="30%" align-center>
+    <el-dialog
+        v-model="downloadphagedialogVisible"
+        title="Select download data type"
+        width="30%"
+        align-center
+    >
         <div>
             <el-checkbox-group v-model="checkList" :max="1">
                 <el-checkbox label="Download FASTA Data" />
@@ -269,19 +280,20 @@ const route = useRoute()
 const phageid = computed(() => route.query?.phageid as number)
 
 const phagedata = ref({
-    data_uid = '',
-    cell_type = '',
-    slice_id = '',
-    ST_platform = '',
-    developmental_stage = '',
-    disease_steps = '',
-    sex = '',
-    slice_name = '',
-    cell_num = 0,
-    gene_num = 0,
-    gene_filter_threshold = 0,
-    anchor_gene_proportion = 0,
-    inferred_trans_center_num = '',
+    data_uid: '',
+    cell_type: '',
+    slice_id: '',
+    ST_platform: '',
+    species: '',
+    developmental_stage: '',
+    disease_steps: '',
+    sex: '',
+    slice_name: '',
+    cell_num: 0,
+    gene_num: 0,
+    // gene_filter_threshold = 0,
+    // anchor_gene_proportion = 0,
+    // inferred_trans_center_num = '',
 })
 
 const proteinVisible = ref(false)

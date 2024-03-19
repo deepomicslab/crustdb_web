@@ -164,7 +164,7 @@
 
     <el-dialog
         v-model="downloaddialogVisible"
-        title="Select download data type"
+        title="Select download data"
         width="30%"
         align-center
     >
@@ -172,8 +172,18 @@
             <el-checkbox-group v-model="checkList" :max="1">
                 <!-- <el-checkbox label="Download FASTA Data" /> -->
                 <!-- <el-checkbox label="Download GBK Data" /> -->
-                <el-checkbox label="Download ADATA" />
-                <el-checkbox label="Download Zip Data" />
+                <!-- <el-checkbox label="Download ADATA" />
+                <el-checkbox label="Download Zip Data" /> -->
+                <!-- <el-checkbox
+                    v-for="(v, idx) in downloadDataName"
+                    :key="v"
+                    :label="'(Repeat #' + (idx + 1) + ') Download ' + v + '.zip'"
+                /> -->
+                <el-checkbox
+                    v-for="v in downloadDataName"
+                    :key="v"
+                    :label="'Download ' + v + '.zip'"
+                />
                 <!-- <el-checkbox label="Download Meta Data" /> -->
             </el-checkbox-group>
         </div>
@@ -340,7 +350,9 @@ const detail = (row: any) => {
 const downloaddialogVisible = ref(false)
 const downloadtype = ref('')
 const checkList = ref([] as any[])
+const downloadDataName = ref([] as any[])
 const checkedRowKeysRef = ref<DataTableRowKey[]>([])
+// const checkedRepeatDataUID = ref([])
 function handleCheck(rowKeys: DataTableRowKey[]) {
     checkedRowKeysRef.value = rowKeys
 }
@@ -351,55 +363,64 @@ const downloadrequest = async () => {
             closable: true,
             duration: 5000,
         })
-    } else if (downloadtype.value === 'selected') {
-        if (checkList.value.includes('Download FASTA Data')) {
-            window.open(`/api/phage/fasta/?phageids=${checkedRowKeysRef.value}`, '_blank')
-        }
-        if (checkList.value.includes('Download ADATA')) {
-            console.log('88888')
-            window.open(`/api/phage/gff/?phageids=${checkedRowKeysRef.value}`, '_blank')
-        }
-        if (checkList.value.includes('Download GBK Data')) {
-            window.open(`/api/phage/gbk/?phageids=${checkedRowKeysRef.value}`, '_blank')
-        }
-        if (checkList.value.includes('Download Meta Data')) {
-            window.open(`/api/phage/meta/?phageids=${checkedRowKeysRef.value}`, '_blank')
-        }
-    } else if (downloadtype.value === 'single') {
-        // DB -> download -> single file download
-        if (checkList.value.includes('Download Meta Data')) {
-            window.open(`/api/phage/meta/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
-        }
-        if (checkList.value.includes('Download FASTA Data')) {
-            window.open(`/api/phage/fasta/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
-        }
-        if (checkList.value.includes('Download ADATA')) {
-            // ==================
-            // e.g. https://crustdb.deepomics.org/api/phage/fasta/?phageid=2
-            // window.open(`/api/phage/gff/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
-            window.open(`/api/crustdb_main/adata/?crustid=${checkedRowKeysRef.value[0]}`, '_blank')
-        }
-        if (checkList.value.includes('Download Zip Data')) {
-            // ==================
-            window.open(`/api/crustdb_main/zip/?crustid=${checkedRowKeysRef.value[0]}`, '_blank')
-        }
-        if (checkList.value.includes('Download GBK Data')) {
-            window.open(`/api/phage/gbk/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
-        }
-    } else {
-        if (checkList.value.includes('Download Meta Data')) {
-            window.open(`/api/phage/meta/`, '_blank')
-        }
-        if (checkList.value.includes('Download FASTA Data')) {
-            window.open(`/api/phage/fasta/`, '_blank')
-        }
-        if (checkList.value.includes('Download ADATA')) {
-            window.open(`/api/phage/gff/`, '_blank')
-        }
-        if (checkList.value.includes('Download GBK Data')) {
-            window.open(`/api/phage/gbk/`, '_blank')
-        }
     }
+    // else if (downloadtype.value === 'selected') {
+    //     if (checkList.value.includes('Download FASTA Data')) {
+    //         window.open(`/api/phage/fasta/?phageids=${checkedRowKeysRef.value}`, '_blank')
+    //     }
+    //     if (checkList.value.includes('Download ADATA')) {
+    //         console.log('88888')
+    //         window.open(`/api/phage/gff/?phageids=${checkedRowKeysRef.value}`, '_blank')
+    //     }
+    //     if (checkList.value.includes('Download GBK Data')) {
+    //         window.open(`/api/phage/gbk/?phageids=${checkedRowKeysRef.value}`, '_blank')
+    //     }
+    //     if (checkList.value.includes('Download Meta Data')) {
+    //         window.open(`/api/phage/meta/?phageids=${checkedRowKeysRef.value}`, '_blank')
+    //     }
+    // }
+    else if (downloadtype.value === 'single') {
+        // DB -> download -> single file download
+        // if (checkList.value.includes('Download Meta Data')) {
+        //     window.open(`/api/phage/meta/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
+        // }
+        // if (checkList.value.includes('Download FASTA Data')) {
+        //     window.open(`/api/phage/fasta/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
+        // }
+        // if (checkList.value.includes('Download ADATA')) {
+        //     // ==================
+        //     // e.g. https://crustdb.deepomics.org/api/phage/fasta/?phageid=2
+        //     // window.open(`/api/phage/gff/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
+        //     window.open(`/api/crustdb_main/adata/?crustid=${checkedRowKeysRef.value[0]}`, '_blank')
+        // }
+        // if (checkList.value.includes('.zip')) {
+        // ==================
+        // alert(checkList.value) //(Repeat #1) Download Stage44.CP_1XOH.zip
+        // checkedRepeatDataUID.push(checkList.value.split('.')[1].split('_')[1])
+        window.open(
+            `/api/crustdb_main/zip/?crustid=${checkedRowKeysRef.value[0]}&checkList=${checkList.value}`,
+            '_blank'
+        )
+        // }
+        // if (checkList.value.includes('Download GBK Data')) {
+        //     window.open(`/api/phage/gbk/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
+        // }
+    }
+    // else {
+    //     if (checkList.value.includes('Download Meta Data')) {
+    //         window.open(`/api/phage/meta/`, '_blank')
+    //     }
+    //     if (checkList.value.includes('Download FASTA Data')) {
+    //         window.open(`/api/phage/fasta/`, '_blank')
+    //     }
+    //     if (checkList.value.includes('Download ADATA')) {
+    //         window.open(`/api/phage/gff/`, '_blank')
+    //     }
+    //     if (checkList.value.includes('Download GBK Data')) {
+    //         window.open(`/api/phage/gbk/`, '_blank')
+    //     }
+    // }
+    checkList.value.length = 0
 }
 const downloadselected = () => {
     if (checkedRowKeysRef.value.length === 0) {
@@ -420,6 +441,15 @@ const download = (row: any) => {
     downloadtype.value = 'single'
     downloaddialogVisible.value = true
     checkedRowKeysRef.value = [row.id]
+    downloadDataName.value.length = 0
+    for (let i = 0; i < row.repeat_data_uid_list.length; i += 1) {
+        downloadDataName.value.push(`${row.uniq_data_uid}_${row.repeat_data_uid_list[i]}`)
+    }
+    // downloadDataName.value = row.repeat_data_uid_list
+    // alert('==================== downloadDataName')
+    // console.log('==================== downloadDataName')
+    // alert(downloadDataName.value)
+    // console.log(downloadDataName.value)
 }
 
 // type RowData = {
