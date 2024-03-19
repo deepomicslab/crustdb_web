@@ -206,7 +206,8 @@
 // @ts-nocheck
 import type { DataTableColumns, DataTableRowKey } from 'naive-ui'
 import { h } from 'vue'
-import { NButton, NTag, NEllipsis, NTooltip } from 'naive-ui'
+// import { NButton, NTag, NEllipsis, NTooltip } from 'naive-ui'
+import { NButton, NTag, NTooltip } from 'naive-ui'
 import {
     FunnelOutline,
     ChevronBack,
@@ -218,7 +219,8 @@ import _ from 'lodash'
 import axios from 'axios'
 import filterview from '../filter/index.vue'
 // import { datasetDict, datasetList } from '@/utils/phage'
-import { celltypeDict } from '@/utils/phage'
+// import { celltypeDict } from '@/utils/phage'
+import { celltypeDict, sexDict, devDict } from '@/utils/crustdb'
 
 const showredundancy = ref('Show Redundancy')
 const pagevalue = ref(1)
@@ -420,7 +422,7 @@ const downloadrequest = async () => {
     //         window.open(`/api/phage/gbk/`, '_blank')
     //     }
     // }
-    checkList.value.length = 0
+    checkList.value.length = 0 // clear the checkList means clear the picked items 取消选中
 }
 const downloadselected = () => {
     if (checkedRowKeysRef.value.length === 0) {
@@ -575,81 +577,7 @@ const createColumns = (): DataTableColumns<RowData> => {
         {
             type: 'selection',
         },
-        {
-            title() {
-                return renderTooltip(h('div', null, { default: () => 'Data UID' }), 'data UID') // directly display; hover on then display
-            },
-            key: 'data_uid',
-            align: 'center',
-            fixed: 'left',
-            width: 125,
-            ellipsis: {
-                tooltip: true,
-            },
-            render(row: any) {
-                return h('div', {}, [
-                    h(
-                        NButton,
-                        {
-                            type: 'info',
-                            text: true,
-                            size: 'small',
-                            style: { width: '100px' },
-                            onClick: () => {
-                                window.open(`${row.reference}`)
-                            },
-                        },
-                        [
-                            h(NEllipsis, null, {
-                                default: () => {
-                                    return row.data_uid
-                                },
-                            }),
-                        ]
-                    ),
-                ])
-            },
-        },
-        {
-            title() {
-                return renderTooltip(h('div', null, { default: () => 'Cell Type' }), 'cell type')
-            },
-            key: 'cell_type',
-            align: 'center',
-            width: 130,
-            filterOptions: celltypeDict,
-            filter(value: any, row: any) {
-                return row.cell_type === value
-            },
-            render(row: any) {
-                return h('div', { style: { width: '100px' } }, [
-                    h(
-                        NTag,
-                        {
-                            type: 'info',
-                            size: 'small',
-                            round: true,
-                        },
-                        {
-                            default: () => {
-                                return row.cell_type
-                            },
-                        }
-                    ),
-                ])
-            },
-        },
-        {
-            title() {
-                return renderTooltip(h('div', null, { default: () => 'Slice ID' }), 'slice ID')
-            },
-            key: 'slice_id',
-            align: 'center',
-            ellipsis: {
-                tooltip: true,
-            },
-            width: 250,
-        },
+        // ST_platform
         {
             title() {
                 return renderTooltip(
@@ -659,7 +587,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'ST_platform',
             align: 'center',
-            width: 120,
+            width: 100,
             ellipsis: {
                 tooltip: true,
             },
@@ -691,13 +619,14 @@ const createColumns = (): DataTableColumns<RowData> => {
                 ])
             },
         },
+        // species
         {
             title() {
                 return renderTooltip(h('div', null, { default: () => 'Species' }), 'species')
             },
             key: 'species',
             align: 'center',
-            width: 100,
+            width: 170,
             ellipsis: {
                 tooltip: true,
             },
@@ -729,20 +658,7 @@ const createColumns = (): DataTableColumns<RowData> => {
                 ])
             },
         },
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Developmental Stage' }),
-                    'developmental stageslice name'
-                )
-            },
-            key: 'developmental_stage',
-            align: 'center',
-            ellipsis: {
-                tooltip: true,
-            },
-            width: 110,
-        },
+        // disease_steps
         {
             title() {
                 return renderTooltip(
@@ -752,7 +668,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'disease_steps',
             align: 'center',
-            width: 100,
+            width: 110,
             ellipsis: {
                 tooltip: true,
             },
@@ -784,25 +700,81 @@ const createColumns = (): DataTableColumns<RowData> => {
                 ])
             },
         },
+        // developmental_stage
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Developmental Stage' }),
+                    'developmental stage'
+                )
+            },
+            key: 'developmental_stage',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: 140,
+            filterOptions: devDict,
+            filter(value: any, row: any) {
+                return row.developmental_stage === value
+            },
+        },
+        // sex
         {
             title() {
                 return renderTooltip(h('div', null, { default: () => 'Sex' }), 'sex')
             },
             key: 'sex',
             align: 'center',
-            width: 90,
+            width: 70,
+            filterOptions: sexDict,
+            filter(value: any, row: any) {
+                return row.sex === value
+            },
         },
+        // cell_type
         {
             title() {
-                return renderTooltip(h('div', null, { default: () => 'Slice Name' }), 'slice name')
+                return renderTooltip(h('div', null, { default: () => 'Cell Type' }), 'cell type')
             },
-            key: 'slice_name',
+            key: 'cell_type',
+            align: 'center',
+            width: 100,
+            filterOptions: celltypeDict,
+            filter(value: any, row: any) {
+                return row.cell_type === value
+            },
+            render(row: any) {
+                return h('div', { style: { width: '100px' } }, [
+                    h(
+                        NTag,
+                        {
+                            type: 'info',
+                            size: 'small',
+                            round: true,
+                        },
+                        {
+                            default: () => {
+                                return row.cell_type
+                            },
+                        }
+                    ),
+                ])
+            },
+        },
+        // slice_id
+        {
+            title() {
+                return renderTooltip(h('div', null, { default: () => 'Slice ID' }), 'slice ID')
+            },
+            key: 'slice_id',
             align: 'center',
             ellipsis: {
                 tooltip: true,
             },
-            width: 110,
+            width: 260,
         },
+        // cell_num
         {
             title() {
                 return renderTooltip(
@@ -816,8 +788,9 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            width: 110,
+            width: 80,
         },
+        // gene_num
         {
             title() {
                 return renderTooltip(
@@ -831,16 +804,18 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            width: 110,
+            width: 80,
         },
+        // slice_name
         // gene_filter_threshold
         // anchor_gene_proportion
         // inferred_trans_center_num
+        // actions
         {
             title: 'Action',
             key: 'actions',
             align: 'center',
-            width: 150,
+            width: 130,
             fixed: 'right',
             render(row: any) {
                 return h(
