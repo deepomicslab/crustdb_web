@@ -10,7 +10,7 @@
                                 <di />
                             </n-icon>
                         </template>
-                        Download Phage Data
+                        Download CrustDB Data
                     </el-button>
                 </div>
                 <div class="mt-1.5 ml-10">
@@ -158,7 +158,7 @@
     </el-dialog>
     <el-dialog
         v-model="downloadphagedialogVisible"
-        title="Select download data type"
+        title="Select download data"
         width="30%"
         align-center
     >
