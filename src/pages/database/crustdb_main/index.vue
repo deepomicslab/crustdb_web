@@ -346,7 +346,11 @@ const gofilter = () => {
     filterVisible.value = true
 }
 const detail = (row: any) => {
-    router.push({ path: '/database/phage/detail', query: { phageid: row.id } })
+    // router.push({ path: '/database/phage/detail', query: { phageid: row.id } })
+    router.push({
+        path: '/database/crustdb_main/detail',
+        query: { crustdb_main_id: row.id, details_uid: '' },
+    })
 }
 
 const downloaddialogVisible = ref(false)
@@ -354,14 +358,13 @@ const downloadtype = ref('')
 const checkList = ref([] as any[])
 const downloadDataName = ref([] as any[])
 const checkedRowKeysRef = ref<DataTableRowKey[]>([])
-// const checkedRepeatDataUID = ref([])
 function handleCheck(rowKeys: DataTableRowKey[]) {
     checkedRowKeysRef.value = rowKeys
 }
 
 const downloadrequest = async () => {
     if (checkList.value.length === 0) {
-        window.$message.warning('Please select download data type', {
+        window.$message.warning('Please select one zip data to download', {
             closable: true,
             duration: 5000,
         })
@@ -447,25 +450,8 @@ const download = (row: any) => {
     for (let i = 0; i < row.repeat_data_uid_list.length; i += 1) {
         downloadDataName.value.push(`${row.uniq_data_uid}_${row.repeat_data_uid_list[i]}`)
     }
-    // downloadDataName.value = row.repeat_data_uid_list
-    // alert('==================== downloadDataName')
-    // console.log('==================== downloadDataName')
-    // alert(downloadDataName.value)
-    // console.log(downloadDataName.value)
 }
 
-// type RowData = {
-//     id: number
-//     Acession_ID: string
-//     Data_Sets: string
-//     length: string
-//     gc_content: any
-//     host: string
-//     completeness: string
-//     taxonomy: string
-//     cluster: string
-//     subcluster: string
-// }
 type RowData = {
     data_uid: string
     cell_type: string
@@ -506,19 +492,6 @@ const rowKey = (row: RowData) => {
 //     }
 //     return 'warning'
 // }
-// const lifestyleColor = (style: any) => {
-//     if (style === 'virulent') {
-//         return 'error'
-//     }
-//     return 'info'
-// }
-// const STPlatformColor = (style: any) => {
-//     if (style === 'Axolotl') {
-//         // wait to see how many colors needed
-//         return 'error'
-//     }
-//     return 'info'
-// }
 const SpeciesColor = (style: any) => {
     if (style === 'Axolotl') {
         // wait to see how many colors needed
@@ -528,7 +501,6 @@ const SpeciesColor = (style: any) => {
 }
 const STPlatformColor = (style: any) => {
     if (style === 'Stereo-Seq') {
-        // wait to see how many colors needed
         return 'error'
     }
     return 'info'
