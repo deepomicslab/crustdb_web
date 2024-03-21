@@ -64,6 +64,7 @@
         </div>
 
         <!-- navigation bar with anchor -->
+        <!-- Filtering, by ST_platform -->
         <div class="flex flex-row justify-between">
             <el-menu
                 :default-active="datasets"
@@ -71,22 +72,10 @@
                 mode="horizontal"
                 @select="handleSelectSet"
             >
-                <el-menu-item index="phage" class="text-lg">All</el-menu-item>
-                <!-- <el-menu-item index="phage_NCBI">NCBI</el-menu-item> -->
-                <el-menu-item index="phage_RefSeq" class="text-lg">RefSeq</el-menu-item>
-                <el-menu-item index="phage_Genbank" class="text-lg">Genbank</el-menu-item>
-                <el-menu-item index="phage_EMBL" class="text-lg">EMBL</el-menu-item>
-                <el-menu-item index="phage_DDBJ" class="text-lg">DDBJ</el-menu-item>
-                <el-menu-item index="phage_PhagesDB" class="text-lg">PhagesDB</el-menu-item>
-                <el-menu-item index="phage_GVD" class="text-lg">GVD</el-menu-item>
-                <el-menu-item index="phage_GPD" class="text-lg">GPD</el-menu-item>
-                <el-menu-item index="phage_MGV" class="text-lg">MGV</el-menu-item>
-                <el-menu-item index="phage_TemPhD" class="text-lg">TemPhD</el-menu-item>
-                <el-menu-item index="phage_CHVD" class="text-lg">CHVD</el-menu-item>
-                <el-menu-item index="phage_IGVD" class="text-lg">IGVD</el-menu-item>
-                <el-menu-item index="phage_IMG_VR" class="text-lg">IMG VR</el-menu-item>
-                <el-menu-item index="phage_GOV2" class="text-lg">GOV2</el-menu-item>
-                <el-menu-item index="phage_STV" class="text-lg">STV</el-menu-item>
+                <el-menu-item index="crustdb_main" class="text-lg">All</el-menu-item>
+                <el-menu-item index="crustdb_stereo" class="text-lg">Stereo-Seq</el-menu-item>
+                <el-menu-item index="crustdb_cosmx" class="text-lg">CosMx</el-menu-item>
+                <el-menu-item index="crustdb_merfish" class="text-lg">Merfish</el-menu-item>
             </el-menu>
             <div class="flex flex-row mt-7 text-[16px] font-400">
                 <div># CrustDB Records</div>
