@@ -7,8 +7,8 @@
                 @click="router.push('/')"
             >
                 <img :src="Logo" class="h-[calc(100%-6px)]" />
-                <h1 text="white h5" hover="text-[#eee]">CrustDB</h1>
             </div>
+            <h1 text="white h5" hover="text-[#eee]">CrustDB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h1>
             <n-menu
                 v-model:value="activeKey"
                 mode="horizontal"

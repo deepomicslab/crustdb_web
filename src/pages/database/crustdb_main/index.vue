@@ -37,25 +37,6 @@
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
-
-                    <el-select
-                        v-model="showredundancy"
-                        placeholder="Select show redundancy"
-                        class="mb-1"
-                        @change="redundchange"
-                    >
-                        <template #prefix>
-                            <el-icon>
-                                <Switch />
-                            </el-icon>
-                        </template>
-                        <el-option
-                            v-for="item in redundancyoptions"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                        ></el-option>
-                    </el-select>
                 </div>
             </div>
 
@@ -108,8 +89,8 @@
                 <el-menu-item index="phage_STV" class="text-lg">STV</el-menu-item>
             </el-menu>
             <div class="flex flex-row mt-7 text-[16px] font-400">
-                <div># CrustDB Sequences (TBD)</div>
-                <div class="ml-5">{{ seqnum }}</div>
+                <div># CrustDB Records</div>
+                <div class="ml-5">{{ crust_num }}</div>
             </div>
         </div>
 
@@ -214,7 +195,8 @@ import {
     ChevronForward,
     CloudDownloadOutline as downicon,
 } from '@vicons/ionicons5'
-import { Search, RefreshRight, ArrowDown, InfoFilled, Switch } from '@element-plus/icons-vue'
+// import { Search, RefreshRight, ArrowDown, InfoFilled, Switch } from '@element-plus/icons-vue'
+import { Search, RefreshRight, ArrowDown, InfoFilled } from '@element-plus/icons-vue'
 import _ from 'lodash'
 import axios from 'axios'
 import filterview from '../filter/index.vue'
@@ -222,11 +204,10 @@ import filterview from '../filter/index.vue'
 // import { celltypeDict } from '@/utils/phage'
 import { celltypeDict, sexDict, devDict } from '@/utils/crustdb'
 
-const showredundancy = ref('Show Redundancy')
 const pagevalue = ref(1)
 const pageSize = ref(30)
 const datasets = ref('crustdb_main')
-const seqnum = ref('873,718')
+const crust_num = ref()
 const loading = ref(false)
 const searchinput = ref('')
 
@@ -235,16 +216,6 @@ const phagedata = ref()
 
 const crusturl = ref(`/crustdb_main/`)
 const route = useRoute()
-const redundancyoptions = [
-    {
-        value: 'Show Redundancy',
-        label: 'Show Redundancy',
-    },
-    {
-        value: 'Hide Redundancy',
-        label: 'Hide Redundancy',
-    },
-]
 
 onBeforeMount(async () => {
     if (route.query?.dataset) {
@@ -263,6 +234,7 @@ onBeforeMount(async () => {
     })
     const { data } = response
     phagedata.value = data
+    crust_num.value = phagedata.value.count
     loading.value = false
 })
 
@@ -862,25 +834,5 @@ const godatahelper = () => {
         path: '/tutorial',
         query: { type: 'database_intro' },
     })
-}
-
-const redundchange = async () => {
-    loading.value = true
-    const response = await axios.get(crusturl.value, {
-        baseURL: '/api',
-        timeout: 100000,
-        params: {
-            page: pagevalue.value,
-            pagesize: pageSize.value,
-        },
-    })
-    if (showredundancy.value === 'Show Redundancy') {
-        seqnum.value = '873,718'
-    } else {
-        seqnum.value = '767,797'
-    }
-    const { data } = response
-    phagedata.value = data
-    loading.value = false
 }
 </script>

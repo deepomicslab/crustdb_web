@@ -121,7 +121,10 @@
                 v-show="annoshow"
             >
                 <!-- <annotation /> -->
-                <details_linechart />
+                <!-- <details_linechart /> -->
+                <img
+                    src="'https://crustdbapi.deepomics.org/files/Axolotls/20DPI_1.VLMC_3DXO/20DPI_1.VLMC_3DXO_details_linechart.png'"
+                />
             </div>
         </div>
         <div
@@ -130,7 +133,10 @@
             v-show="!annoshow"
         >
             <!-- <circo /> -->
-            <details_linechart />
+            <!-- <details_linechart /> -->
+            <img
+                src="../../../../../crustdb_api/workspace/crustdb_database/Axolotls/2DPI_1.MSN_2NN3/2DPI_1.MSN_2NN3_details_linechart.png"
+            />
         </div>
         <div class="mt-20 ml-10" v-show="phageStore.phageterminator.length !== 0">
             <terminator />
@@ -211,7 +217,7 @@ import { reactive, ref } from 'vue'
 // import { datasetList } from '@/utils/phage'
 import proteindetail from '../protein/detail.vue'
 // import annotation from '../../visualize/components/annotation.vue'
-import details_linechart from '../../visualize/components/details_linechart.vue'
+// import details_linechart from '../../visualize/components/details_linechart.vue'
 // import circo from '../../visualize/components/circo.vue'
 // import terminator from '../phage/terminator.vue'
 // import anti from '../phage/anti.vue'
