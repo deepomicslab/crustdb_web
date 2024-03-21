@@ -120,7 +120,8 @@
                 class="w-310 h-200 mt-5 ml-10 mb-20"
                 v-show="annoshow"
             >
-                <annotation />
+                <!-- <annotation /> -->
+                <details_linechart />
             </div>
         </div>
         <div
@@ -128,7 +129,8 @@
             class="w-350 h-250 ml-2 mt-5 mb-20"
             v-show="!annoshow"
         >
-            <circo />
+            <!-- <circo /> -->
+            <details_linechart />
         </div>
         <div class="mt-20 ml-10" v-show="phageStore.phageterminator.length !== 0">
             <terminator />
@@ -209,6 +211,7 @@ import { reactive, ref } from 'vue'
 // import { datasetList } from '@/utils/phage'
 import proteindetail from '../protein/detail.vue'
 // import annotation from '../../visualize/components/annotation.vue'
+import details_linechart from '../../visualize/components/details_linechart.vue'
 // import circo from '../../visualize/components/circo.vue'
 // import terminator from '../phage/terminator.vue'
 // import anti from '../phage/anti.vue'
@@ -217,10 +220,12 @@ import proteindetail from '../protein/detail.vue'
 // import transprotein from '../phage/transprotein.vue'
 // import arvf from '../phage/arvf.vue'
 import { usePhageStore } from '@/store/phage'
+import { useCrustDBStore } from '@/store/crustdb'
 // import { useVisualizeStore } from '@/store/visualize'
 // const visualizeStore = useVisualizeStore()
 
 const phageStore = usePhageStore()
+const crustdbStore = useCrustDBStore()
 const loaddata = ref(false)
 // const annoshow = ref(true)
 // const showswicth = () => {
@@ -308,6 +313,7 @@ const selectRepeatRequest = async () => {
         // console.log('=============================== response2')
         // console.log(response2)
         detailsdata.value = response2.data
+        crustdbStore.detailsDistanceList = detailsdata.value.distance_list
         selectRepeatDialogVisible.value = false
     }
 }
@@ -371,9 +377,10 @@ onBeforeMount(async () => {
     }
 
     detailsdata.value = response2.data // show the 1st repeat, by default
+    crustdbStore.detailsDistanceList = detailsdata.value.distance_list
     // alert(detailsdata.value)
 
-    phageStore.phageaccid = data.Acession_ID
+    // phageStore.phageaccid = data.Acession_ID
     // const response2 = await axios.get(`/proteins`, {
     //     baseURL: '/api',
     //     timeout: 10000,
@@ -394,7 +401,7 @@ onBeforeMount(async () => {
     //     },
     // })
 
-    phageStore.phagefastadata = response3.data
+    // phageStore.phagefastadata = response3.data
     // phageStore.phagedataloaded = true
 })
 
