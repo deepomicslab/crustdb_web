@@ -44,7 +44,7 @@
                 <div class="mt-2 text-lg">
                     <el-tooltip
                         effect="dark"
-                        content="Fuzzy Search on Phage ID, Taxonomy, Host, Lifestyle, Completeness, Clusters and Subclusters columns"
+                        content="Fuzzy string search on columns (ST Platform, Species, Disease Stage, Developmental Stage, Sex, Cell Type, Slice ID)"
                         placement="top"
                         class="mt-4"
                     >
@@ -475,7 +475,7 @@ const DiseaseStageColor = (style: any) => {
 
 const filtersearch = async () => {
     loading.value = true
-    crusturl.value = 'phage/search/'
+    crusturl.value = 'crustdb_main/search/'
     const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
@@ -489,7 +489,7 @@ const filtersearch = async () => {
     loading.value = false
 }
 const resetsearch = async () => {
-    crusturl.value = '/phage/'
+    crusturl.value = '/crustdb_main/'
     searchinput.value = ''
     loading.value = true
     const response = await axios.get(crusturl.value, {
