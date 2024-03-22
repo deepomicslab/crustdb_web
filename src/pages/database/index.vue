@@ -101,21 +101,21 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                 <n-button
                     class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
-                    @click="viewhost('Bacillota')"
+                    @click="viewSTPlatform('Stereo-Seq')"
                 >
                     Stereo-Seq
                 </n-button>
                 <n-button
                     class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
-                    @click="viewhost('Bacteroidota')"
+                    @click="viewSTPlatform('CosMx')"
                 >
                     CosMx
                 </n-button>
                 <n-button
                     class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
-                    @click="viewhost('Bacteroidota')"
+                    @click="viewSTPlatform('Merfish')"
                 >
                     Merfish
                 </n-button>
@@ -134,28 +134,28 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                 <n-button
                     class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
-                    @click="gobyset('phage')"
+                    @click="viewSpecies('human')"
                 >
                     Human
                 </n-button>
                 <n-button
                     class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
-                    @click="gobyset('phage_RefSeq')"
+                    @click="viewSpecies('mice')"
                 >
                     Mice
                 </n-button>
                 <n-button
                     class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
-                    @click="gobyset('phage_RefSeq')"
+                    @click="viewSpecies('axolotls')"
                 >
                     Axolotls
                 </n-button>
                 <n-button
                     class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
-                    @click="gobyset('phage_RefSeq')"
+                    @click="viewSpecies('monkey')"
                 >
                     Monkey
                 </n-button>
@@ -220,17 +220,54 @@ import * as echarts from 'echarts'
 import { datasetsOption, QualityOption, Hostnumber } from '@/utils/overview'
 
 const router = useRouter()
-const godatalist = () => router.push({ path: '/database/phage' })
+const godatalist = () => router.push({ path: '/database/crustdb_main' })
 
-const gobyset = (seturl: string) => {
-    router.push({ path: '/database/phage', query: { dataset: seturl } })
-}
-const viewhost = (node: string) => {
+// const gobyset = (seturl: string) => {
+//     router.push({ path: '/database/phage', query: { dataset: seturl } })
+// }
+// const viewhost = (node: string) => {
+//     router.push({
+//         path: `/database/host/list`,
+//         query: {
+//             rank: 'Phylum',
+//             node,
+//         },
+//     })
+// }
+
+const viewSTPlatform = (node: string) => {
+    let dataset = ''
+    if (node === 'Stereo-Seq') {
+        dataset = 'crustdb_stereo'
+    } else if (node === 'CosMx') {
+        dataset = 'crustdb_cosmx'
+    } else if (node === 'Merfish') {
+        dataset = 'crustdb_merfish'
+    }
     router.push({
-        path: `/database/host/list`,
+        path: `/database/crustdb_main`,
         query: {
-            rank: 'Phylum',
-            node,
+            dataset,
+        },
+    })
+}
+
+const viewSpecies = (node: string) => {
+    let dataset = ''
+    if (node === 'human') {
+        dataset = 'crustdb_human'
+    } else if (node === 'mice') {
+        dataset = 'crustdb_mice'
+    } else if (node === 'axolotls') {
+        dataset = 'crustdb_axolotls'
+    }
+    // else if (node === 'monkey') {
+    //     dataset = 'crustdb_axolotls'
+    // }
+    router.push({
+        path: `/database/crustdb_main`,
+        query: {
+            dataset,
         },
     })
 }
