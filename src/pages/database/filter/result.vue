@@ -153,7 +153,7 @@ submitdata.append('filterdata', queryStore.filterdata)
 
 onBeforeMount(async () => {
     loading.value = true
-    const response = await axios.post(`/phage/filter/`, submitdata, {
+    const response = await axios.post(`/crustdb_main/filter/`, submitdata, {
         baseURL: '/api',
         timeout: 100000,
         params: {

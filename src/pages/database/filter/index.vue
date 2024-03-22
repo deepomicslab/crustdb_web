@@ -248,8 +248,6 @@ const submitFilter = async () => {
     } else {
         loading.value = true
         queryStore.filterdata = JSON.stringify(filterform.value)
-        console.log('================================= index queryStore.filterdata')
-        console.log(queryStore.filterdata)
         router.push({
             path: `/database/filter/result`,
         })
