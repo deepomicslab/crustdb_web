@@ -1,226 +1,67 @@
-export const annotationRefOptions = [
+export const STPlatformOptions = [
     {
-        value: 'prodigal',
-        label: 'Prodigal',
+        value: 'Stereo-Seq',
+        label: 'Stereo-Seq',
     },
     {
-        value: 'genebank',
-        label: 'Genebank',
+        value: 'CosMx',
+        label: 'CosMx',
     },
     {
-        value: 'refSeq',
-        label: 'RefSeq',
-    },
-]
-
-export const datasetsOptions = [
-    {
-        value: 'Genbank',
-        label: 'Genbank',
-    },
-
-    {
-        value: 'RefSeq',
-        label: 'RefSeq',
-    },
-    {
-        value: 'DDBJ',
-        label: 'DDBJ',
-    },
-    {
-        value: 'EMBL',
-        label: 'EMBL',
-    },
-    {
-        value: 'PhagesDB',
-        label: 'PhagesDB',
-    },
-    {
-        value: 'GPD',
-        label: 'GPD',
-    },
-    {
-        value: 'GVD',
-        label: 'GVD',
-    },
-    {
-        value: 'GPD',
-        label: 'GPD',
-    },
-    {
-        value: 'MGV',
-        label: 'MGV',
-    },
-    {
-        value: 'TemPhD',
-        label: 'TemPhD',
-    },
-    {
-        value: 'CHVD',
-        label: 'CHVD',
-    },
-    {
-        value: 'IGVD',
-        label: 'IGVD',
-    },
-    {
-        value: 'IMG_VR',
-        label: 'IMG_VR',
-    },
-    {
-        value: 'GOV2',
-        label: 'GOV2',
-    },
-    {
-        value: 'STV',
-        label: 'STV',
-    },
-]
-export const qualityOptions = [
-    {
-        value: 'Complete',
-        label: 'Complete',
-    },
-    {
-        value: 'High-quality',
-        label: 'High-quality',
-    },
-    {
-        value: 'Medium-quality',
-        label: 'Medium-quality',
-    },
-    {
-        value: 'Low-quality',
-        label: 'Low-quality',
-    },
-    {
-        value: 'Not-determined',
-        label: 'Not-determined',
+        value: 'Merfish',
+        label: 'Merfish',
     },
 ]
 
-export const clusterOptions = [
+export const speciesOptions = [
     {
-        value: 'Cluster_1',
-        label: 'Cluster 1',
+        value: 'Ambystoma mexicanum (Axolotl)',
+        label: 'Ambystoma mexicanum (Axolotl)',
     },
     {
-        value: 'Cluster_10',
-        label: 'Cluster 10',
-    },
-    {
-        value: 'Cluster_100',
-        label: 'Cluster 100',
-    },
-    {
-        value: 'Cluster_1000',
-        label: 'Cluster 1000',
-    },
-    {
-        value: 'Cluster_1001',
-        label: 'Cluster 1001',
+        value: 'None',
+        label: 'None',
     },
 ]
 
-export const subclusterOptions = [
+export const developmentalStageOptions = [
     {
-        value: 'Subluster_1',
-        label: 'Subluster 1',
+        label: 'Adult',
+        value: 'Adult',
     },
     {
-        value: 'Subluster10',
-        label: 'Subluster 10',
+        label: 'Developmental Stage',
+        value: 'Developmental Stage',
     },
     {
-        value: 'Subluster100',
-        label: 'Subluster 100',
+        label: 'Juvenile',
+        value: 'Juvenile',
     },
     {
-        value: 'Subluster1000',
-        label: 'Subluster 1000',
+        label: 'Metamorphosis',
+        value: 'Metamorphosis',
     },
     {
-        value: 'Subluster1001',
-        label: 'Subluster 1001',
-    },
-]
-export const hostTypeOptions = [
-    {
-        value: 'Bacillota',
-        label: 'Bacillota',
+        label: 'Stage 44',
+        value: 'Stage 44',
     },
     {
-        value: 'Bacteroidota',
-        label: 'Bacteroidota',
+        label: 'Stage 54',
+        value: 'Stage 54',
     },
     {
-        value: 'Pseudomonadota',
-        label: 'Pseudomonadota',
-    },
-    {
-        value: 'Thermodesulfobacteriota',
-        label: 'Thermodesulfobacteriota',
-    },
-    {
-        value: 'Campylobacterota',
-        label: 'Campylobacterota',
-    },
-    {
-        value: 'Verrucomicrobiota',
-        label: 'Verrucomicrobiota',
-    },
-    {
-        value: 'Fusobacteriota',
-        label: 'Fusobacteriota',
-    },
-    {
-        value: 'Spirochaetota',
-        label: 'Spirochaetota',
-    },
-    {
-        value: 'Cyanobacteriota',
-        label: 'Cyanobacteriota',
-    },
-    {
-        value: 'Synergistota',
-        label: 'Synergistota',
+        label: 'Stage 57',
+        value: 'Stage 57',
     },
 ]
-export const taxonomyOptions = [
+
+export const diseaseOptions = [
     {
-        value: 'Caudovirales',
-        label: 'Caudovirales',
+        value: 'Normal',
+        label: 'Normal',
     },
     {
-        value: 'Microviridae',
-        label: 'Microviridae',
-    },
-    {
-        value: 'NCLDV',
-        label: 'NCLDV',
-    },
-    {
-        value: 'Inoviridae',
-        label: 'Inoviridae',
-    },
-    {
-        value: 'CressDNAParvo',
-        label: 'CressDNAParvo',
-    },
-    {
-        value: 'PolyoPapillo ',
-        label: 'PolyoPapillo ',
-    },
-    {
-        value: 'Retrovirales',
-        label: 'Retrovirales',
-    },
-    {
-        value: 'Riboviria',
-        label: 'Riboviria',
-    },
-    {
-        value: 'Lavidaviridae',
-        label: 'Lavidaviridae',
+        value: 'None',
+        label: 'None',
     },
 ]

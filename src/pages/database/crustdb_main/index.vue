@@ -13,7 +13,7 @@
                         <n-icon class="mr-2">
                             <FunnelOutline />
                         </n-icon>
-                        Sequence Filter
+                        Record Filter
                     </el-button>
 
                     <el-dropdown class="mx-4">
@@ -23,7 +23,7 @@
                                     <downicon />
                                 </n-icon>
                             </template>
-                            Download Sequence
+                            Download Data
                             <el-icon class="el-icon--right"><arrow-down /></el-icon>
                         </el-button>
                         <template #dropdown>
@@ -721,7 +721,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            width: 80,
+            width: 90,
         },
         // gene_num
         {
@@ -737,7 +737,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            width: 80,
+            width: 100,
         },
         // slice_name
         // gene_filter_threshold

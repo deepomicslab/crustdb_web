@@ -94,26 +94,26 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
             <h1 class="text-4xl mt-8 ml-6 font-500">Platform</h1>
             <div class="flex flex-row justify-start w-370 flex-wrap items-start ml-10 mt-6 mb-6">
                 <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/stereo-seq.png" />
-                <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/CosMx.png" />
-                <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/CosMx.png" />
+                <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/cosmx.png" />
+                <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/merfish.png" />
             </div>
             <div class="flex flex-row justify-start w-370 flex-wrap items-start ml-10 mt-6 mb-6">
                 <n-button
-                    class="mt-10 mr-10 w-80 text-[#34498e] text-xl h-11"
+                    class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
                     @click="viewhost('Bacillota')"
                 >
                     Stereo-Seq
                 </n-button>
                 <n-button
-                    class="mt-10 mr-10 w-80 text-[#34498e] text-xl h-11"
+                    class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
                     @click="viewhost('Bacteroidota')"
                 >
                     CosMx
                 </n-button>
                 <n-button
-                    class="mt-10 mr-10 w-80 text-[#34498e] text-xl h-11"
+                    class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
                     @click="viewhost('Bacteroidota')"
                 >
@@ -121,7 +121,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                 </n-button>
             </div>
         </div>
-        <div class="mt-3 m-3">
+        <div class="mt-12 m-3">
             <div class="border-t-2"></div>
             <h1 class="text-4xl mt-8 ml-6 font-500">Data Source</h1>
             <div class="flex flex-row justify-start w-370 flex-wrap items-start ml-10 mt-6">
@@ -132,28 +132,28 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
             </div>
             <div class="flex flex-row justify-start w-370 flex-wrap items-start ml-10 mt-6">
                 <n-button
-                    class="mt-10 mr-10 w-80 text-[#34498e] text-xl h-11"
+                    class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
                     @click="gobyset('phage')"
                 >
                     Human
                 </n-button>
                 <n-button
-                    class="mt-10 mr-10 w-80 text-[#34498e] text-xl h-11"
+                    class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
                     @click="gobyset('phage_RefSeq')"
                 >
                     Mice
                 </n-button>
                 <n-button
-                    class="mt-10 mr-10 w-80 text-[#34498e] text-xl h-11"
+                    class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
                     @click="gobyset('phage_RefSeq')"
                 >
                     Axolotls
                 </n-button>
                 <n-button
-                    class="mt-10 mr-10 w-80 text-[#34498e] text-xl h-11"
+                    class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
                     @click="gobyset('phage_RefSeq')"
                 >
@@ -162,7 +162,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
             </div>
         </div>
 
-        <div class="mt-23 m-3">
+        <div class="mt-20 m-3">
             <div class="border-t-2"></div>
             <div class="flex felx-row justify-start">
                 <h1 class="text-3xl mt-8 ml-6 font-600">Database overview visualization</h1>

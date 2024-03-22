@@ -137,7 +137,7 @@ const menuOptions: MenuOption[] = [
             },
 
             {
-                label: 'Sequence Filter',
+                label: 'Record Filter',
                 key: '/database/filter',
             },
         ],

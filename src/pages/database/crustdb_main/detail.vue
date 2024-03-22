@@ -27,37 +27,37 @@
 
             <!-- Phage Informatin table -->
             <el-descriptions
-                class="w-350 text-xl mt-8"
+                class="w-330 text-xl mt-8"
                 :column="2"
                 size="large"
                 border
                 v-loading="loaddata"
             >
-                <el-descriptions-item>
+                <el-descriptions-item :width="165">
                     <template #label>
                         <div class="cell-item">Data UID</div>
                     </template>
                     {{ detailsdata.repeat_data_uid }}
                 </el-descriptions-item>
-                <el-descriptions-item>
+                <el-descriptions-item :width="165">
                     <template #label>
                         <div class="cell-item">Seed</div>
                     </template>
                     {{ detailsdata.seed }}
                 </el-descriptions-item>
-                <el-descriptions-item>
+                <el-descriptions-item :width="165">
                     <template #label>
                         <div class="cell-item">Sample Name</div>
                     </template>
                     {{ detailsdata.sample_name }}
                 </el-descriptions-item>
-                <el-descriptions-item>
+                <el-descriptions-item :width="165">
                     <template #label>
                         <div class="cell-item">Threshold for gene filter</div>
                     </template>
                     {{ detailsdata.gene_filter_threshold }}
                 </el-descriptions-item>
-                <el-descriptions-item>
+                <el-descriptions-item :width="165">
                     <template #label>
                         <div class="cell-item">
                             Proportion of genes used for Rotation Derivation
@@ -65,13 +65,13 @@
                     </template>
                     {{ detailsdata.anchor_gene_proportion }}
                 </el-descriptions-item>
-                <el-descriptions-item>
+                <el-descriptions-item :width="165">
                     <template #label>
                         <div class="cell-item">Task ID</div>
                     </template>
                     {{ detailsdata.task_id }}
                 </el-descriptions-item>
-                <el-descriptions-item>
+                <el-descriptions-item :width="165">
                     <template #label>
                         <div class="cell-item">Number of total Transcription centers</div>
                     </template>
