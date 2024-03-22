@@ -75,71 +75,71 @@ const menuOptions: MenuOption[] = [
                 label: 'Overview',
                 key: '/database',
             },
-            {
-                label: 'Phage List',
-                key: '/database/phage',
-            },
+            // {
+            //     label: 'Phage List',
+            //     key: '/database/phage',
+            // },
             {
                 label: 'Crust List',
                 key: '/database/crustdb_main',
             },
-            {
-                label: 'Host List',
-                key: '/database/host',
-            },
-            {
-                label: 'Cluster List',
-                key: '/database/cluster',
-            },
-            {
-                label: 'Structural Annotation Data',
-                key: '/database/structural',
-                children: [
-                    {
-                        label: 'Annotated Protein List',
-                        key: '/database/protein',
-                    },
-                    {
-                        label: 'Transcription Terminator List',
-                        key: '/database/structural/terminators',
-                    },
-                ],
-            },
-            {
-                label: 'Functional Annotation Data',
-                key: '/database/function',
-                children: [
-                    {
-                        label: 'tRNA & tmRNA Gene List',
-                        key: '/database/function/trna',
-                    },
-                    {
-                        label: 'Anti-CRISPR Protein List',
-                        key: '/database/function/anticrispr',
-                    },
-                    {
-                        label: 'CRISPR Array List',
-                        key: '/database/function/crispr',
-                    },
-                    {
-                        label: 'Virulent Factor List',
-                        key: '/database/function/virulent',
-                    },
-                    {
-                        label: 'Antimicrobial Resistance Gene List',
-                        key: '/database/function/antimicrobial_resistance',
-                    },
-                    {
-                        label: 'Transmembrane Protein List',
-                        key: '/database/function/transmembrane',
-                    },
-                ],
-            },
+            // {
+            //     label: 'Host List',
+            //     key: '/database/host',
+            // },
+            // {
+            //     label: 'Cluster List',
+            //     key: '/database/cluster',
+            // },
+            // {
+            //     label: 'Structural Annotation Data',
+            //     key: '/database/structural',
+            //     children: [
+            //         {
+            //             label: 'Annotated Protein List',
+            //             key: '/database/protein',
+            //         },
+            //         {
+            //             label: 'Transcription Terminator List',
+            //             key: '/database/structural/terminators',
+            //         },
+            //     ],
+            // },
+            // {
+            //     label: 'Functional Annotation Data',
+            //     key: '/database/function',
+            //     children: [
+            //         {
+            //             label: 'tRNA & tmRNA Gene List',
+            //             key: '/database/function/trna',
+            //         },
+            //         {
+            //             label: 'Anti-CRISPR Protein List',
+            //             key: '/database/function/anticrispr',
+            //         },
+            //         {
+            //             label: 'CRISPR Array List',
+            //             key: '/database/function/crispr',
+            //         },
+            //         {
+            //             label: 'Virulent Factor List',
+            //             key: '/database/function/virulent',
+            //         },
+            //         {
+            //             label: 'Antimicrobial Resistance Gene List',
+            //             key: '/database/function/antimicrobial_resistance',
+            //         },
+            //         {
+            //             label: 'Transmembrane Protein List',
+            //             key: '/database/function/transmembrane',
+            //         },
+            //     ],
+            // },
 
-            {
-                label: 'Record Filter',
-                key: '/database/filter',
-            },
+            // {
+            //     label: 'Record Filter',
+            //     key: '/database/filter',
+            // },
         ],
     },
     {
