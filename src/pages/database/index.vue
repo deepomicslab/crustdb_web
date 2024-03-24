@@ -13,6 +13,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                 </el-button>
             </div>
         </div>
+        <!-- part Overview -->
         <div class="mb-4 mt-12 p-1">
             <div class="flex flex-row">
                 <div class="w-45 ml-3">
@@ -89,6 +90,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                 </div>
             </div>
         </div>
+        <!-- part Platform -->
         <div class="mt-12 m-3">
             <div class="border-t-2"></div>
             <h1 class="text-4xl mt-8 ml-6 font-500">Platform</h1>
@@ -121,9 +123,10 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                 </n-button>
             </div>
         </div>
+        <!-- part Species -->
         <div class="mt-12 m-3">
             <div class="border-t-2"></div>
-            <h1 class="text-4xl mt-8 ml-6 font-500">Data Source</h1>
+            <h1 class="text-4xl mt-8 ml-6 font-500">Species</h1>
             <div class="flex flex-row justify-start w-370 flex-wrap items-start ml-10 mt-6">
                 <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/stereo-seq.png" />
                 <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/stereo-seq.png" />
@@ -161,7 +164,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                 </n-button>
             </div>
         </div>
-
+        <!-- part VIs -->
         <div class="mt-20 m-3">
             <div class="border-t-2"></div>
             <div class="flex felx-row justify-start">
@@ -180,6 +183,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                     <h1 class="text-3xl mt-9 ml-7 font-500 text-[#3262a8]">Bar Plot</h1>
                 </div>
                 <div class="flex flex-row justify-between mt-6 ml-8 w-285">
+                    <!-- first chart -->
                     <n-form-item label="Please choose plot type" class="w-75">
                         <n-select
                             v-model:value="barchartvalue1"
@@ -187,6 +191,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                             @update:value="barcharthandleUpdateValue1"
                         ></n-select>
                     </n-form-item>
+                    <!-- second chart -->
                     <n-form-item label="Please choose plot type" class="w-75">
                         <n-select
                             v-model:value="barchartvalue2"
@@ -196,17 +201,55 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                     </n-form-item>
                 </div>
                 <div class="flex flex-row">
+                    <!-- first chart -->
                     <div
                         class="w-200 h-140 mb-10 mt-5 p-5 ml-8"
                         style="box-shadow: 0 0 64px #cfd5db"
                     >
                         <div id="myEcharts" class="h-130" ref="echartbarDom1"></div>
                     </div>
+                    <!-- second chart -->
                     <div
                         class="w-200 h-140 mb-10 mt-5 ml-10 p-5"
                         style="box-shadow: 0 0 64px #cfd5db"
                     >
                         <div id="myEcharts" class="h-130" ref="echartbarDom2"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-10">
+                <div>
+                    <h1 class="text-3xl mt-9 ml-7 font-500 text-[#3262a8]">Pie Chart</h1>
+                </div>
+                <div class="w-285 flex flex-row justify-between mt-6 ml-8">
+                    <n-form-item label="Please choose chart type" class="w-75">
+                        <n-select
+                            v-model:value="piechartvalue1"
+                            :options="piechartoptions1"
+                            @update:value="piecharthandleUpdateValue1"
+                        ></n-select>
+                    </n-form-item>
+                    <n-form-item label="Please choose chart type" class="w-75">
+                        <n-select
+                            v-model:value="piechartvalue2"
+                            :options="piechartoptions2"
+                            @update:value="piecharthandleUpdateValue2"
+                        ></n-select>
+                    </n-form-item>
+                </div>
+
+                <div class="flex flex-row">
+                    <div
+                        class="w-200 h-120 mb-10 mt-5 p-5 ml-8"
+                        style="box-shadow: 0 0 64px #cfd5db"
+                    >
+                        <div id="mypieEcharts1" class="w-190 h-110" ref="echartpieDom1"></div>
+                    </div>
+                    <div
+                        class="w-200 h-120 mb-10 mt-5 ml-10 p-5"
+                        style="box-shadow: 0 0 64px #cfd5db"
+                    >
+                        <div id="mypieEcharts2" class="w-190 h-110" ref="echartpieDom2"></div>
                     </div>
                 </div>
             </div>
@@ -217,23 +260,17 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
 import { CloudDownloadOutline as downicon } from '@vicons/ionicons5'
 import * as echarts from 'echarts'
 
-import { datasetsOption, QualityOption, Hostnumber } from '@/utils/overview'
+import {
+    STPlatformBarOptions,
+    TestSTPlatformBarOptions,
+    SpeciesBarOptions,
+    STPlatformPieOptions,
+    TestSTPlatformPieOptions,
+    SpeciesPieOptions,
+} from '@/utils/overview'
 
 const router = useRouter()
 const godatalist = () => router.push({ path: '/database/crustdb_main' })
-
-// const gobyset = (seturl: string) => {
-//     router.push({ path: '/database/phage', query: { dataset: seturl } })
-// }
-// const viewhost = (node: string) => {
-//     router.push({
-//         path: `/database/host/list`,
-//         query: {
-//             rank: 'Phylum',
-//             node,
-//         },
-//     })
-// }
 
 const viewSTPlatform = (node: string) => {
     let dataset = ''
@@ -272,59 +309,91 @@ const viewSpecies = (node: string) => {
     })
 }
 
-const barchartvalue1 = ref('Phage Quality Tier Distribution')
-const barchartvalue2 = ref('Host Phylum Distribution')
+const barchartvalue1 = ref('ST Platform Distribution')
+const barchartvalue2 = ref('Species Distribution')
+const piechartvalue1 = ref('ST Platform Distribution')
+const piechartvalue2 = ref('Species Distribution')
 
 const barchartoptions1 = [
     {
-        label: 'Phage Quality Tier Distribution',
-        value: 'Phage Quality Tier Distribution',
+        label: 'ST Platform Distribution',
+        value: 'ST Platform Distribution',
     },
     {
-        label: 'Data Source Distribution',
-        value: 'Data Source Distribution',
+        label: '(test) ST Platform Distribution',
+        value: '(test) ST Platform Distribution',
     },
 ]
 const barchartoptions2 = [
     {
-        label: 'Host Phylum Distribution',
-        value: 'Host Phylum Distribution',
+        label: 'Species Distribution',
+        value: 'Species Distribution',
+    },
+]
+const piechartoptions1 = [
+    {
+        label: 'ST Platform Distribution',
+        value: 'ST Platform Distribution',
+    },
+    {
+        label: '(test) ST Platform Distribution',
+        value: '(test) ST Platform Distribution',
+    },
+]
+const piechartoptions2 = [
+    {
+        label: 'Species Distribution',
+        value: 'Species Distribution',
     },
 ]
 const echartbarDom1 = ref<HTMLElement | null>(null)
 const echartbarDom2 = ref<HTMLElement | null>(null)
+const echartpieDom1 = ref<HTMLElement | null>(null)
+const echartpieDom2 = ref<HTMLElement | null>(null)
 
 onMounted(() => {
     const mybarEcharts1 = echarts.init(echartbarDom1.value as HTMLElement)
-    mybarEcharts1.setOption(QualityOption)
+    mybarEcharts1.setOption(STPlatformBarOptions)
     const mybarEcharts2 = echarts.init(echartbarDom2.value as HTMLElement)
-    mybarEcharts2.setOption(Hostnumber)
+    mybarEcharts2.setOption(SpeciesBarOptions)
+    const mypieEcharts1 = echarts.init(echartpieDom1.value as HTMLElement)
+    mypieEcharts1.setOption(STPlatformPieOptions)
+    const mypieEcharts2 = echarts.init(echartpieDom2.value as HTMLElement)
+    mypieEcharts2.setOption(SpeciesPieOptions)
 })
 
 const barcharthandleUpdateValue1 = (value: string) => {
     barchartvalue1.value = value
-    if (value === 'Data Source Distribution') {
+    if (value === 'ST Platform Distribution') {
         const mybarEcharts1 = echarts.init(echartbarDom1.value as HTMLElement)
-        mybarEcharts1.setOption(datasetsOption)
-    } else if (value === 'Phage Quality Tier Distribution') {
+        mybarEcharts1.setOption(STPlatformBarOptions)
+    } else if (value === '(test) ST Platform Distribution') {
         const mybarEcharts1 = echarts.init(echartbarDom1.value as HTMLElement)
-        mybarEcharts1.setOption(QualityOption)
-    } else if (value === 'Host Phylum Distribution') {
-        const mybarEcharts1 = echarts.init(echartbarDom1.value as HTMLElement)
-        mybarEcharts1.setOption(Hostnumber)
+        mybarEcharts1.setOption(TestSTPlatformBarOptions)
     }
 }
 const barcharthandleUpdateValue2 = (value: string) => {
     barchartvalue2.value = value
-    if (value === 'Data Source Distribution') {
+    if (value === 'Species Distribution') {
         const mybarEcharts2 = echarts.init(echartbarDom2.value as HTMLElement)
-        mybarEcharts2.setOption(datasetsOption)
-    } else if (value === 'Phage Quality Tier Distribution') {
-        const mybarEcharts2 = echarts.init(echartbarDom2.value as HTMLElement)
-        mybarEcharts2.setOption(QualityOption)
-    } else if (value === 'Host Phylum Distribution') {
-        const mybarEcharts2 = echarts.init(echartbarDom2.value as HTMLElement)
-        mybarEcharts2.setOption(Hostnumber)
+        mybarEcharts2.setOption(SpeciesBarOptions)
+    }
+}
+const piecharthandleUpdateValue1 = (value: string) => {
+    piechartvalue1.value = value
+    if (value === 'ST Platform Distribution') {
+        const mypieEcharts1 = echarts.init(echartpieDom1.value as HTMLElement)
+        mypieEcharts1.setOption(STPlatformPieOptions)
+    } else if (value === '(test) ST Platform Distribution') {
+        const mypieEcharts1 = echarts.init(echartpieDom1.value as HTMLElement)
+        mypieEcharts1.setOption(TestSTPlatformPieOptions)
+    }
+}
+const piecharthandleUpdateValue2 = (value: string) => {
+    piechartvalue2.value = value
+    if (value === 'Species Distribution') {
+        const mypieEcharts2 = echarts.init(echartpieDom2.value as HTMLElement)
+        mypieEcharts2.setOption(SpeciesPieOptions)
     }
 }
 
