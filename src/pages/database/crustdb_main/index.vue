@@ -28,7 +28,7 @@
                         </el-button>
                         <template #dropdown>
                             <el-dropdown-menu>
-                                <el-dropdown-item @click="downloadall" v-if="false">
+                                <el-dropdown-item @click="downloadall" v-if="true">
                                     All Data
                                 </el-dropdown-item>
                                 <el-dropdown-item @click="downloadselected">
@@ -329,63 +329,16 @@ const downloadrequest = async () => {
             closable: true,
             duration: 5000,
         })
-    }
-    // else if (downloadtype.value === 'selected') {
-    //     if (checkList.value.includes('Download FASTA Data')) {
-    //         window.open(`/api/phage/fasta/?phageids=${checkedRowKeysRef.value}`, '_blank')
-    //     }
-    //     if (checkList.value.includes('Download ADATA')) {
-    //         console.log('88888')
-    //         window.open(`/api/phage/gff/?phageids=${checkedRowKeysRef.value}`, '_blank')
-    //     }
-    //     if (checkList.value.includes('Download GBK Data')) {
-    //         window.open(`/api/phage/gbk/?phageids=${checkedRowKeysRef.value}`, '_blank')
-    //     }
-    //     if (checkList.value.includes('Download Meta Data')) {
-    //         window.open(`/api/phage/meta/?phageids=${checkedRowKeysRef.value}`, '_blank')
-    //     }
-    // }
-    else if (downloadtype.value === 'single') {
-        // DB -> download -> single file download
-        // if (checkList.value.includes('Download Meta Data')) {
-        //     window.open(`/api/phage/meta/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
-        // }
-        // if (checkList.value.includes('Download FASTA Data')) {
-        //     window.open(`/api/phage/fasta/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
-        // }
-        // if (checkList.value.includes('Download ADATA')) {
-        //     // ==================
-        //     // e.g. https://crustdb.deepomics.org/api/phage/fasta/?phageid=2
-        //     // window.open(`/api/phage/gff/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
-        //     window.open(`/api/crustdb_main/adata/?crustid=${checkedRowKeysRef.value[0]}`, '_blank')
-        // }
-        // if (checkList.value.includes('.zip')) {
-        // ==================
-        // alert(checkList.value) //(Repeat #1) Download Stage44.CP_1XOH.zip
-        // checkedRepeatDataUID.push(checkList.value.split('.')[1].split('_')[1])
+    } else if (downloadtype.value === 'selected') {
+        window.open(`/api/crustdb_main/zip/?crustids=${checkedRowKeysRef.value}`, '_blank')
+    } else if (downloadtype.value === 'single') {
         window.open(
             `/api/crustdb_main/zip/?crustid=${checkedRowKeysRef.value[0]}&checkList=${checkList.value}`,
             '_blank'
         )
-        // }
-        // if (checkList.value.includes('Download GBK Data')) {
-        //     window.open(`/api/phage/gbk/?phageid=${checkedRowKeysRef.value[0]}`, '_blank')
-        // }
+    } else if (downloadtype.value === 'all') {
+        window.open(`/api/crustdb_main/zip/`, '_blank')
     }
-    // else {
-    //     if (checkList.value.includes('Download Meta Data')) {
-    //         window.open(`/api/phage/meta/`, '_blank')
-    //     }
-    //     if (checkList.value.includes('Download FASTA Data')) {
-    //         window.open(`/api/phage/fasta/`, '_blank')
-    //     }
-    //     if (checkList.value.includes('Download ADATA')) {
-    //         window.open(`/api/phage/gff/`, '_blank')
-    //     }
-    //     if (checkList.value.includes('Download GBK Data')) {
-    //         window.open(`/api/phage/gbk/`, '_blank')
-    //     }
-    // }
     checkList.value.length = 0 // clear the checkList means clear the picked items 取消选中
 }
 const downloadselected = () => {
@@ -397,11 +350,15 @@ const downloadselected = () => {
     } else {
         downloaddialogVisible.value = true
         downloadtype.value = 'selected'
+        downloadDataName.value.length = 0
+        downloadDataName.value.push('selected')
     }
 }
 const downloadall = () => {
     downloaddialogVisible.value = true
     downloadtype.value = 'all'
+    downloadDataName.value.length = 0
+    downloadDataName.value.push('all')
 }
 const download = (row: any) => {
     downloadtype.value = 'single'
