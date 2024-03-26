@@ -28,7 +28,7 @@
                         </el-button>
                         <template #dropdown>
                             <el-dropdown-menu>
-                                <el-dropdown-item @click="downloadall" v-if="true">
+                                <el-dropdown-item @click="downloadall" v-if="false">
                                     All Data
                                 </el-dropdown-item>
                                 <el-dropdown-item @click="downloadselected">

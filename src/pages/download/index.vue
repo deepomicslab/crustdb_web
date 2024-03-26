@@ -19,19 +19,19 @@
                 <div class="w-280 border-1 border-gray-700">
                     <downloadItem
                         description="adata.h5ad"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_1.cckIN_4XZR/adata.h5ad"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/10DPI_1.cckIN_4XZR/adata.h5ad"
                     ></downloadItem>
                     <downloadItem
                         description="10DPI_1.cckIN_updated1times_chrchr9p.pdb"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_1.cckIN_4XZR/10DPI_1.cckIN_updated1times_chrchr9p.pdb"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/10DPI_1.cckIN_4XZR/10DPI_1.cckIN_updated1times_chrchr9p.pdb"
                     ></downloadItem>
                     <downloadItem
                         description="10DPI_1.cckIN_updated11times_chrchr9p.pdb"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_1.cckIN_4XZR/10DPI_1.cckIN_updated11times_chrchr9p.pdb"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/10DPI_1.cckIN_4XZR/10DPI_1.cckIN_updated11times_chrchr9p.pdb"
                     ></downloadItem>
                     <downloadItem
                         description="10DPI_1.cckIN_updated21times_chrchr9p.pdb"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_1.cckIN_4XZR/10DPI_1.cckIN_updated21times_chrchr9p.pdb"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/10DPI_1.cckIN_4XZR/10DPI_1.cckIN_updated21times_chrchr9p.pdb"
                     ></downloadItem>
                 </div>
             </div>
@@ -48,23 +48,23 @@
                 <div class="w-280 border-1 border-gray-700">
                     <downloadItem
                         description="adata.h5ad"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/adata.h5ad"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/adata.h5ad"
                     ></downloadItem>
                     <downloadItem
                         description="10DPI_3.wntEGC_Q7HN.log"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/10DPI_3.wntEGC_Q7HN.log"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/10DPI_3.wntEGC_Q7HN.log"
                     ></downloadItem>
                     <downloadItem
                         description="10DPI_3.wntEGC_updated1times_chrchr9p.pdb"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/10DPI_3.wntEGC_updated1times_chrchr9p.pdb"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/10DPI_3.wntEGC_updated1times_chrchr9p.pdb"
                     ></downloadItem>
                     <downloadItem
                         description="10DPI_3.wntEGC_updated11times_chrchr9p.pdb"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/10DPI_3.wntEGC_updated11times_chrchr9p.pdb"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/10DPI_3.wntEGC_updated11times_chrchr9p.pdb"
                     ></downloadItem>
                     <downloadItem
                         description="10DPI_3.wntEGC_updated21times_chrchr9p.pdb"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/10DPI_3.wntEGC_updated21times_chrchr9p.pdb"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/10DPI_3.wntEGC_updated21times_chrchr9p.pdb"
                     ></downloadItem>
                 </div>
             </div>
@@ -81,23 +81,23 @@
                 <div class="w-280 border-1 border-gray-700">
                     <downloadItem
                         description="adata.h5ad"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/adata.h5ad"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/adata.h5ad"
                     ></downloadItem>
                     <downloadItem
                         description="15DPI_3.rIPC2_TQG2.log"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/15DPI_3.rIPC2_TQG2.log"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/15DPI_3.rIPC2_TQG2.log"
                     ></downloadItem>
                     <downloadItem
                         description="15DPI_3.rIPC2_updated11times_chrchr9p.pdb"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/15DPI_3.rIPC2_updated11times_chrchr9p.pdb"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/15DPI_3.rIPC2_updated11times_chrchr9p.pdb"
                     ></downloadItem>
                     <downloadItem
                         description="15DPI_3.rIPC2_updated1times_chrchr9p.pdb"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/15DPI_3.rIPC2_updated1times_chrchr9p.pdb"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/15DPI_3.rIPC2_updated1times_chrchr9p.pdb"
                     ></downloadItem>
                     <downloadItem
                         description="15DPI_3.rIPC2_updated21times_chrchr9p.pdb"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/15DPI_3.rIPC2_updated21times_chrchr9p.pdb"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/10DPI_3.wntEGC_Q7HN/15DPI_3.rIPC2_updated21times_chrchr9p.pdb"
                     ></downloadItem>
                 </div>
             </div>
@@ -114,23 +114,23 @@
                 <div class="w-280 border-1 border-gray-700">
                     <downloadItem
                         description="adata.h5ad"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/adata.h5ad"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/adata.h5ad"
                     ></downloadItem>
                     <downloadItem
                         description="15DPI_3.rIPC2_TQG2.log"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/20DPI_2.obNBL_DVO6/.log"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/20DPI_2.obNBL_DVO6/.log"
                     ></downloadItem>
                     <downloadItem
                         description="20DPI_2.obNBL_updated11times_chrchr9p.pdb"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/20DPI_2.obNBL_updated11times_chrchr9p.pdb"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/20DPI_2.obNBL_updated11times_chrchr9p.pdb"
                     ></downloadItem>
                     <downloadItem
                         description="20DPI_2.obNBL_updated1times_chrchr9p.pdb"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/20DPI_2.obNBL_updated1times_chrchr9p.pdb"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/20DPI_2.obNBL_updated1times_chrchr9p.pdb"
                     ></downloadItem>
                     <downloadItem
                         description="20DPI_2.obNBL_updated21times_chrchr9p.pdb"
-                        link="https://crustdbapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/20DPI_2.obNBL_updated21times_chrchr9p.pdb"
+                        link="https://cygraphapi.deepomics.org/files/Axolotls/20DPI_2.obNBL_DVO6/20DPI_2.obNBL_updated21times_chrchr9p.pdb"
                     ></downloadItem>
                 </div>
             </div>

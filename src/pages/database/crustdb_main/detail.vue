@@ -82,7 +82,7 @@
 
         <div class="mt-5 ml-15">
             <div class="flex flex-row w-200">
-                <h1 class="text-3xl mt-9 ml-7 font-500 text-[#3262a8]">Line Plot</h1>
+                <h1 class="text-3xl mt-9 ml-7 font-500 text-[#3262a8]">Convergence Curve</h1>
             </div>
             <!-- <div class="flex flex-row justify-between mt-6 ml-8 w-285">
                 <n-form-item label="Please choose plot type" class="w-100">
