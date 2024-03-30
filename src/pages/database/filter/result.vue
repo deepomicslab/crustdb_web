@@ -112,11 +112,6 @@
             </span>
         </template>
     </el-dialog>
-    <el-dialog v-model="filterVisible" width="70%" height="80%" align-center>
-        <div class="h-180">
-            <filterview />
-        </div>
-    </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -134,7 +129,7 @@ import {
 import { ArrowDown } from '@element-plus/icons-vue'
 import _ from 'lodash'
 import axios from 'axios'
-import filterview from './index.vue'
+// import filterview from './index.vue'
 import { celltypeDict, sexDict, devDict } from '@/utils/crustdb'
 import { useQueryStore } from '@/store/query'
 
@@ -239,10 +234,8 @@ const pagesizechange = async () => {
 
 const router = useRouter()
 
-const filterVisible = ref(false)
-
 const gofilter = () => {
-    filterVisible.value = true
+    router.push({ path: '/database/filter' })
 }
 const detail = (row: any) => {
     // router.push({ path: '/database/phage/detail', query: { phageid: row.id } })
