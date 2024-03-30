@@ -89,8 +89,9 @@
                 :columns="columns"
                 :data="phageList"
                 :row-key="rowKey"
-                :scroll-x="1900"
+                :scroll-x="2600"
                 :max-height="1600"
+                :single-line="false"
                 @update:checked-row-keys="handleCheck"
                 @update:filters="handleUpdateFilter"
             />
@@ -462,10 +463,42 @@ const resetsearch = async () => {
     loading.value = false
 }
 
+const col_width = {
+    // total 2500
+    publication_doi: 260,
+    st_platform: 120,
+    species: 220,
+    disease_stage: 130,
+    developmental_stage: 150,
+    sex: 70,
+    cell_type: 130,
+    slice_id: 320,
+    conformations: 110,
+    cell_num: 105,
+    gene_num: 105,
+    actions: 130,
+}
+
 const createColumns = (): DataTableColumns<RowData> => {
     return [
         {
             type: 'selection',
+        },
+        // publication_doi
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Publication DOI' }),
+                    'publication doi'
+                )
+            },
+            fixed: 'left',
+            key: 'publication_doi',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.publication_doi,
         },
         // st_platform
         {
@@ -477,7 +510,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'st_platform',
             align: 'center',
-            width: 100,
+            width: col_width.st_platform,
             ellipsis: {
                 tooltip: true,
             },
@@ -516,7 +549,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'species',
             align: 'center',
-            width: 170,
+            width: col_width.species,
             ellipsis: {
                 tooltip: true,
             },
@@ -558,7 +591,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'disease_stage',
             align: 'center',
-            width: 110,
+            width: col_width.disease_stage,
             ellipsis: {
                 tooltip: true,
             },
@@ -603,7 +636,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            width: 140,
+            width: col_width.developmental_stage,
             filterOptions: devDict,
             filter(value: any, row: any) {
                 return row.developmental_stage === value
@@ -616,7 +649,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'sex',
             align: 'center',
-            width: 70,
+            width: col_width.sex,
             filterOptions: sexDict,
             filter(value: any, row: any) {
                 return row.sex === value
@@ -629,13 +662,13 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'cell_type',
             align: 'center',
-            width: 100,
+            width: col_width.cell_type,
             filterOptions: celltypeDict,
             filter(value: any, row: any) {
                 return row.cell_type === value
             },
             render(row: any) {
-                return h('div', { style: { width: '100px' } }, [
+                return h('div', [
                     h(
                         NTag,
                         {
@@ -662,7 +695,23 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            width: 260,
+            width: col_width.slice_id,
+        },
+        // conformations
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Conformations' }),
+                    'conformations'
+                )
+            },
+            key: 'repeat_data_uid_list.length',
+            align: 'center',
+            sorter: 'default',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.conformations,
         },
         // cell_num
         {
@@ -678,7 +727,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            width: 90,
+            width: col_width.cell_num,
         },
         // gene_num
         {
@@ -694,7 +743,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            width: 100,
+            width: col_width.gene_num,
         },
         // slice_name
         // gene_filter_threshold
@@ -705,7 +754,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             title: 'Action',
             key: 'actions',
             align: 'center',
-            width: 130,
+            width: col_width.actions,
             fixed: 'right',
             render(row: any) {
                 return h(
@@ -782,3 +831,12 @@ const godatahelper = () => {
     })
 }
 </script>
+
+<style scoped>
+:deep .n-data-table-th {
+    text-align: center;
+}
+:deep .n-data-table-td {
+    text-align: center;
+}
+</style>
