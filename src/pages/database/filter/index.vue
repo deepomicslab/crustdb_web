@@ -13,7 +13,7 @@
                             <el-form-item label="ST Platform">
                                 &nbsp;&nbsp;
                                 <el-select
-                                    v-model="filterform.ST_platform"
+                                    v-model="filterform.st_platform"
                                     placeholder="Select ST Platform"
                                     class="w-60"
                                     clearable
@@ -189,7 +189,7 @@ const queryStore = useQueryStore()
 const loading = ref(false)
 
 const filterform = ref({
-    ST_platform: '',
+    st_platform: '',
     species: [],
     celltype: '',
     dev_stage: [],
@@ -257,7 +257,7 @@ const submitFilter = async () => {
 }
 const resetFilterForm = () => {
     filterform.value = {
-        ST_platform: '',
+        st_platform: '',
         species: [],
         celltype: '',
         dev_stage: [],

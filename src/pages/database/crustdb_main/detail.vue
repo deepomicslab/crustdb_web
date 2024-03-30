@@ -162,9 +162,9 @@ const repeatuid = computed(() => route.query?.details_uid as string)
 let mylineEcharts
 
 const phagedata = ref({
-    ST_platform: '',
+    st_platform: '',
     species: '',
-    disease_steps: '',
+    disease_stage: '',
     developmental_stage: '',
     sex: '',
     cell_type: '',

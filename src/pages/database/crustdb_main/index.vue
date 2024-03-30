@@ -64,7 +64,7 @@
         </div>
 
         <!-- navigation bar with anchor -->
-        <!-- Filtering, by ST_platform -->
+        <!-- Filtering, by st_platform -->
         <div class="flex flex-row justify-between">
             <el-menu
                 :default-active="datasets"
@@ -374,10 +374,10 @@ type RowData = {
     data_uid: string
     cell_type: string
     slice_id: string
-    ST_platform: string
+    st_platform: string
     species: string
     developmental_stage: string
-    disease_steps: string
+    disease_stage: string
     sex: string
     slice_name: string
     cell_num: number
@@ -467,7 +467,7 @@ const createColumns = (): DataTableColumns<RowData> => {
         {
             type: 'selection',
         },
-        // ST_platform
+        // st_platform
         {
             title() {
                 return renderTooltip(
@@ -475,7 +475,7 @@ const createColumns = (): DataTableColumns<RowData> => {
                     'ST Platform'
                 )
             },
-            key: 'ST_platform',
+            key: 'st_platform',
             align: 'center',
             width: 100,
             ellipsis: {
@@ -492,18 +492,18 @@ const createColumns = (): DataTableColumns<RowData> => {
                 },
             ],
             filter(value: any, row: any) {
-                return row.ST_platform === value
+                return row.st_platform === value
             },
             render(row: any) {
                 return h('div', {}, [
                     h(
                         NTag,
                         {
-                            type: STPlatformColor(row.ST_platform),
+                            type: STPlatformColor(row.st_platform),
                             size: 'small',
                         },
                         {
-                            default: () => row.ST_platform,
+                            default: () => row.st_platform,
                         }
                     ),
                 ])
@@ -548,7 +548,7 @@ const createColumns = (): DataTableColumns<RowData> => {
                 ])
             },
         },
-        // disease_steps
+        // disease_stage
         {
             title() {
                 return renderTooltip(
@@ -556,7 +556,7 @@ const createColumns = (): DataTableColumns<RowData> => {
                     'disease stage'
                 )
             },
-            key: 'disease_steps',
+            key: 'disease_stage',
             align: 'center',
             width: 110,
             ellipsis: {
@@ -573,18 +573,18 @@ const createColumns = (): DataTableColumns<RowData> => {
                 },
             ],
             filter(value: any, row: any) {
-                return row.disease_steps === value
+                return row.disease_stage === value
             },
             render(row: any) {
                 return h('div', {}, [
                     h(
                         NTag,
                         {
-                            type: DiseaseStageColor(row.disease_steps),
+                            type: DiseaseStageColor(row.disease_stage),
                             size: 'small',
                         },
                         {
-                            default: () => row.disease_steps,
+                            default: () => row.disease_stage,
                         }
                     ),
                 ])
