@@ -70,7 +70,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         />
                         <template #label>
                             <!-- select count(*) from crustdb_main;  -->
-                            <h1 class="text-[#212529] text-lg font-700">CrustDB Records</h1>
+                            <h1 class="text-[#212529] text-lg font-700">CyGraph Records</h1>
                         </template>
                     </n-statistic>
                 </div>

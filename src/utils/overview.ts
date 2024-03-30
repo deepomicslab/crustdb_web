@@ -26,7 +26,7 @@ export const STPlatformBarOptions = {
     yAxis: {},
     series: [
         {
-            name: 'CrustDB',
+            name: 'CyGraph',
             type: 'bar',
             data: [93, 0, 0],
         },
@@ -60,7 +60,7 @@ export const TestSTPlatformBarOptions = {
     yAxis: {},
     series: [
         {
-            name: 'CrustDB',
+            name: 'CyGraph',
             type: 'bar',
             data: [93, 120, 0],
         },
@@ -100,7 +100,7 @@ export const SpeciesBarOptions = {
     yAxis: {},
     series: [
         {
-            name: 'CrustDB',
+            name: 'CyGraph',
             type: 'bar',
             data: [93, 0, 0],
         },
@@ -136,7 +136,7 @@ export const SpeciesPieOptions = {
     },
     series: [
         {
-            name: 'CrustDB',
+            name: 'CyGraph',
             type: 'pie',
             data: [
                 { value: 93, name: 'Ambystoma mexicanum \n(Axolotl)' },
@@ -176,7 +176,7 @@ export const STPlatformPieOptions = {
     },
     series: [
         {
-            name: 'CrustDB',
+            name: 'CyGraph',
             type: 'pie',
             data: [
                 { value: 93, name: 'Stereo-Seq' },
@@ -216,7 +216,7 @@ export const TestSTPlatformPieOptions = {
     },
     series: [
         {
-            name: 'CrustDB',
+            name: 'CyGraph',
             type: 'pie',
             data: [
                 { value: 93, name: 'Stereo-Seq' },

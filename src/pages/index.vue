@@ -37,7 +37,7 @@
             <div class="w-full flex flex-col justify-start h-700 bg-[#f8f9fa]">
                 <div class="h-220 flex flex-col">
                     <div class="flex flex-row border-b-1 border-[#34498E] ml-13 w-290 pb-6">
-                        <div class="text-5xl font-700 mt-20 text-[#3e5294]">CrustDB</div>
+                        <div class="text-5xl font-700 mt-20 text-[#3e5294]">CyGraph</div>
                         <el-button
                             round
                             color="#34498E"
@@ -306,7 +306,7 @@
                         </div>
                         <div class="flex flex-col">
                             <a class="text-xl mb-3" href="/database">Database</a>
-                            <p><a href="/database/crustdb_main">Crust List</a></p>
+                            <p><a href="/database/crustdb_main">CyGraph List</a></p>
                             <p><a href="/database/phage">Phage List</a></p>
                             <p><a href="/database/host">Host List</a></p>
                             <p><a href="/database/cluster">Cluster List</a></p>

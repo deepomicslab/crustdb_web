@@ -8,7 +8,7 @@
             >
                 <img :src="Logo" class="h-[calc(100%-6px)]" />
             </div>
-            <h1 text="white h5" hover="text-[#eee]">CrustDB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h1>
+            <h1 text="white h5" hover="text-[#eee]">CyGraph&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h1>
             <n-menu
                 v-model:value="activeKey"
                 mode="horizontal"
@@ -80,7 +80,7 @@ const menuOptions: MenuOption[] = [
             //     key: '/database/phage',
             // },
             {
-                label: 'Crust List',
+                label: 'CyGraph List',
                 key: '/database/crustdb_main',
             },
             // {

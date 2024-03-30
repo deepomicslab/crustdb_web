@@ -2,7 +2,7 @@
     <div class="flex flex-col mx-1/10 justify-start">
         <div class="w-300 mt-18 ml-10">
             <div class="flex flex-row w-350 border-b-2 border-gray-300">
-                <div class="text-4xl font-500 mb-8">CrustDB Informtion</div>
+                <div class="text-4xl font-500 mb-8">CyGraph Informtion</div>
                 <div class="mt-1.5 ml-10">
                     <el-button class="ml-5" @click="download">
                         <template #icon>
@@ -10,7 +10,7 @@
                                 <di />
                             </n-icon>
                         </template>
-                        Download CrustDB Data
+                        Download CyGraph Data
                     </el-button>
                 </div>
                 <div class="mt-1.5 ml-10">
@@ -286,7 +286,7 @@ const chartOption = () => {
         },
         series: [
             {
-                name: 'CrustDB',
+                name: 'CyGraph',
                 type: 'line',
                 data: detailsdata.value.distance_list,
             },
