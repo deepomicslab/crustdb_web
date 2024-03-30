@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col py-5 px-20">
         <div class="flex flex-row ml-1 my-7">
-            <div class="text-4xl font-600">CyGraph Information</div>
+            <div class="text-4xl font-600">CyGraph Samples</div>
             <el-button round color="#34498E" class="ml-5 mt-2" @click="godatahelper">
                 Database Helper
             </el-button>
@@ -78,7 +78,7 @@
                 <el-menu-item index="crustdb_merfish" class="text-lg">Merfish</el-menu-item>
             </el-menu>
             <div class="flex flex-row mt-7 text-[16px] font-400">
-                <div># CyGraph Records</div>
+                <div># CyGraph samples</div>
                 <div class="ml-5">{{ crust_num }}</div>
             </div>
         </div>

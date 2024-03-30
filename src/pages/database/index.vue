@@ -27,21 +27,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         />
                         <template #label>
                             <!-- select count(distinct slice_id) from crustdb_main;  -->
-                            <h1 class="text-[#212529] text-lg font-700 ml-1">Slice ID</h1>
-                        </template>
-                    </n-statistic>
-                </div>
-                <div class="w-65">
-                    <n-statistic>
-                        <n-number-animation
-                            ref="numberAnimationInstRef"
-                            :from="0"
-                            :to="36198"
-                            show-separator
-                        />
-                        <template #label>
-                            <!-- select sum(cell_num) from crustdb_main;  -->
-                            <h1 class="text-[#212529] text-lg font-700">Cell</h1>
+                            <h1 class="text-[#212529] text-lg font-700 ml-1">Total Slices</h1>
                         </template>
                     </n-statistic>
                 </div>
@@ -56,11 +42,25 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         />
                         <template #label>
                             <!-- select count(distinct cell_type) from crustdb_main;  -->
-                            <h1 class="text-[#212529] text-lg font-700">Cell Type</h1>
+                            <h1 class="text-[#212529] text-lg font-700">Total Cell Types</h1>
                         </template>
                     </n-statistic>
                 </div>
-                <div class="w-70">
+                <div class="w-55">
+                    <n-statistic>
+                        <n-number-animation
+                            ref="numberAnimationInstRef"
+                            :from="0"
+                            :to="36198"
+                            show-separator
+                        />
+                        <template #label>
+                            <!-- select sum(cell_num) from crustdb_main;  -->
+                            <h1 class="text-[#212529] text-lg font-700">Total Cells</h1>
+                        </template>
+                    </n-statistic>
+                </div>
+                <div class="w-80">
                     <n-statistic>
                         <n-number-animation
                             ref="numberAnimationInstRef"
@@ -70,11 +70,13 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         />
                         <template #label>
                             <!-- select count(*) from crustdb_main;  -->
-                            <h1 class="text-[#212529] text-lg font-700">CyGraph Records</h1>
+                            <h1 class="text-[#212529] text-lg font-700">
+                                Total Cytocraft Conformation
+                            </h1>
                         </template>
                     </n-statistic>
                 </div>
-                <div class="w-65">
+                <div class="w-85">
                     <n-statistic>
                         <n-number-animation
                             ref="numberAnimationInstRef"
@@ -84,7 +86,9 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         />
                         <template #label>
                             <!-- select max(gene_num) from crustdb_main;  -->
-                            <h1 class="text-[#212529] text-lg font-700">Max Gene Number</h1>
+                            <h1 class="text-[#212529] text-lg font-700">
+                                Max Gene Number in Conformation
+                            </h1>
                         </template>
                     </n-statistic>
                 </div>
@@ -183,7 +187,6 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                     <h1 class="text-3xl mt-9 ml-7 font-500 text-[#3262a8]">Bar Plot</h1>
                 </div>
                 <div class="flex flex-row justify-between mt-6 ml-8 w-285">
-                    <!-- first chart -->
                     <n-form-item label="Please choose plot type" class="w-75">
                         <n-select
                             v-model:value="barchartvalue1"
@@ -191,7 +194,6 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                             @update:value="barcharthandleUpdateValue1"
                         ></n-select>
                     </n-form-item>
-                    <!-- second chart -->
                     <n-form-item label="Please choose plot type" class="w-75">
                         <n-select
                             v-model:value="barchartvalue2"
@@ -201,19 +203,17 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                     </n-form-item>
                 </div>
                 <div class="flex flex-row">
-                    <!-- first chart -->
                     <div
                         class="w-200 h-140 mb-10 mt-5 p-5 ml-8"
                         style="box-shadow: 0 0 64px #cfd5db"
                     >
-                        <div id="myEcharts" class="h-130" ref="echartbarDom1"></div>
+                        <div id="myEcharts" class="w-190 h-130" ref="echartbarDom1"></div>
                     </div>
-                    <!-- second chart -->
                     <div
                         class="w-200 h-140 mb-10 mt-5 ml-10 p-5"
                         style="box-shadow: 0 0 64px #cfd5db"
                     >
-                        <div id="myEcharts" class="h-130" ref="echartbarDom2"></div>
+                        <div id="myEcharts" class="w-190 h-130" ref="echartbarDom2"></div>
                     </div>
                 </div>
             </div>
