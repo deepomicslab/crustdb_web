@@ -2,7 +2,7 @@
     <div class="flex flex-col mx-1/10 justify-start">
         <div class="w-300 mt-18 ml-10">
             <div class="flex flex-row w-350 border-b-2 border-gray-300">
-                <div class="text-4xl font-500 mb-8">CyGraph Informtion</div>
+                <div class="text-4xl font-500 mb-8">CyGraph Conformation</div>
                 <div class="mt-1.5 ml-10">
                     <el-button class="ml-5" @click="download">
                         <template #icon>
@@ -10,7 +10,7 @@
                                 <di />
                             </n-icon>
                         </template>
-                        Download CyGraph Data
+                        Download Conformation data
                     </el-button>
                 </div>
                 <div class="mt-1.5 ml-10">
@@ -35,6 +35,12 @@
             >
                 <el-descriptions-item :width="165">
                     <template #label>
+                        <div class="cell-item">Publication Link</div>
+                    </template>
+                    {{ detailsdata.publication_link }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165">
+                    <template #label>
                         <div class="cell-item">Data UID</div>
                     </template>
                     {{ detailsdata.repeat_data_uid }}
@@ -50,6 +56,12 @@
                         <div class="cell-item">Sample Name</div>
                     </template>
                     {{ detailsdata.sample_name }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165">
+                    <template #label>
+                        <div class="cell-item">Cell Type</div>
+                    </template>
+                    {{ detailsdata.celltype }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165">
                     <template #label>
@@ -250,7 +262,7 @@ const selectRepeatRequest = async () => {
 const chartOption = () => {
     mylineEcharts.setOption({
         title: {
-            text: `Convergence of Conformation with Cytocraft\n${detailsdata.value.repeat_data_uid}`,
+            text: `Convergence of Cytocraft Conformation\n${detailsdata.value.repeat_data_uid}`,
             left: 'center',
         },
         tooltip: {},
@@ -286,7 +298,7 @@ const chartOption = () => {
         },
         series: [
             {
-                name: 'CyGraph',
+                name: 'Iteration number',
                 type: 'line',
                 data: detailsdata.value.distance_list,
             },
