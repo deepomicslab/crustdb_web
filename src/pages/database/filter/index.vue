@@ -49,7 +49,7 @@
                     </el-row>
                     <el-row class="mt-4" justify="space-evenly">
                         <el-col :span="10">
-                            <el-form-item label="Celltype">
+                            <el-form-item label="Cell Type">
                                 &nbsp;&nbsp;
                                 <el-input v-model="filterform.celltype" class="w-60" />
                             </el-form-item>
