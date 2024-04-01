@@ -94,6 +94,7 @@
                 :single-line="false"
                 @update:checked-row-keys="handleCheck"
                 @update:filters="handleUpdateFilter"
+                @update:sorter="handleSorterChange"
             />
         </div>
 
@@ -207,6 +208,9 @@ const phagedata = ref()
 const crusturl = ref(`/crustdb_main/`)
 const route = useRoute()
 
+const sorter_columnkey = ref('')
+const sorter_order = ref('')
+
 onBeforeMount(async () => {
     if (route.query?.dataset) {
         datasets.value = route.query?.dataset as string
@@ -278,6 +282,8 @@ const pagechange = async () => {
             page: pagevalue.value,
             pagesize: pageSize.value,
             search: searchinput.value,
+            columnKey: sorter_columnkey.value,
+            order: sorter_order.value,
         },
     })
     const { data } = response
@@ -293,6 +299,8 @@ const pagesizechange = async () => {
             page: pagevalue.value,
             pagesize: pageSize.value,
             search: searchinput.value,
+            columnKey: sorter_columnkey.value,
+            order: sorter_order.value,
         },
     })
     const { data } = response
@@ -493,7 +501,8 @@ const createColumns = (): DataTableColumns<RowData> => {
                 )
             },
             fixed: 'left',
-            key: 'publication_doi',
+            // key: 'publication_doi',
+            key: 'id',
             align: 'center',
             ellipsis: {
                 tooltip: true,
@@ -707,7 +716,8 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'repeat_data_uid_list.length',
             align: 'center',
-            sorter: 'default',
+            // sorter: 'default',
+            sorter: true,
             ellipsis: {
                 tooltip: true,
             },
@@ -723,7 +733,9 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'cell_num',
             align: 'center',
-            sorter: 'default',
+            // sorter: 'default',
+            sorter: true,
+            // sortOrder: false,
             ellipsis: {
                 tooltip: true,
             },
@@ -739,7 +751,8 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'gene_num',
             align: 'center',
-            sorter: 'default',
+            // sorter: 'default',
+            sorter: true,
             ellipsis: {
                 tooltip: true,
             },
@@ -824,6 +837,28 @@ const handleSelectSet = async (value: any) => {
     loading.value = false
 }
 
+const handleSorterChange = async sorter => {
+    console.log('sorter', sorter)
+    sorter_columnkey.value = sorter.columnKey
+    sorter_order.value = sorter.order
+    crusturl.value = '/crustdb_main/'
+    searchinput.value = ''
+    loading.value = true
+    const response = await axios.get(crusturl.value, {
+        baseURL: '/api',
+        timeout: 100000,
+        params: {
+            page: pagevalue.value,
+            pagesize: pageSize.value,
+            columnKey: sorter_columnkey.value,
+            order: sorter_order.value,
+        },
+    })
+    const { data } = response
+    phagedata.value = data
+    loading.value = false
+}
+
 const godatahelper = () => {
     router.push({
         path: '/tutorial',
@@ -836,6 +871,7 @@ const godatahelper = () => {
 :deep .n-data-table-th {
     text-align: center;
 }
+
 :deep .n-data-table-td {
     text-align: center;
 }
