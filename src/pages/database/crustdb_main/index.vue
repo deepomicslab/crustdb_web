@@ -714,7 +714,7 @@ const createColumns = (): DataTableColumns<RowData> => {
                     'conformations'
                 )
             },
-            key: 'repeat_data_uid_list.length',
+            key: 'conformation_num',
             align: 'center',
             // sorter: 'default',
             sorter: true,
