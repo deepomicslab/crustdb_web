@@ -251,6 +251,8 @@ const nextPage = async () => {
             page: pagevalue.value + 1,
             pagesize: pageSize.value,
             search: searchinput.value,
+            columnKey: sorter_columnkey.value,
+            order: sorter_order.value,
         },
     })
     const { data } = response
@@ -267,6 +269,8 @@ const prevPage = async () => {
             page: pagevalue.value - 1,
             pagesize: pageSize.value,
             search: searchinput.value,
+            columnKey: sorter_columnkey.value,
+            order: sorter_order.value,
         },
     })
     const { data } = response
