@@ -424,17 +424,22 @@ const rowKey = (row: RowData) => {
 //     return 'warning'
 // }
 const SpeciesColor = (style: any) => {
-    if (style === 'Axolotl') {
-        // wait to see how many colors needed
-        return 'error'
+    if (style === 'Ambystoma mexicanum (Axolotl)') {
+        return 'success'
     }
-    return 'info'
+    if (style === 'Homo sapiens (Human)') {
+        return 'info'
+    }
+    return 'warning'
 }
 const STPlatformColor = (style: any) => {
     if (style === 'Stereo-Seq') {
-        return 'error'
+        return 'success'
     }
-    return 'info'
+    if (style === 'CosMx') {
+        return 'info'
+    }
+    return 'warning' // Merfish
 }
 const DiseaseStageColor = (style: any) => {
     if (style === 'Normal') {
@@ -477,10 +482,10 @@ const resetsearch = async () => {
 
 const col_width = {
     // total 2500
-    publication_doi: 260,
+    publication_doi: 170,
     st_platform: 120,
     species: 220,
-    disease_stage: 130,
+    disease_stage: 180,
     developmental_stage: 150,
     sex: 70,
     cell_type: 130,
@@ -506,7 +511,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             fixed: 'left',
             // key: 'publication_doi',
-            key: 'id',
+            key: 'doi',
             align: 'center',
             ellipsis: {
                 tooltip: true,
@@ -533,8 +538,12 @@ const createColumns = (): DataTableColumns<RowData> => {
                     value: 'Stereo-Seq',
                 },
                 {
-                    label: 'Wait for other label',
-                    value: 'Wait for other label',
+                    label: 'CosMx',
+                    value: 'CosMx',
+                },
+                {
+                    label: 'Merfish',
+                    value: 'Merfish',
                 },
             ],
             filter(value: any, row: any) {
@@ -568,12 +577,12 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             filterOptions: [
                 {
-                    label: 'Axolotl',
-                    value: 'Axolotl',
+                    label: 'Homo sapiens (Human)',
+                    value: 'Homo sapiens (Human)',
                 },
                 {
-                    label: 'Not Axolotl',
-                    value: 'Not_Axolotl',
+                    label: 'Ambystoma mexicanum (Axolotl)',
+                    value: 'Ambystoma mexicanum (Axolotl)',
                 },
             ],
             filter(value: any, row: any) {
@@ -610,12 +619,16 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             filterOptions: [
                 {
-                    label: 'wait for other label', //
-                    value: 'wait for other label',
+                    label: 'Normal', //
+                    value: 'Normal',
                 },
                 {
-                    label: 'Normal',
-                    value: 'Normal',
+                    label: 'Non-Small Cell Lung Cancer IIB',
+                    value: 'Non-Small Cell Lung Cancer IIB',
+                },
+                {
+                    label: 'Non-Small Cell Lung Cancer IIIA',
+                    value: 'Non-Small Cell Lung Cancer IIIA',
                 },
             ],
             filter(value: any, row: any) {
