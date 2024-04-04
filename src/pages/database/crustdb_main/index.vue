@@ -210,6 +210,7 @@ const route = useRoute()
 
 const sorter_columnkey = ref('')
 const sorter_order = ref('')
+const filter_dict = ref('')
 
 onBeforeMount(async () => {
     if (route.query?.dataset) {
@@ -253,6 +254,7 @@ const nextPage = async () => {
             search: searchinput.value,
             columnKey: sorter_columnkey.value,
             order: sorter_order.value,
+            filter: filter_dict.value,
         },
     })
     const { data } = response
@@ -271,6 +273,7 @@ const prevPage = async () => {
             search: searchinput.value,
             columnKey: sorter_columnkey.value,
             order: sorter_order.value,
+            filter: filter_dict.value,
         },
     })
     const { data } = response
@@ -288,6 +291,7 @@ const pagechange = async () => {
             search: searchinput.value,
             columnKey: sorter_columnkey.value,
             order: sorter_order.value,
+            filter: filter_dict.value,
         },
     })
     const { data } = response
@@ -305,6 +309,7 @@ const pagesizechange = async () => {
             search: searchinput.value,
             columnKey: sorter_columnkey.value,
             order: sorter_order.value,
+            filter: filter_dict.value,
         },
     })
     const { data } = response
@@ -408,21 +413,7 @@ const renderTooltip = (trigger: any, content: any) => {
 const rowKey = (row: RowData) => {
     return row.id
 }
-// const complete = (comp: any) => {
-//     if (comp === 'Medium-quality') {
-//         return 'info'
-//     }
-//     if (comp === 'High-quality') {
-//         return 'success'
-//     }
-//     if (comp === 'Low-quality') {
-//         return 'warning'
-//     }
-//     if (comp === 'Complete') {
-//         return 'success'
-//     }
-//     return 'warning'
-// }
+// Color: info, success, warning, error
 const SpeciesColor = (style: any) => {
     if (style === 'Ambystoma mexicanum (Axolotl)') {
         return 'success'
@@ -546,9 +537,11 @@ const createColumns = (): DataTableColumns<RowData> => {
                     value: 'Merfish',
                 },
             ],
-            filter(value: any, row: any) {
-                return row.st_platform === value
-            },
+            // filter(value: any, row: any) {
+            //     return row.st_platform === value
+            // },
+            filter: true,
+            // filterOptionValues: [],
             render(row: any) {
                 return h('div', {}, [
                     h(
@@ -585,9 +578,10 @@ const createColumns = (): DataTableColumns<RowData> => {
                     value: 'Ambystoma mexicanum (Axolotl)',
                 },
             ],
-            filter(value: any, row: any) {
-                return row.species === value
-            },
+            // filter(value: any, row: any) {
+            //     return row.species === value
+            // },
+            filter: true,
             render(row: any) {
                 return h('div', {}, [
                     h(
@@ -631,9 +625,10 @@ const createColumns = (): DataTableColumns<RowData> => {
                     value: 'Non-Small Cell Lung Cancer IIIA',
                 },
             ],
-            filter(value: any, row: any) {
-                return row.disease_stage === value
-            },
+            // filter(value: any, row: any) {
+            //     return row.disease_stage === value
+            // },
+            filter: true,
             render(row: any) {
                 return h('div', {}, [
                     h(
@@ -664,9 +659,10 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             width: col_width.developmental_stage,
             filterOptions: devDict,
-            filter(value: any, row: any) {
-                return row.developmental_stage === value
-            },
+            // filter(value: any, row: any) {
+            //     return row.developmental_stage === value
+            // },
+            filter: true,
         },
         // sex
         {
@@ -677,9 +673,10 @@ const createColumns = (): DataTableColumns<RowData> => {
             align: 'center',
             width: col_width.sex,
             filterOptions: sexDict,
-            filter(value: any, row: any) {
-                return row.sex === value
-            },
+            // filter(value: any, row: any) {
+            //     return row.sex === value
+            // },
+            filter: true,
         },
         // cell_type
         {
@@ -690,9 +687,10 @@ const createColumns = (): DataTableColumns<RowData> => {
             align: 'center',
             width: col_width.cell_type,
             filterOptions: celltypeDict,
-            filter(value: any, row: any) {
-                return row.cell_type === value
-            },
+            // filter(value: any, row: any) {
+            //     return row.cell_type === value
+            // },
+            filter: true,
             render(row: any) {
                 return h('div', [
                     h(
@@ -869,6 +867,27 @@ const handleSorterChange = async sorter => {
             pagesize: pageSize.value,
             columnKey: sorter_columnkey.value,
             order: sorter_order.value,
+        },
+    })
+    const { data } = response
+    phagedata.value = data
+    loading.value = false
+}
+
+const handleUpdateFilter = async filters => {
+    console.log('============= filters', filters)
+    filter_dict.value = filters
+    crusturl.value = '/crustdb_main/'
+    loading.value = true
+    const response = await axios.get(crusturl.value, {
+        baseURL: '/api',
+        timeout: 100000,
+        params: {
+            page: pagevalue.value,
+            pagesize: pageSize.value,
+            columnKey: sorter_columnkey.value,
+            order: sorter_order.value,
+            filter: filter_dict.value,
         },
     })
     const { data } = response
