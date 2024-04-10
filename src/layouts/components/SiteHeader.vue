@@ -83,6 +83,10 @@ const menuOptions: MenuOption[] = [
                 label: 'CyGraph List',
                 key: '/database/crustdb_main',
             },
+            {
+                label: 'Dataset List',
+                key: '/database/dataset',
+            },
             // {
             //     label: 'Host List',
             //     key: '/database/host',

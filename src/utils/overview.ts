@@ -28,7 +28,7 @@ export const STPlatformBarOptions = {
         {
             name: 'CyGraph',
             type: 'bar',
-            data: [93, 0, 0],
+            data: [93, 164, 0],
         },
     ],
 }
@@ -62,7 +62,7 @@ export const TestSTPlatformBarOptions = {
         {
             name: 'CyGraph',
             type: 'bar',
-            data: [93, 120, 0],
+            data: [93, 10, 40],
         },
     ],
 }
@@ -102,7 +102,7 @@ export const SpeciesBarOptions = {
         {
             name: 'CyGraph',
             type: 'bar',
-            data: [93, 0, 0],
+            data: [93, 164, 0],
         },
     ],
 }
@@ -140,7 +140,7 @@ export const SpeciesPieOptions = {
             type: 'pie',
             data: [
                 { value: 93, name: 'Ambystoma mexicanum \n(Axolotl)' },
-                { value: 0, name: 'Homo sapiens \n(Human)' },
+                { value: 164, name: 'Homo sapiens \n(Human)' },
                 { value: 0, name: 'Mus musculus \n(Mouse)' },
             ],
             label: {
@@ -180,7 +180,7 @@ export const STPlatformPieOptions = {
             type: 'pie',
             data: [
                 { value: 93, name: 'Stereo-Seq' },
-                { value: 0, name: 'CosMx' },
+                { value: 164, name: 'CosMx' },
                 { value: 0, name: 'Merfish' },
             ],
             label: {

@@ -16,12 +16,12 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
         <!-- part Overview -->
         <div class="mb-4 mt-12 p-1">
             <div class="flex flex-row">
-                <div class="w-45 ml-3">
+                <div class="w-40 ml-3">
                     <n-statistic>
                         <n-number-animation
                             ref="numberAnimationInstRef"
                             :from="0"
-                            :to="6"
+                            :to="14"
                             :duration="1000"
                             show-separator
                         />
@@ -36,7 +36,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         <n-number-animation
                             ref="numberAnimationInstRef"
                             :from="0"
-                            :to="33"
+                            :to="55"
                             :duration="1000"
                             show-separator
                         />
@@ -51,7 +51,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         <n-number-animation
                             ref="numberAnimationInstRef"
                             :from="0"
-                            :to="36198"
+                            :to="801802"
                             show-separator
                         />
                         <template #label>
@@ -65,7 +65,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         <n-number-animation
                             ref="numberAnimationInstRef"
                             :from="0"
-                            :to="93"
+                            :to="253"
                             show-separator
                         />
                         <template #label>

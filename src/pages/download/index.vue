@@ -1,9 +1,9 @@
 <template>
     <n-anchor show-rail affix :top="150" class="ml-15 w-55" show-background :bound="124">
-        <n-anchor-link title="10DPI_1.cckIN_4XZR Download" href="#10DPI_1" class="text-xl" />
-        <n-anchor-link title="10DPI_3.wntEGC_Q7HN Download" href="#10DPI_3" />
-        <n-anchor-link title="15DPI_3.rIPC2_TQG2 Download" href="#15DPI_3" />
-        <n-anchor-link title="20DPI_2.obNBL_DVO6 Download" href="#20DPI_2" />
+        <n-anchor-link title="10DPI_1.cckIN_4XZR" href="#10DPI_1" class="text-xl" />
+        <n-anchor-link title="10DPI_3.wntEGC_Q7HN" href="#10DPI_3" />
+        <n-anchor-link title="15DPI_3.rIPC2_TQG2" href="#15DPI_3" />
+        <n-anchor-link title="20DPI_2.obNBL_DVO6" href="#20DPI_2" />
     </n-anchor>
 
     <div class="flex flex-col w-full h-2220 justify-start items-center">

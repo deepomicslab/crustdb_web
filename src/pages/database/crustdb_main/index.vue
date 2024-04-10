@@ -452,10 +452,10 @@ const filtersearch = async () => {
         },
     })
     phagedata.value = response.data
+    crusturl.value = '/crustdb_main/'
     loading.value = false
 }
 const resetsearch = async () => {
-    crusturl.value = '/crustdb_main/'
     searchinput.value = ''
     loading.value = true
     const response = await axios.get(crusturl.value, {
@@ -853,10 +853,8 @@ const handleSelectSet = async (value: any) => {
 }
 
 const handleSorterChange = async sorter => {
-    console.log('sorter', sorter)
     sorter_columnkey.value = sorter.columnKey
     sorter_order.value = sorter.order
-    crusturl.value = '/crustdb_main/'
     searchinput.value = ''
     loading.value = true
     const response = await axios.get(crusturl.value, {
@@ -875,9 +873,7 @@ const handleSorterChange = async sorter => {
 }
 
 const handleUpdateFilter = async filters => {
-    console.log('============= filters', filters)
     filter_dict.value = filters
-    crusturl.value = '/crustdb_main/'
     loading.value = true
     const response = await axios.get(crusturl.value, {
         baseURL: '/api',
