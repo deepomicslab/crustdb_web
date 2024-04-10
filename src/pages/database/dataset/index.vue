@@ -62,6 +62,7 @@
         </div>
 
         <!-- main table -->
+        <!-- @update:filters="handleUpdateFilter" -->
         <div v-loading="loading" class="h-420">
             <n-data-table
                 :columns="columns"
@@ -71,7 +72,6 @@
                 :max-height="1600"
                 :single-line="false"
                 @update:checked-row-keys="handleCheck"
-                @update:filters="handleUpdateFilter"
                 @update:sorter="handleSorterChange"
             />
         </div>
@@ -148,10 +148,8 @@ const phagedata = ref()
 const dataseturl = ref(`/dataset/`)
 const route = useRoute()
 
-// const sorter_columnkey = ref('')
-// const sorter_order = ref('')
 const sorter_dict = ref('')
-const filter_dict = ref('')
+// const filter_dict = ref('')
 
 onBeforeMount(async () => {
     if (route.query?.dataset) {
@@ -194,10 +192,8 @@ const nextPage = async () => {
             page: pagevalue.value + 1,
             pagesize: pageSize.value,
             search: searchinput.value,
-            // columnKey: sorter_columnkey.value,
-            // order: sorter_order.value,
             sorter: sorter_dict.value,
-            filter: filter_dict.value,
+            // filter: filter_dict.value,
         },
     })
     const { data } = response
@@ -214,10 +210,8 @@ const prevPage = async () => {
             page: pagevalue.value - 1,
             pagesize: pageSize.value,
             search: searchinput.value,
-            // columnKey: sorter_columnkey.value,
-            // order: sorter_order.value,
             sorter: sorter_dict.value,
-            filter: filter_dict.value,
+            // filter: filter_dict.value,
         },
     })
     const { data } = response
@@ -233,10 +227,8 @@ const pagechange = async () => {
             page: pagevalue.value,
             pagesize: pageSize.value,
             search: searchinput.value,
-            // columnKey: sorter_columnkey.value,
-            // order: sorter_order.value,
             sorter: sorter_dict.value,
-            filter: filter_dict.value,
+            // filter: filter_dict.value,
         },
     })
     const { data } = response
@@ -252,10 +244,8 @@ const pagesizechange = async () => {
             page: pagevalue.value,
             pagesize: pageSize.value,
             search: searchinput.value,
-            // columnKey: sorter_columnkey.value,
-            // order: sorter_order.value,
             sorter: sorter_dict.value,
-            filter: filter_dict.value,
+            // filter: filter_dict.value,
         },
     })
     const { data } = response
@@ -504,8 +494,6 @@ const handleSorterChange = async sorter => {
         params: {
             page: pagevalue.value,
             pagesize: pageSize.value,
-            // columnKey: sorter_columnkey.value,
-            // order: sorter_order.value,
             sorter: sorter_dict.value,
         },
     })
@@ -514,26 +502,24 @@ const handleSorterChange = async sorter => {
     loading.value = false
 }
 
-const handleUpdateFilter = async filters => {
-    filter_dict.value = filters
-    // dataseturl.value = '/crustdb_main/'
-    loading.value = true
-    const response = await axios.get(dataseturl.value, {
-        baseURL: '/api',
-        timeout: 100000,
-        params: {
-            page: pagevalue.value,
-            pagesize: pageSize.value,
-            // columnKey: sorter_columnkey.value,
-            // order: sorter_order.value,
-            sorter: sorter_dict.value,
-            filter: filter_dict.value,
-        },
-    })
-    const { data } = response
-    phagedata.value = data
-    loading.value = false
-}
+// const handleUpdateFilter = async filters => {
+//     filter_dict.value = filters
+//     // dataseturl.value = '/crustdb_main/'
+//     loading.value = true
+//     const response = await axios.get(dataseturl.value, {
+//         baseURL: '/api',
+//         timeout: 100000,
+//         params: {
+//             page: pagevalue.value,
+//             pagesize: pageSize.value,
+//             sorter: sorter_dict.value,
+//             filter: filter_dict.value,
+//         },
+//     })
+//     const { data } = response
+//     phagedata.value = data
+//     loading.value = false
+// }
 
 const godatahelper = () => {
     router.push({
