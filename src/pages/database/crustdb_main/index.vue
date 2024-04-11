@@ -389,20 +389,18 @@ const download = (row: any) => {
 }
 
 type RowData = {
-    data_uid: string
-    cell_type: string
-    slice_id: string
+    publication_doi: string
     st_platform: string
     species: string
-    developmental_stage: string
     disease_stage: string
+    developmental_stage: string
     sex: string
-    slice_name: string
+    cell_type: string
+    slice_id: string
+    conformations: number
     cell_num: number
     gene_num: number
-    gene_filter_threshold: number
-    anchor_gene_proportion: number
-    inferred_trans_center_num: string
+    actions: string
 }
 const renderTooltip = (trigger: any, content: any) => {
     return h(NTooltip, null, {

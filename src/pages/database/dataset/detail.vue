@@ -2,27 +2,7 @@
     <div class="flex flex-col mx-1/10 justify-start">
         <div class="w-300 mt-18 ml-10">
             <div class="flex flex-row w-350 border-b-2 border-gray-300">
-                <div class="text-4xl font-500 mb-8">CyGraph Conformation</div>
-                <div class="mt-1.5 ml-10">
-                    <el-button class="ml-5" @click="download">
-                        <template #icon>
-                            <n-icon>
-                                <di />
-                            </n-icon>
-                        </template>
-                        Download Conformation data
-                    </el-button>
-                </div>
-                <div class="mt-1.5 ml-10">
-                    <el-button class="ml-5" @click="selectRepeat">
-                        <template #icon>
-                            <n-icon>
-                                <selectIcon />
-                            </n-icon>
-                        </template>
-                        Choose Repeat #
-                    </el-button>
-                </div>
+                <div class="text-4xl font-500 mb-8">Publication Details</div>
             </div>
 
             <!-- Phage Informatin table -->
@@ -35,145 +15,99 @@
             >
                 <el-descriptions-item :width="165">
                     <template #label>
-                        <div class="cell-item">Publication Link</div>
+                        <div class="cell-item">Publication DOI</div>
                     </template>
-                    {{ detailsdata.publication_link }}
+                    {{ datasetdata.doi }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165">
                     <template #label>
-                        <div class="cell-item">Data UID</div>
+                        <div class="cell-item">Journal</div>
                     </template>
-                    {{ detailsdata.repeat_data_uid }}
+                    {{ datasetdata.journal }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165" span="2">
+                    <template #label>
+                        <div class="cell-item">Title</div>
+                    </template>
+                    {{ datasetdata.title }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165" span="2">
+                    <template #label>
+                        <div class="cell-item">Abstract</div>
+                    </template>
+                    {{ datasetdata.abstract }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165">
                     <template #label>
-                        <div class="cell-item">Seed</div>
+                        <div class="cell-item">Author</div>
                     </template>
-                    {{ detailsdata.seed }}
+                    {{ datasetdata.author }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165">
                     <template #label>
-                        <div class="cell-item">Sample Name</div>
+                        <div class="cell-item">Volume</div>
                     </template>
-                    {{ detailsdata.sample_name }}
+                    {{ datasetdata.volume }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165">
                     <template #label>
-                        <div class="cell-item">Cell Type</div>
+                        <div class="cell-item">Number</div>
                     </template>
-                    {{ detailsdata.celltype }}
+                    {{ datasetdata.number }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165">
                     <template #label>
-                        <div class="cell-item">Threshold for gene filter</div>
+                        <div class="cell-item">Pages</div>
                     </template>
-                    {{ detailsdata.gene_filter_threshold }}
+                    {{ datasetdata.pages }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165">
                     <template #label>
-                        <div class="cell-item">
-                            Proportion of genes used for Rotation Derivation
-                        </div>
+                        <div class="cell-item">Year</div>
                     </template>
-                    {{ detailsdata.anchor_gene_proportion }}
+                    {{ datasetdata.year }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165">
                     <template #label>
-                        <div class="cell-item">Task ID</div>
+                        <div class="cell-item">Publisher</div>
                     </template>
-                    {{ detailsdata.task_id }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Number of total Transcription centers</div>
-                    </template>
-                    {{ detailsdata.inferred_trans_center_num }}
+                    {{ datasetdata.publisher }}
                 </el-descriptions-item>
             </el-descriptions>
         </div>
-
-        <div class="mt-5 ml-15">
-            <div class="flex flex-row w-200">
-                <h1 class="text-3xl mt-9 ml-7 font-500 text-[#3262a8]">Convergence Curve</h1>
+        <div class="w-330 mt-15 ml-10">
+            <div class="flex flex-row w-350 border-b-2 border-gray-300">
+                <div class="text-4xl font-500 mb-8">Conformations</div>
             </div>
-            <!-- <div class="flex flex-row justify-between mt-6 ml-8 w-285">
-                <n-form-item label="Please choose plot type" class="w-100">
-                    <n-select
-                        v-model:value="linechartvalue"
-                        :options="linechartoptions"
-                        @update:value="detailsdata"
-                    ></n-select>
-                </n-form-item>
-            </div> -->
-            <div class="flex flex-row">
-                <div class="w-300 h-150 mb-10 mt-5 p-5 ml-8" style="box-shadow: 0 0 64px #cfd5db">
-                    <div id="myEcharts" class="h-140" ref="echartlineDom"></div>
-                </div>
+            <div class="w-350" v-loading="loaddata">
+                <n-data-table
+                    :data="crustList"
+                    :columns="columns"
+                    :pagination="pagination"
+                    :max-height="700"
+                    :row-key="rowKey"
+                    :scroll-x="2600"
+                />
             </div>
         </div>
     </div>
-    <el-dialog
-        v-model="downloadphagedialogVisible"
-        title="Select download data"
-        width="30%"
-        align-center
-    >
-        <div>
-            <el-checkbox-group v-model="checkList" :max="1">
-                <el-checkbox
-                    v-for="v in repeat_data_uid_list"
-                    :key="v"
-                    :label="'Download ' + v + '.zip'"
-                />
-            </el-checkbox-group>
-        </div>
-        <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="downloadphagedialogVisible = false">Cancel</el-button>
-                <el-button type="primary" @click="downloadrequest">Download</el-button>
-            </span>
-        </template>
-    </el-dialog>
-    <el-dialog v-model="selectRepeatDialogVisible" title="Select repeat #" width="30%" align-center>
-        <div>
-            <el-checkbox-group v-model="selectRepeatCheckList" :max="1">
-                <el-checkbox
-                    v-for="(v, idx) in repeat_data_uid_list"
-                    :key="v"
-                    :label="'(Repeat #' + (idx + 1) + ') ' + v"
-                />
-            </el-checkbox-group>
-        </div>
-        <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="selectRepeatDialogVisible = false">Cancel</el-button>
-                <el-button type="primary" @click="selectRepeatRequest">Select</el-button>
-            </span>
-        </template>
-    </el-dialog>
 </template>
 
 <script setup lang="ts">
 // @ts-nocheck
 /* eslint-disable camelcase */
-import { CloudDownloadOutline as di, AddCircleOutline as selectIcon } from '@vicons/ionicons5'
-//
 import axios from 'axios'
 import { reactive, ref } from 'vue'
-import * as echarts from 'echarts'
-import _ from 'lodash'
-import { usePhageStore } from '@/store/phage'
 // import { useCrustDBStore } from '@/store/crustdb'
+import { NButton, NTag, NTooltip } from 'naive-ui'
+import { celltypeDict, sexDict, devDict } from '@/utils/crustdb'
 
-const phageStore = usePhageStore()
 // const crustdbStore = useCrustDBStore()
 const loaddata = ref(false)
 const route = useRoute()
-const phageid = computed(() => route.query?.crustdb_main_id as number)
-const repeatuid = computed(() => route.query?.details_uid as string)
-let mylineEcharts
+const datasetid = computed(() => route.query?.id as number)
 
-const phagedata = ref({
+const datasetdata = ref({
     st_platform: '',
     species: '',
     disease_stage: '',
@@ -187,191 +121,34 @@ const phagedata = ref({
     repeat_data_uid_list: [],
 })
 
-const detailsdata = ref({
-    repeat_data_uid: '',
-    seed: 0,
-    sample_name: '',
-    gene_filter_threshold: '',
-    anchor_gene_proportion: 0,
-    task_id: '',
-    inferred_trans_center_num: 0,
-    distance_list: [],
-})
-
-const echartlineDom = ref<HTMLElement | null>(null)
-// const linechartvalue = ref('Convergence of Conformation with Cytocraft')
-// const linechartoptions = [
-//     {
-//         label: 'ST Platform Distribution',
-//         value: 'ST Platform Distribution',
-//     },
-//     {
-//         label: 'ST Platform Distribution',
-//         value: 'ST Platform Distribution',
-//     },
-// ]
-
-const downloadphagedialogVisible = ref(false)
-
-const selectRepeatDialogVisible = ref(false)
-const repeat_data_uid_list = ref([] as any[])
-
-const downloadtype = ref('')
-const checkList = ref([] as any[])
-const selectRepeatCheckList = ref([] as any[])
-const checkedRowKeysRef = ref<DataTableRowKey[]>([])
-// const router = useRouter()
-
-const downloadrequest = async () => {
-    if (checkList.value.length === 0) {
-        window.$message.warning('Please select one zip data to download', {
-            closable: true,
-            duration: 5000,
-        })
-    } else {
-        window.open(
-            `/api/crustdb_main/zip/?crustid=${checkedRowKeysRef.value[0]}&checkList=${checkList.value}`,
-            '_blank'
-        )
-    }
-    checkList.value.length = 0
-}
-
-const selectRepeatRequest = async () => {
-    if (selectRepeatCheckList.value.length === 0) {
-        window.$message.warning('Please select one repeat', {
-            closable: true,
-            duration: 5000,
-        })
-    } else {
-        const data_uid = selectRepeatCheckList.value[0].split(' ')[2]
-        // console.log(data_uid) // Stage44.CP_1XOH
-        selectRepeatCheckList.value.length = 0 // clear the checkList
-        const response2 = await axios.get(`/details`, {
-            baseURL: '/api',
-            timeout: 10000,
-            params: {
-                details_uid: data_uid, // details.repeat_data_uid
-            },
-        })
-        detailsdata.value = response2.data
-        selectRepeatDialogVisible.value = false
-    }
-}
-
-const chartOption = () => {
-    mylineEcharts.setOption({
-        title: {
-            text: `Convergence of Cytocraft Conformation\n${detailsdata.value.repeat_data_uid}`,
-            left: 'center',
-        },
-        tooltip: {},
-        toolbox: {
-            itemSize: 20,
-            iconStyle: {
-                borderColor: '#34498e',
-            },
-            feature: {
-                dataView: { readOnly: true },
-                // magicType: { type: ['line', 'bar'] },
-                // restore: {},
-                saveAsImage: {},
-            },
-        },
-        xAxis: {
-            name: 'Iteration',
-            nameLocation: 'middle',
-            nameGap: 30,
-            scale: true,
-            data: _.range(detailsdata.value.distance_list.length),
-            axisLabel: {
-                rotate: 0,
-                fontSize: 13,
-            },
-        },
-        yAxis: {
-            name: 'cvRMSD',
-            nameLocation: 'middle',
-            nameGap: 30,
-            scale: true,
-            type: 'value',
-        },
-        series: [
-            {
-                name: 'Iteration number',
-                type: 'line',
-                data: detailsdata.value.distance_list,
-            },
-        ],
-    })
-}
-const updateRepeatList = () => {
-    repeat_data_uid_list.value.length = 0
-    for (let i = 0; i < phagedata.value.repeat_data_uid_list.length; i += 1) {
-        repeat_data_uid_list.value.push(
-            `${phagedata.value.uniq_data_uid}_${phagedata.value.repeat_data_uid_list[i]}`
-        )
-    }
-}
-const selectRepeat = () => {
-    updateRepeatList()
-    selectRepeatDialogVisible.value = true
-}
-const download = () => {
-    updateRepeatList()
-    downloadtype.value = 'single'
-    downloadphagedialogVisible.value = true
-    checkedRowKeysRef.value = [phageid.value]
-}
+const crustdata = ref([] as any[])
 
 onBeforeMount(async () => {
-    // From table crustdb_main
+    // From table Dataset Details
     loaddata.value = true
-    phageStore.phagedataloaded = false
-    phageStore.phageid = phageid.value
-    // const response = await axios.get(`/phage/detail`, {
-    const response = await axios.get(`/crustdb_main/detail`, {
+    const response = await axios.get(`dataset/detail/`, {
         baseURL: '/api',
         timeout: 10000,
         params: {
-            id: phageid.value, // crustdb_main.id
+            id: datasetid.value,
         },
     })
     const { data } = response
-    phagedata.value = data
+    datasetdata.value = data
 
-    // From table details
-    let response2 = null
-    if (repeatuid.value === '') {
-        response2 = await axios.get(`/details`, {
-            baseURL: '/api',
-            timeout: 10000,
-            params: {
-                crustdb_main_id: phagedata.value.uniq_data_uid, // details.repeat_data_uid
-            },
-        })
-    } else {
-        response2 = await axios.get(`/details`, {
-            baseURL: '/api',
-            timeout: 10000,
-            params: {
-                details_uid: repeatuid.value, // details.repeat_data_uid
-            },
-        })
-    }
-
-    detailsdata.value = response2.data // show the 1st repeat, by default
-    // crustdbStore.detailsDistanceList = detailsdata.value.distance_list
+    // From conformations
+    const response2 = await axios.get(`crustdb_main/dataset/`, {
+        baseURL: '/api',
+        timeout: 10000,
+        params: {
+            doi: datasetdata.value.doi,
+        },
+    })
+    crustdata.value = response2.data
     loaddata.value = false
 })
-onMounted(async () => {
-    mylineEcharts = echarts.init(echartlineDom.value as HTMLElement)
-    chartOption()
-})
 
-watch(detailsdata, () => {
-    chartOption()
-})
+const crustList = computed(() => crustdata.value)
 
 const pagination = reactive({
     page: 1,
@@ -386,4 +163,437 @@ const pagination = reactive({
         pagination.page = 1
     },
 })
+
+const router = useRouter()
+const detail = (row: any) => {
+    // router.push({ path: '/database/phage/detail', query: { phageid: row.id } })
+    router.push({
+        path: '/database/crustdb_main/detail',
+        query: { crustdb_main_id: row.id, details_uid: '' },
+    })
+}
+
+type RowData = {
+    publication_doi: string
+    st_platform: string
+    species: string
+    disease_stage: string
+    developmental_stage: string
+    sex: string
+    cell_type: string
+    slice_id: string
+    conformations: number
+    cell_num: number
+    gene_num: number
+    actions: string
+}
+const renderTooltip = (trigger: any, content: any) => {
+    return h(NTooltip, null, {
+        trigger: () => trigger,
+        default: () => content,
+    })
+}
+const rowKey = (row: RowData) => {
+    return row.id
+}
+const SpeciesColor = (style: any) => {
+    if (style === 'Ambystoma mexicanum (Axolotl)') {
+        return 'success'
+    }
+    if (style === 'Homo sapiens (Human)') {
+        return 'info'
+    }
+    return 'warning'
+}
+const STPlatformColor = (style: any) => {
+    if (style === 'Stereo-Seq') {
+        return 'success'
+    }
+    if (style === 'CosMx') {
+        return 'info'
+    }
+    return 'warning' // Merfish
+}
+const DiseaseStageColor = (style: any) => {
+    if (style === 'Normal') {
+        return 'info'
+    }
+    return 'error'
+}
+const col_width = {
+    // total 2500
+    publication_doi: 170,
+    st_platform: 120,
+    species: 220,
+    disease_stage: 180,
+    developmental_stage: 150,
+    sex: 70,
+    cell_type: 130,
+    slice_id: 320,
+    conformations: 110,
+    cell_num: 105,
+    gene_num: 105,
+    actions: 130,
+}
+
+const createColumns = (): DataTableColumns<RowData> => {
+    return [
+        {
+            type: 'selection',
+        },
+        // for test
+        // {
+        //     title() {
+        //         return renderTooltip(h('div', null, { default: () => 'UID' }), 'uid')
+        //     },
+        //     key: 'uniq_data_uid',
+        //     align: 'center',
+        //     ellipsis: {
+        //         tooltip: true,
+        //     },
+        //     width: 120,
+        // },
+        // {
+        //     title() {
+        //         return renderTooltip(h('div', null, { default: () => 'UID' }), 'uid')
+        //     },
+        //     key: 'repeat_data_uid_list',
+        //     align: 'center',
+        //     ellipsis: {
+        //         tooltip: true,
+        //     },
+        //     width: 70,
+        // },
+        // publication_doi
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Publication DOI' }),
+                    'publication doi'
+                )
+            },
+            fixed: 'left',
+            // key: 'publication_doi',
+            key: 'doi',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.publication_doi,
+        },
+        // st_platform
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'ST Platform' }),
+                    'ST Platform'
+                )
+            },
+            key: 'st_platform',
+            align: 'center',
+            width: col_width.st_platform,
+            ellipsis: {
+                tooltip: true,
+            },
+            filterOptions: [
+                {
+                    label: 'Stereo-Seq',
+                    value: 'Stereo-Seq',
+                },
+                {
+                    label: 'CosMx',
+                    value: 'CosMx',
+                },
+                {
+                    label: 'Merfish',
+                    value: 'Merfish',
+                },
+            ],
+            // filter(value: any, row: any) {
+            //     return row.st_platform === value
+            // },
+            filter: true,
+            // filterOptionValues: [],
+            render(row: any) {
+                return h('div', {}, [
+                    h(
+                        NTag,
+                        {
+                            type: STPlatformColor(row.st_platform),
+                            size: 'small',
+                        },
+                        {
+                            default: () => row.st_platform,
+                        }
+                    ),
+                ])
+            },
+        },
+        // species
+        {
+            title() {
+                return renderTooltip(h('div', null, { default: () => 'Species' }), 'species')
+            },
+            key: 'species',
+            align: 'center',
+            width: col_width.species,
+            ellipsis: {
+                tooltip: true,
+            },
+            filterOptions: [
+                {
+                    label: 'Homo sapiens (Human)',
+                    value: 'Homo sapiens (Human)',
+                },
+                {
+                    label: 'Ambystoma mexicanum (Axolotl)',
+                    value: 'Ambystoma mexicanum (Axolotl)',
+                },
+            ],
+            // filter(value: any, row: any) {
+            //     return row.species === value
+            // },
+            filter: true,
+            render(row: any) {
+                return h('div', {}, [
+                    h(
+                        NTag,
+                        {
+                            type: SpeciesColor(row.species),
+                            size: 'small',
+                        },
+                        {
+                            default: () => row.species,
+                        }
+                    ),
+                ])
+            },
+        },
+        // disease_stage
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Disease Stage' }),
+                    'disease stage'
+                )
+            },
+            key: 'disease_stage',
+            align: 'center',
+            width: col_width.disease_stage,
+            ellipsis: {
+                tooltip: true,
+            },
+            filterOptions: [
+                {
+                    label: 'Normal', //
+                    value: 'Normal',
+                },
+                {
+                    label: 'Non-Small Cell Lung Cancer IIB',
+                    value: 'Non-Small Cell Lung Cancer IIB',
+                },
+                {
+                    label: 'Non-Small Cell Lung Cancer IIIA',
+                    value: 'Non-Small Cell Lung Cancer IIIA',
+                },
+            ],
+            // filter(value: any, row: any) {
+            //     return row.disease_stage === value
+            // },
+            filter: true,
+            render(row: any) {
+                return h('div', {}, [
+                    h(
+                        NTag,
+                        {
+                            type: DiseaseStageColor(row.disease_stage),
+                            size: 'small',
+                        },
+                        {
+                            default: () => row.disease_stage,
+                        }
+                    ),
+                ])
+            },
+        },
+        // developmental_stage
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Developmental Stage' }),
+                    'developmental stage'
+                )
+            },
+            key: 'developmental_stage',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.developmental_stage,
+            filterOptions: devDict,
+            // filter(value: any, row: any) {
+            //     return row.developmental_stage === value
+            // },
+            filter: true,
+        },
+        // sex
+        {
+            title() {
+                return renderTooltip(h('div', null, { default: () => 'Sex' }), 'sex')
+            },
+            key: 'sex',
+            align: 'center',
+            width: col_width.sex,
+            filterOptions: sexDict,
+            // filter(value: any, row: any) {
+            //     return row.sex === value
+            // },
+            filter: true,
+        },
+        // cell_type
+        {
+            title() {
+                return renderTooltip(h('div', null, { default: () => 'Cell Type' }), 'cell type')
+            },
+            key: 'cell_type',
+            align: 'center',
+            width: col_width.cell_type,
+            filterOptions: celltypeDict,
+            // filter(value: any, row: any) {
+            //     return row.cell_type === value
+            // },
+            filter: true,
+            render(row: any) {
+                return h('div', [
+                    h(
+                        NTag,
+                        {
+                            type: 'info',
+                            size: 'small',
+                            round: true,
+                        },
+                        {
+                            default: () => {
+                                return row.cell_type
+                            },
+                        }
+                    ),
+                ])
+            },
+        },
+        // slice_id
+        {
+            title() {
+                return renderTooltip(h('div', null, { default: () => 'Slice ID' }), 'slice ID')
+            },
+            key: 'slice_id',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.slice_id,
+        },
+        // conformations
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Conformations' }),
+                    'conformations'
+                )
+            },
+            key: 'conformation_num',
+            align: 'center',
+            // sorter: 'default',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.conformations,
+        },
+        // cell_num
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Cell Number' }),
+                    'cell number'
+                )
+            },
+            key: 'cell_num',
+            align: 'center',
+            // sorter: 'default',
+            sorter: true,
+            // sortOrder: false,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.cell_num,
+        },
+        // gene_num
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Gene Number' }),
+                    'gene number'
+                )
+            },
+            key: 'gene_num',
+            align: 'center',
+            // sorter: 'default',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.gene_num,
+        },
+        // slice_name
+        // gene_filter_threshold
+        // anchor_gene_proportion
+        // inferred_trans_center_num
+        // actions
+        {
+            title: 'Action',
+            key: 'actions',
+            align: 'center',
+            width: col_width.actions,
+            fixed: 'right',
+            render(row: any) {
+                return h(
+                    'div',
+                    {
+                        style: {
+                            // display: 'flex',
+                            justifyContent: 'space-between',
+                        },
+                    },
+                    [
+                        h(
+                            NButton,
+                            {
+                                strong: true,
+                                size: 'small',
+                                type: 'info',
+                                onClick: () => detail(row),
+                            },
+                            { default: () => 'Conformation Detail' }
+                        ),
+                        // h(
+                        //     NButton,
+                        //     {
+                        //         strong: true,
+                        //         size: 'small',
+                        //         type: 'primary',
+                        //         onClick: () => download(row),
+                        //     },
+                        //     {
+                        //         default: () => 'Download',
+                        //     }
+                        // ),
+                    ]
+                )
+            },
+        },
+    ]
+}
+
+const columns = createColumns()
 </script>

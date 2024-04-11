@@ -137,7 +137,7 @@ import filterview from '../filter/index.vue'
 
 const pagevalue = ref(1)
 const pageSize = ref(30)
-const datasets = ref('crustdb_main')
+const datasets = ref('dataset')
 const crust_num = ref()
 const loading = ref(false)
 const searchinput = ref('')
@@ -263,8 +263,8 @@ const gofilter = () => {
 const detail = (row: any) => {
     // router.push({ path: '/database/phage/detail', query: { phageid: row.id } })
     router.push({
-        path: '/database/crustdb_main/detail',
-        query: { crustdb_main_id: row.id, details_uid: '' },
+        path: '/database/dataset/detail',
+        query: { id: row.id },
     })
 }
 
@@ -291,7 +291,7 @@ const rowKey = (row: RowData) => {
 
 const filtersearch = async () => {
     loading.value = true
-    dataseturl.value = 'crustdb_main/search/'
+    dataseturl.value = 'dataset/search/'
     const response = await axios.get(dataseturl.value, {
         baseURL: '/api',
         timeout: 100000,
@@ -302,10 +302,10 @@ const filtersearch = async () => {
         },
     })
     phagedata.value = response.data
+    dataseturl.value = 'dataset/'
     loading.value = false
 }
 const resetsearch = async () => {
-    dataseturl.value = '/crustdb_main/'
     searchinput.value = ''
     loading.value = true
     const response = await axios.get(dataseturl.value, {
@@ -481,11 +481,7 @@ const handleSelectSet = async (value: any) => {
 }
 
 const handleSorterChange = async sorter => {
-    // console.log('sorter', sorter)
-    // sorter_columnkey.value = sorter.columnKey
-    // sorter_order.value = sorter.order
     sorter_dict.value = sorter
-    // dataseturl.value = '/crustdb_main/'
     searchinput.value = ''
     loading.value = true
     const response = await axios.get(dataseturl.value, {
@@ -504,7 +500,6 @@ const handleSorterChange = async sorter => {
 
 // const handleUpdateFilter = async filters => {
 //     filter_dict.value = filters
-//     // dataseturl.value = '/crustdb_main/'
 //     loading.value = true
 //     const response = await axios.get(dataseturl.value, {
 //         baseURL: '/api',
