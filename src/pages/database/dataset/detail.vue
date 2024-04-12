@@ -136,28 +136,16 @@ onBeforeMount(async () => {
     const { data } = response
     datasetdata.value = data
 
-    // From slice
-    const response2 = await axios.get(`slice/dataset/`, {
+    // From Slice List
+    const response2 = await axios.get(`/slice/`, {
         baseURL: '/api',
         timeout: 100000,
         params: {
             doi: datasetdata.value.doi,
         },
     })
-    const slice_list = { data: response2.data }
-    // console.log('============ slice_list', slice_list)
 
-    // From Slice List
-    const response3 = await axios.get(`/slice/`, {
-        baseURL: '/api',
-        timeout: 100000,
-        params: {
-            slices: slice_list,
-        },
-    })
-    // console.log('============ response3', response3)
-
-    crustdata.value = response3.data.results
+    crustdata.value = response2.data.results
     loaddata.value = false
 })
 

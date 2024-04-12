@@ -88,7 +88,7 @@ const menuOptions: MenuOption[] = [
                 key: '/database/slice',
             },
             {
-                label: 'CyGraph List',
+                label: 'CyGraph Conformation List',
                 key: '/database/crustdb_main',
             },
             // {

@@ -110,7 +110,8 @@ let mylineEcharts
 
 const visSymbolSize = (n_spots: number) => {
     if (n_spots > 20000) return 2
-    if (n_spots > 7000) return 3
+    if (n_spots > 10000) return 3
+    if (n_spots > 7000) return 4
     if (n_spots > 3000) return 7
     return 12
 }
