@@ -118,9 +118,7 @@ const visSymbolSize = (n_spots: number) => {
 
 const preprocess_scatter = () => {
     uniqueAnnotations.value = Array.from(new Set(adata.value.annotation))
-    console.log('uniqueAnnotations.value', uniqueAnnotations.value)
     const seriesData = uniqueAnnotations.value.map((annotation, index) => {
-        // console.log('annotation, index', annotation, index)
         const filteredData = adata.value.x.reduce((result, xValue, i) => {
             if (adata.value.annotation[i] === annotation) {
                 result.push([xValue, adata.value.y[i]])
@@ -140,7 +138,6 @@ const preprocess_scatter = () => {
             },
         }
     })
-    console.log('seriesData', seriesData)
 
     option.value = {
         title: {
@@ -150,7 +147,7 @@ const preprocess_scatter = () => {
         tooltip: {
             show: true,
             formatter(param) {
-                return `(${param.data[0]}, ${param.data[1]})` // Thhs is the standarized coordinates instead of the ones in the adata / mets.csv
+                return `${param.seriesName}<br/>(${param.data[0]}, ${param.data[1]})` // Thhs is the standarized coordinates instead of the ones in the adata / mets.csv
             },
         },
         toolbox: {
@@ -203,8 +200,6 @@ onBeforeMount(async () => {
     phagedata.value = data
     crust_num.value = phagedata.value.count
     loading.value = false
-
-    // console.log('================ phagedata', phagedata.value.results[0].slice_id)
 
     const response2 = await axios.get('/slice/adata/', {
         baseURL: '/api',
