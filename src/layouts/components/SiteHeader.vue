@@ -80,12 +80,16 @@ const menuOptions: MenuOption[] = [
             //     key: '/database/phage',
             // },
             {
-                label: 'CyGraph List',
-                key: '/database/crustdb_main',
-            },
-            {
                 label: 'Dataset List',
                 key: '/database/dataset',
+            },
+            {
+                label: 'Slice List',
+                key: '/database/slice',
+            },
+            {
+                label: 'CyGraph List',
+                key: '/database/crustdb_main',
             },
             // {
             //     label: 'Host List',

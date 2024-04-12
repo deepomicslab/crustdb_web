@@ -233,6 +233,8 @@
                         </div>
                         <div class="flex flex-col">
                             <a class="text-xl mb-3" href="/database">Database</a>
+                            <p><a href="/database/dataset">Dataset List</a></p>
+                            <p><a href="/database/slice">Slice List</a></p>
                             <p><a href="/database/crustdb_main">CyGraph List</a></p>
                             <!-- <p><a href="/database/phage">Phage List</a></p>
                             <p><a href="/database/host">Host List</a></p>
