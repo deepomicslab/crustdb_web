@@ -77,7 +77,7 @@
         </div>
         <div class="w-330 mt-15 ml-10">
             <div class="flex flex-row w-350 border-b-2 border-gray-300">
-                <div class="text-4xl font-500 mb-8">Conformations</div>
+                <div class="text-4xl font-500 mb-8">Slices</div>
             </div>
             <div class="w-350" v-loading="loaddata">
                 <n-data-table
@@ -86,7 +86,7 @@
                     :pagination="pagination"
                     :max-height="700"
                     :row-key="rowKey"
-                    :scroll-x="2600"
+                    :scroll-x="1300"
                 />
             </div>
         </div>
@@ -99,8 +99,8 @@
 import axios from 'axios'
 import { reactive, ref } from 'vue'
 // import { useCrustDBStore } from '@/store/crustdb'
-import { NButton, NTag, NTooltip } from 'naive-ui'
-import { celltypeDict, sexDict, devDict } from '@/utils/crustdb'
+import { NButton, NTooltip } from 'naive-ui'
+// import { celltypeDict, sexDict, devDict } from '@/utils/crustdb'
 
 // const crustdbStore = useCrustDBStore()
 const loaddata = ref(false)
@@ -136,15 +136,28 @@ onBeforeMount(async () => {
     const { data } = response
     datasetdata.value = data
 
-    // From conformations
-    const response2 = await axios.get(`crustdb_main/dataset/`, {
+    // From slice
+    const response2 = await axios.get(`slice/dataset/`, {
         baseURL: '/api',
-        timeout: 10000,
+        timeout: 100000,
         params: {
             doi: datasetdata.value.doi,
         },
     })
-    crustdata.value = response2.data
+    const slice_list = { data: response2.data }
+    // console.log('============ slice_list', slice_list)
+
+    // From Slice List
+    const response3 = await axios.get(`/slice/`, {
+        baseURL: '/api',
+        timeout: 100000,
+        params: {
+            slices: slice_list,
+        },
+    })
+    // console.log('============ response3', response3)
+
+    crustdata.value = response3.data.results
     loaddata.value = false
 })
 
@@ -168,24 +181,16 @@ const router = useRouter()
 const detail = (row: any) => {
     // router.push({ path: '/database/phage/detail', query: { phageid: row.id } })
     router.push({
-        path: '/database/crustdb_main/detail',
-        query: { crustdb_main_id: row.id, details_uid: '' },
+        path: '/database/slice/detail',
+        query: { id: row.id },
     })
 }
 
 type RowData = {
-    publication_doi: string
-    st_platform: string
-    species: string
-    disease_stage: string
-    developmental_stage: string
-    sex: string
-    cell_type: string
-    slice_id: string
-    conformations: number
-    cell_num: number
-    gene_num: number
-    actions: string
+    n_slices: number
+    n_cell_types: number
+    n_conformations: number
+    n_cells: number
 }
 const renderTooltip = (trigger: any, content: any) => {
     return h(NTooltip, null, {
@@ -196,295 +201,26 @@ const renderTooltip = (trigger: any, content: any) => {
 const rowKey = (row: RowData) => {
     return row.id
 }
-const SpeciesColor = (style: any) => {
-    if (style === 'Ambystoma mexicanum (Axolotl)') {
-        return 'success'
-    }
-    if (style === 'Homo sapiens (Human)') {
-        return 'info'
-    }
-    return 'warning'
-}
-const STPlatformColor = (style: any) => {
-    if (style === 'Stereo-Seq') {
-        return 'success'
-    }
-    if (style === 'CosMx') {
-        return 'info'
-    }
-    return 'warning' // Merfish
-}
-const DiseaseStageColor = (style: any) => {
-    if (style === 'Normal') {
-        return 'info'
-    }
-    return 'error'
-}
+
 const col_width = {
-    // total 2500
-    publication_doi: 170,
-    st_platform: 120,
-    species: 220,
-    disease_stage: 180,
-    developmental_stage: 150,
-    sex: 70,
-    cell_type: 130,
-    slice_id: 320,
-    conformations: 110,
-    cell_num: 105,
-    gene_num: 105,
-    actions: 130,
+    slice_id: 100,
+    publication_doi: 50,
+    n_slices: 45,
+    n_cell_types: 40,
+    n_conformations: 45,
+    n_cells: 45,
+    actions: 35,
 }
 
 const createColumns = (): DataTableColumns<RowData> => {
     return [
-        {
-            type: 'selection',
-        },
-        // for test
         // {
-        //     title() {
-        //         return renderTooltip(h('div', null, { default: () => 'UID' }), 'uid')
-        //     },
-        //     key: 'uniq_data_uid',
-        //     align: 'center',
-        //     ellipsis: {
-        //         tooltip: true,
-        //     },
-        //     width: 120,
+        //     type: 'selection',
         // },
-        // {
-        //     title() {
-        //         return renderTooltip(h('div', null, { default: () => 'UID' }), 'uid')
-        //     },
-        //     key: 'repeat_data_uid_list',
-        //     align: 'center',
-        //     ellipsis: {
-        //         tooltip: true,
-        //     },
-        //     width: 70,
-        // },
-        // publication_doi
+        // id
         {
             title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Publication DOI' }),
-                    'publication doi'
-                )
-            },
-            fixed: 'left',
-            // key: 'publication_doi',
-            key: 'doi',
-            align: 'center',
-            ellipsis: {
-                tooltip: true,
-            },
-            width: col_width.publication_doi,
-        },
-        // st_platform
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'ST Platform' }),
-                    'ST Platform'
-                )
-            },
-            key: 'st_platform',
-            align: 'center',
-            width: col_width.st_platform,
-            ellipsis: {
-                tooltip: true,
-            },
-            filterOptions: [
-                {
-                    label: 'Stereo-Seq',
-                    value: 'Stereo-Seq',
-                },
-                {
-                    label: 'CosMx',
-                    value: 'CosMx',
-                },
-                {
-                    label: 'Merfish',
-                    value: 'Merfish',
-                },
-            ],
-            // filter(value: any, row: any) {
-            //     return row.st_platform === value
-            // },
-            filter: true,
-            // filterOptionValues: [],
-            render(row: any) {
-                return h('div', {}, [
-                    h(
-                        NTag,
-                        {
-                            type: STPlatformColor(row.st_platform),
-                            size: 'small',
-                        },
-                        {
-                            default: () => row.st_platform,
-                        }
-                    ),
-                ])
-            },
-        },
-        // species
-        {
-            title() {
-                return renderTooltip(h('div', null, { default: () => 'Species' }), 'species')
-            },
-            key: 'species',
-            align: 'center',
-            width: col_width.species,
-            ellipsis: {
-                tooltip: true,
-            },
-            filterOptions: [
-                {
-                    label: 'Homo sapiens (Human)',
-                    value: 'Homo sapiens (Human)',
-                },
-                {
-                    label: 'Ambystoma mexicanum (Axolotl)',
-                    value: 'Ambystoma mexicanum (Axolotl)',
-                },
-            ],
-            // filter(value: any, row: any) {
-            //     return row.species === value
-            // },
-            filter: true,
-            render(row: any) {
-                return h('div', {}, [
-                    h(
-                        NTag,
-                        {
-                            type: SpeciesColor(row.species),
-                            size: 'small',
-                        },
-                        {
-                            default: () => row.species,
-                        }
-                    ),
-                ])
-            },
-        },
-        // disease_stage
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Disease Stage' }),
-                    'disease stage'
-                )
-            },
-            key: 'disease_stage',
-            align: 'center',
-            width: col_width.disease_stage,
-            ellipsis: {
-                tooltip: true,
-            },
-            filterOptions: [
-                {
-                    label: 'Normal', //
-                    value: 'Normal',
-                },
-                {
-                    label: 'Non-Small Cell Lung Cancer IIB',
-                    value: 'Non-Small Cell Lung Cancer IIB',
-                },
-                {
-                    label: 'Non-Small Cell Lung Cancer IIIA',
-                    value: 'Non-Small Cell Lung Cancer IIIA',
-                },
-            ],
-            // filter(value: any, row: any) {
-            //     return row.disease_stage === value
-            // },
-            filter: true,
-            render(row: any) {
-                return h('div', {}, [
-                    h(
-                        NTag,
-                        {
-                            type: DiseaseStageColor(row.disease_stage),
-                            size: 'small',
-                        },
-                        {
-                            default: () => row.disease_stage,
-                        }
-                    ),
-                ])
-            },
-        },
-        // developmental_stage
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Developmental Stage' }),
-                    'developmental stage'
-                )
-            },
-            key: 'developmental_stage',
-            align: 'center',
-            ellipsis: {
-                tooltip: true,
-            },
-            width: col_width.developmental_stage,
-            filterOptions: devDict,
-            // filter(value: any, row: any) {
-            //     return row.developmental_stage === value
-            // },
-            filter: true,
-        },
-        // sex
-        {
-            title() {
-                return renderTooltip(h('div', null, { default: () => 'Sex' }), 'sex')
-            },
-            key: 'sex',
-            align: 'center',
-            width: col_width.sex,
-            filterOptions: sexDict,
-            // filter(value: any, row: any) {
-            //     return row.sex === value
-            // },
-            filter: true,
-        },
-        // cell_type
-        {
-            title() {
-                return renderTooltip(h('div', null, { default: () => 'Cell Type' }), 'cell type')
-            },
-            key: 'cell_type',
-            align: 'center',
-            width: col_width.cell_type,
-            filterOptions: celltypeDict,
-            // filter(value: any, row: any) {
-            //     return row.cell_type === value
-            // },
-            filter: true,
-            render(row: any) {
-                return h('div', [
-                    h(
-                        NTag,
-                        {
-                            type: 'info',
-                            size: 'small',
-                            round: true,
-                        },
-                        {
-                            default: () => {
-                                return row.cell_type
-                            },
-                        }
-                    ),
-                ])
-            },
-        },
-        // slice_id
-        {
-            title() {
-                return renderTooltip(h('div', null, { default: () => 'Slice ID' }), 'slice ID')
+                return renderTooltip(h('div', null, { default: () => 'Slice ID' }), 'Slice ID')
             },
             key: 'slice_id',
             align: 'center',
@@ -493,62 +229,69 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             width: col_width.slice_id,
         },
-        // conformations
+        // publication_doi
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'Conformations' }),
-                    'conformations'
+                    h('div', null, { default: () => 'Publication DOI' }),
+                    'Publication DOI'
                 )
             },
-            key: 'conformation_num',
+            key: 'publication_doi',
             align: 'center',
-            // sorter: 'default',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.publication_doi,
+        },
+        // n_cell_types
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Number of Cell Types' }),
+                    'Number of Cell Types'
+                )
+            },
+            key: 'n_cell_types',
+            align: 'center',
             sorter: true,
             ellipsis: {
                 tooltip: true,
             },
-            width: col_width.conformations,
+            width: col_width.n_cell_types,
         },
-        // cell_num
+        // n_conformations
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'Cell Number' }),
-                    'cell number'
+                    h('div', null, { default: () => 'Number of Conformations' }),
+                    'Number of Conformations'
                 )
             },
-            key: 'cell_num',
+            key: 'n_conformations',
             align: 'center',
-            // sorter: 'default',
-            sorter: true,
-            // sortOrder: false,
-            ellipsis: {
-                tooltip: true,
-            },
-            width: col_width.cell_num,
-        },
-        // gene_num
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Gene Number' }),
-                    'gene number'
-                )
-            },
-            key: 'gene_num',
-            align: 'center',
-            // sorter: 'default',
             sorter: true,
             ellipsis: {
                 tooltip: true,
             },
-            width: col_width.gene_num,
+            width: col_width.n_conformations,
         },
-        // slice_name
-        // gene_filter_threshold
-        // anchor_gene_proportion
-        // inferred_trans_center_num
+        // n_cells
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Total Number of Cells' }),
+                    'Total Number of Cells'
+                )
+            },
+            key: 'n_cells',
+            align: 'center',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.n_cells,
+        },
         // actions
         {
             title: 'Action',
@@ -574,20 +317,8 @@ const createColumns = (): DataTableColumns<RowData> => {
                                 type: 'info',
                                 onClick: () => detail(row),
                             },
-                            { default: () => 'Conformation Detail' }
+                            { default: () => 'Slice Details' }
                         ),
-                        // h(
-                        //     NButton,
-                        //     {
-                        //         strong: true,
-                        //         size: 'small',
-                        //         type: 'primary',
-                        //         onClick: () => download(row),
-                        //     },
-                        //     {
-                        //         default: () => 'Download',
-                        //     }
-                        // ),
                     ]
                 )
             },

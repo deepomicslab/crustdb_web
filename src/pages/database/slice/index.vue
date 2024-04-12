@@ -167,6 +167,7 @@ onBeforeMount(async () => {
         },
     })
     const { data } = response
+    // console.log('====================== response', response)
     phagedata.value = data
     crust_num.value = phagedata.value.count
     loading.value = false
@@ -321,7 +322,6 @@ const resetsearch = async () => {
 }
 
 const col_width = {
-    // total 2500
     slice_id: 170,
     publication_doi: 100,
     n_slices: 70,
