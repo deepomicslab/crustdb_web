@@ -68,7 +68,7 @@
                 :columns="columns"
                 :data="datasetList"
                 :row-key="rowKey"
-                :scroll-x="1000"
+                :scroll-x="1800"
                 :max-height="1600"
                 :single-line="false"
                 @update:checked-row-keys="handleCheck"
@@ -322,12 +322,12 @@ const resetsearch = async () => {
 }
 
 const col_width = {
-    // total 2500
-    doi: 70,
+    doi: 100,
+    species: 100,
     n_slices: 70,
-    n_cell_types: 70,
-    n_conformations: 70,
-    n_cells: 70,
+    n_cell_types: 80,
+    n_conformations: 90,
+    n_cells: 80,
     actions: 100,
 }
 
@@ -351,6 +351,18 @@ const createColumns = (): DataTableColumns<RowData> => {
                 tooltip: true,
             },
             width: col_width.doi,
+        },
+        // species
+        {
+            title() {
+                return renderTooltip(h('div', null, { default: () => 'Species' }), 'Species')
+            },
+            key: 'species',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.species,
         },
         // n_slices
         {
