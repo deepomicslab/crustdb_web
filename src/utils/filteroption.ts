@@ -1,15 +1,15 @@
 export const STPlatformOptions = [
     {
-        value: 'Stereo-Seq',
-        label: 'Stereo-Seq',
+        value: 'Stereo-seq',
+        label: 'Stereo-seq',
     },
     {
         value: 'CosMx',
         label: 'CosMx',
     },
     {
-        value: 'Merfish',
-        label: 'Merfish',
+        value: 'MERFISH',
+        label: 'MERFISH',
     },
 ]
 

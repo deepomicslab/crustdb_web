@@ -346,13 +346,19 @@ const SpeciesColor = (style: any) => {
         // wait to see how many colors needed
         return 'error'
     }
-    return 'info'
+    if (style === 'Human') {
+        return 'info'
+    }
+    return 'warning'
 }
 const STPlatformColor = (style: any) => {
-    if (style === 'Stereo-Seq') {
-        return 'error'
+    if (style === 'Stereo-seq') {
+        return 'success'
     }
-    return 'info'
+    if (style === 'CosMx') {
+        return 'info'
+    }
+    return 'warning' // MERFISH
 }
 const DiseaseStageColor = (style: any) => {
     if (style === 'Normal') {
@@ -382,12 +388,16 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             filterOptions: [
                 {
-                    label: 'Stereo-Seq',
-                    value: 'Stereo-Seq',
+                    label: 'Stereo-seq',
+                    value: 'Stereo-seq',
                 },
                 {
-                    label: 'Wait for other label',
-                    value: 'Wait for other label',
+                    label: 'CosMx',
+                    value: 'CosMx',
+                },
+                {
+                    label: 'MERFISH',
+                    value: 'MERFISH',
                 },
             ],
             filter(value: any, row: any) {

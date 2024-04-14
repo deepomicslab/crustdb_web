@@ -17,7 +17,7 @@ export const STPlatformBarOptions = {
         },
     },
     xAxis: {
-        data: ['Stereo-Seq', 'CosMx', 'Merfish'],
+        data: ['Stereo-seq', 'CosMx', 'MERFISH'],
         axisLabel: {
             rotate: 0,
             fontSize: 13,
@@ -51,7 +51,7 @@ export const TestSTPlatformBarOptions = {
         },
     },
     xAxis: {
-        data: ['Stereo-Seq', 'CosMx', 'Merfish'],
+        data: ['Stereo-seq', 'CosMx', 'MERFISH'],
         axisLabel: {
             rotate: 0,
             fontSize: 13,
@@ -179,9 +179,9 @@ export const STPlatformPieOptions = {
             name: 'CyGraph',
             type: 'pie',
             data: [
-                { value: 93, name: 'Stereo-Seq' },
+                { value: 93, name: 'Stereo-seq' },
                 { value: 164, name: 'CosMx' },
-                { value: 0, name: 'Merfish' },
+                { value: 0, name: 'MERFISH' },
             ],
             label: {
                 fontSize: 15,
@@ -219,9 +219,9 @@ export const TestSTPlatformPieOptions = {
             name: 'CyGraph',
             type: 'pie',
             data: [
-                { value: 93, name: 'Stereo-Seq' },
+                { value: 93, name: 'Stereo-seq' },
                 { value: 120, name: 'CosMx' },
-                { value: 9, name: 'Merfish' },
+                { value: 9, name: 'MERFISH' },
             ],
             label: {
                 fontSize: 15,

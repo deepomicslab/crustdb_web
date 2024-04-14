@@ -21,7 +21,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         <n-number-animation
                             ref="numberAnimationInstRef"
                             :from="0"
-                            :to="14"
+                            :to="18"
                             :duration="1000"
                             show-separator
                         />
@@ -36,7 +36,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         <n-number-animation
                             ref="numberAnimationInstRef"
                             :from="0"
-                            :to="55"
+                            :to="131"
                             :duration="1000"
                             show-separator
                         />
@@ -46,12 +46,12 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         </template>
                     </n-statistic>
                 </div>
-                <div class="w-55">
+                <div class="w-62">
                     <n-statistic>
                         <n-number-animation
                             ref="numberAnimationInstRef"
                             :from="0"
-                            :to="801802"
+                            :to="1378472"
                             show-separator
                         />
                         <template #label>
@@ -65,11 +65,13 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         <n-number-animation
                             ref="numberAnimationInstRef"
                             :from="0"
-                            :to="253"
+                            :to="401"
                             show-separator
                         />
                         <template #label>
-                            <!-- select count(*) from crustdb_main;  -->
+                            <!-- select sum(conformation_num) from crustdb_main;
+                            Or
+                            select count(*) from details; -->
                             <h1 class="text-[#212529] text-lg font-700">
                                 Total Cytocraft Conformation
                             </h1>
@@ -81,7 +83,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         <n-number-animation
                             ref="numberAnimationInstRef"
                             :from="0"
-                            :to="24090"
+                            :to="25136"
                             show-separator
                         />
                         <template #label>
@@ -107,9 +109,9 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                 <n-button
                     class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
-                    @click="viewSTPlatform('Stereo-Seq')"
+                    @click="viewSTPlatform('Stereo-seq')"
                 >
-                    Stereo-Seq
+                    Stereo-seq
                 </n-button>
                 <n-button
                     class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
@@ -121,9 +123,9 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                 <n-button
                     class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
                     tertiary
-                    @click="viewSTPlatform('Merfish')"
+                    @click="viewSTPlatform('MERFISH')"
                 >
-                    Merfish
+                    MERFISH
                 </n-button>
             </div>
         </div>
@@ -274,11 +276,11 @@ const godatalist = () => router.push({ path: '/database/crustdb_main' })
 
 const viewSTPlatform = (node: string) => {
     let dataset = ''
-    if (node === 'Stereo-Seq') {
+    if (node === 'Stereo-seq') {
         dataset = 'crustdb_stereo'
     } else if (node === 'CosMx') {
         dataset = 'crustdb_cosmx'
-    } else if (node === 'Merfish') {
+    } else if (node === 'MERFISH') {
         dataset = 'crustdb_merfish'
     }
     router.push({

@@ -51,9 +51,9 @@
                 @select="handleSelectSet"
             >
                 <el-menu-item index="crustdb_main" class="text-lg">All</el-menu-item>
-                <!-- <el-menu-item index="crustdb_stereo" class="text-lg">Stereo-Seq</el-menu-item>
+                <!-- <el-menu-item index="crustdb_stereo" class="text-lg">Stereo-seq</el-menu-item>
                 <el-menu-item index="crustdb_cosmx" class="text-lg">CosMx</el-menu-item>
-                <el-menu-item index="crustdb_merfish" class="text-lg">Merfish</el-menu-item> -->
+                <el-menu-item index="crustdb_merfish" class="text-lg">MERFISH</el-menu-item> -->
             </el-menu>
             <div class="flex flex-row mt-7 text-[16px] font-400">
                 <div># Datasets</div>

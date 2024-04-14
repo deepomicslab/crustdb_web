@@ -73,9 +73,9 @@
                 @select="handleSelectSet"
             >
                 <el-menu-item index="crustdb_main" class="text-lg">All</el-menu-item>
-                <el-menu-item index="crustdb_stereo" class="text-lg">Stereo-Seq</el-menu-item>
+                <el-menu-item index="crustdb_stereo" class="text-lg">Stereo-seq</el-menu-item>
                 <el-menu-item index="crustdb_cosmx" class="text-lg">CosMx</el-menu-item>
-                <el-menu-item index="crustdb_merfish" class="text-lg">Merfish</el-menu-item>
+                <el-menu-item index="crustdb_merfish" class="text-lg">MERFISH</el-menu-item>
             </el-menu>
             <div class="flex flex-row mt-7 text-[16px] font-400">
                 <div># CyGraph samples</div>
@@ -422,13 +422,13 @@ const SpeciesColor = (style: any) => {
     return 'warning'
 }
 const STPlatformColor = (style: any) => {
-    if (style === 'Stereo-Seq') {
+    if (style === 'Stereo-seq') {
         return 'success'
     }
     if (style === 'CosMx') {
         return 'info'
     }
-    return 'warning' // Merfish
+    return 'warning' // MERFISH
 }
 const DiseaseStageColor = (style: any) => {
     if (style === 'Normal') {
@@ -523,16 +523,16 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             filterOptions: [
                 {
-                    label: 'Stereo-Seq',
-                    value: 'Stereo-Seq',
+                    label: 'Stereo-seq',
+                    value: 'Stereo-seq',
                 },
                 {
                     label: 'CosMx',
                     value: 'CosMx',
                 },
                 {
-                    label: 'Merfish',
-                    value: 'Merfish',
+                    label: 'MERFISH',
+                    value: 'MERFISH',
                 },
             ],
             // filter(value: any, row: any) {

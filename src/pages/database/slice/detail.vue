@@ -7,14 +7,23 @@
                     <div class="text-4xl font-500 mb-8">Slice Visualization</div>
                 </div>
                 <div class="flex flex-row">
-                    <div
-                        class="w-300 h-150 mb-10 mt-5 p-5 ml-8"
-                        style="box-shadow: 0 0 64px #cfd5db"
-                    >
-                        <div id="myEcharts" class="h-140" ref="echartlineDom"></div>
+                    <!-- here to change the size of canvas -->
+                    <div class="w-300 mb-10 mt-7 p-5 ml-5" style="box-shadow: 0 0 64px #cfd5db">
+                        <div id="myEcharts" class="w-280 h-190" ref="echartlineDom"></div>
                     </div>
+                    <!-- <el-scrollbar style="box-shadow: 0 0 64px #cfd5db" class="h-200 w-300">
+                        <div id="myEcharts" ref="echartlineDom"></div>
+                    </el-scrollbar> -->
                 </div>
             </div>
+            <!-- <div class="w-330 mt-20">
+                <div class="flex flex-row w-200">
+                    <div class="text-4xl font-500 mb-8">Comparative Tree for the Cluster</div>
+                </div>
+                <el-scrollbar style="box-shadow: 0 0 64px #cfd5db" class="h-200 w-300">
+                    <div id="myEcharts" class="h-140" ref="echartlineDom"></div>
+                </el-scrollbar>
+            </div> -->
             <div class="w-330 mt-15 ml-10">
                 <div class="flex flex-row w-350 border-b-2 border-gray-300">
                     <div class="text-4xl font-500 mb-8">Conformations</div>
@@ -116,6 +125,13 @@ const visSymbolSize = (n_spots: number) => {
     return 12
 }
 
+const top_gap = (n_annotations: number) => {
+    if (n_annotations < 20) return '90%'
+    if (n_annotations < 29) return '85%'
+    if (n_annotations < 34) return '80%'
+    return '75%'
+}
+
 const preprocess_scatter = () => {
     uniqueAnnotations.value = Array.from(new Set(adata.value.annotation))
     const seriesData = uniqueAnnotations.value.map((annotation, index) => {
@@ -168,8 +184,9 @@ const preprocess_scatter = () => {
             show: false,
         },
         legend: {
-            left: '85%',
-            top: '5%',
+            left: '10%',
+            top: top_gap(uniqueAnnotations.value.length),
+            // orient: 'horizontal',
             data: uniqueAnnotations.value,
         },
         series: seriesData,
@@ -354,13 +371,13 @@ const SpeciesColor = (style: any) => {
     return 'warning'
 }
 const STPlatformColor = (style: any) => {
-    if (style === 'Stereo-Seq') {
+    if (style === 'Stereo-seq') {
         return 'success'
     }
     if (style === 'CosMx') {
         return 'info'
     }
-    return 'warning' // Merfish
+    return 'warning' // MERFISH
 }
 const DiseaseStageColor = (style: any) => {
     if (style === 'Normal') {
@@ -423,16 +440,16 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             filterOptions: [
                 {
-                    label: 'Stereo-Seq',
-                    value: 'Stereo-Seq',
+                    label: 'Stereo-seq',
+                    value: 'Stereo-seq',
                 },
                 {
                     label: 'CosMx',
                     value: 'CosMx',
                 },
                 {
-                    label: 'Merfish',
-                    value: 'Merfish',
+                    label: 'MERFISH',
+                    value: 'MERFISH',
                 },
             ],
             // filter(value: any, row: any) {
