@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col py-5 px-20">
         <div class="flex flex-row ml-1 my-7">
-            <div class="text-4xl font-600">Datasets</div>
+            <div class="text-4xl font-600">Cell Types</div>
             <el-button round color="#34498E" class="ml-5 mt-2" @click="godatahelper">
                 Database Helper
             </el-button>
@@ -51,27 +51,24 @@
                 @select="handleSelectSet"
             >
                 <el-menu-item index="crustdb_main" class="text-lg">All</el-menu-item>
-                <!-- <el-menu-item index="crustdb_stereo" class="text-lg">Stereo-seq</el-menu-item>
-                <el-menu-item index="crustdb_cosmx" class="text-lg">CosMx</el-menu-item>
-                <el-menu-item index="crustdb_merfish" class="text-lg">MERFISH</el-menu-item> -->
             </el-menu>
             <div class="flex flex-row mt-7 text-[16px] font-400">
-                <div># Datasets</div>
+                <div># CyGraph cell types</div>
                 <div class="ml-5">{{ crust_num }}</div>
             </div>
         </div>
 
         <!-- main table -->
-        <!-- @update:filters="handleUpdateFilter" -->
-        <div v-loading="loading" class="h-110">
+        <div v-loading="loading" class="h-420">
             <n-data-table
                 :columns="columns"
-                :data="datasetList"
+                :data="phageList"
                 :row-key="rowKey"
-                :scroll-x="1800"
+                :scroll-x="1000"
                 :max-height="1600"
                 :single-line="false"
                 @update:checked-row-keys="handleCheck"
+                @update:filters="handleUpdateFilter"
                 @update:sorter="handleSorterChange"
             />
         </div>
@@ -133,11 +130,12 @@ import _ from 'lodash'
 import axios from 'axios'
 import filterview from '../filter/index.vue'
 // import { datasetDict, datasetList } from '@/utils/phage'
-// import { celltypeDict, sexDict, devDict } from '@/utils/crustdb'
+// import { celltypeDict } from '@/utils/phage'
+import { celltypeDict } from '@/utils/crustdb'
 
 const pagevalue = ref(1)
 const pageSize = ref(30)
-const datasets = ref('dataset')
+const datasets = ref('crustdb_main')
 const crust_num = ref()
 const loading = ref(false)
 const searchinput = ref('')
@@ -145,19 +143,20 @@ const searchinput = ref('')
 // const phagedata = useRequest(() => phageService.getPhageList(pagevalue.value, pageSize.value)).data
 const phagedata = ref()
 
-const dataseturl = ref(`/dataset/`)
+const crusturl = ref(`/celltype/`)
 const route = useRoute()
 
-const sorter_dict = ref('')
-// const filter_dict = ref('')
+const sorter_columnkey = ref('')
+const sorter_order = ref('')
+const filter_dict = ref('')
 
 onBeforeMount(async () => {
     if (route.query?.dataset) {
         datasets.value = route.query?.dataset as string
-        dataseturl.value = `/${route.query?.dataset}/`
+        crusturl.value = `/${route.query?.dataset}/`
     }
     loading.value = true
-    const response = await axios.get(dataseturl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
@@ -166,17 +165,14 @@ onBeforeMount(async () => {
             search: searchinput.value,
         },
     })
-    console.log('response', response)
     const { data } = response
     phagedata.value = data
-    crust_num.value = phagedata.value.count
+    crust_num.value = phagedata.value.length
     loading.value = false
 })
 
-const datasetList = computed(() => {
-    return _.map(phagedata.value?.results, (row: any) => {
-        // eslint-disable-next-line
-        // row.gc_content = Number(parseFloat(row.gc_content).toFixed(2))
+const phageList = computed(() => {
+    return _.map(phagedata.value, (row: any) => {
         return row
     })
 })
@@ -185,15 +181,16 @@ const count = computed(() => phagedata.value?.count)
 
 const nextPage = async () => {
     loading.value = true
-    const response = await axios.get(dataseturl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
             page: pagevalue.value + 1,
             pagesize: pageSize.value,
             search: searchinput.value,
-            sorter: sorter_dict.value,
-            // filter: filter_dict.value,
+            columnKey: sorter_columnkey.value,
+            order: sorter_order.value,
+            filter: filter_dict.value,
         },
     })
     const { data } = response
@@ -203,15 +200,16 @@ const nextPage = async () => {
 
 const prevPage = async () => {
     loading.value = true
-    const response = await axios.get(dataseturl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
             page: pagevalue.value - 1,
             pagesize: pageSize.value,
             search: searchinput.value,
-            sorter: sorter_dict.value,
-            // filter: filter_dict.value,
+            columnKey: sorter_columnkey.value,
+            order: sorter_order.value,
+            filter: filter_dict.value,
         },
     })
     const { data } = response
@@ -220,15 +218,16 @@ const prevPage = async () => {
 }
 const pagechange = async () => {
     loading.value = true
-    const response = await axios.get(dataseturl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
             page: pagevalue.value,
             pagesize: pageSize.value,
             search: searchinput.value,
-            sorter: sorter_dict.value,
-            // filter: filter_dict.value,
+            columnKey: sorter_columnkey.value,
+            order: sorter_order.value,
+            filter: filter_dict.value,
         },
     })
     const { data } = response
@@ -237,15 +236,16 @@ const pagechange = async () => {
 }
 const pagesizechange = async () => {
     loading.value = true
-    const response = await axios.get(dataseturl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
             page: pagevalue.value,
             pagesize: pageSize.value,
             search: searchinput.value,
-            sorter: sorter_dict.value,
-            // filter: filter_dict.value,
+            columnKey: sorter_columnkey.value,
+            order: sorter_order.value,
+            filter: filter_dict.value,
         },
     })
     const { data } = response
@@ -261,10 +261,9 @@ const gofilter = () => {
     filterVisible.value = true
 }
 const detail = (row: any) => {
-    // router.push({ path: '/database/phage/detail', query: { phageid: row.id } })
     router.push({
-        path: '/database/dataset/detail',
-        query: { id: row.id },
+        path: '/database/celltype/detail',
+        query: { celltype: row.cell_type },
     })
 }
 
@@ -274,10 +273,8 @@ function handleCheck(rowKeys: DataTableRowKey[]) {
 }
 
 type RowData = {
-    n_slices: number
-    n_cell_types: number
-    n_conformations: number
-    n_cells: number
+    cell_type: string
+    actions: string
 }
 const renderTooltip = (trigger: any, content: any) => {
     return h(NTooltip, null, {
@@ -288,20 +285,11 @@ const renderTooltip = (trigger: any, content: any) => {
 const rowKey = (row: RowData) => {
     return row.id
 }
-const SpeciesColor = (style: any) => {
-    if (style === 'Ambystoma mexicanum (Axolotl)') {
-        return 'success'
-    }
-    if (style === 'Homo sapiens (Human)') {
-        return 'info'
-    }
-    return 'warning'
-}
 
 const filtersearch = async () => {
     loading.value = true
-    dataseturl.value = 'dataset/search/'
-    const response = await axios.get(dataseturl.value, {
+    crusturl.value = 'crustdb_main/search/'
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
@@ -311,13 +299,13 @@ const filtersearch = async () => {
         },
     })
     phagedata.value = response.data
-    dataseturl.value = 'dataset/'
+    crusturl.value = '/crustdb_main/'
     loading.value = false
 }
 const resetsearch = async () => {
     searchinput.value = ''
     loading.value = true
-    const response = await axios.get(dataseturl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
@@ -331,127 +319,40 @@ const resetsearch = async () => {
 }
 
 const col_width = {
-    doi: 100,
-    species: 100,
-    n_slices: 70,
-    n_cell_types: 80,
-    n_conformations: 90,
-    n_cells: 80,
-    actions: 80,
+    cell_type: 100,
+    actions: 100,
 }
 
 const createColumns = (): DataTableColumns<RowData> => {
     return [
-        // {
-        //     type: 'selection',
-        // },
-        // species
+        // cell_type
         {
             title() {
-                return renderTooltip(h('div', null, { default: () => 'Species' }), 'Species')
+                return renderTooltip(h('div', null, { default: () => 'Cell Type' }), 'cell type')
             },
             fixed: 'left',
-            key: 'species',
+            key: 'cell_type',
             align: 'center',
-            sorter: true,
-            ellipsis: {
-                tooltip: true,
-            },
-            width: col_width.species,
+            width: col_width.cell_type,
+            filterOptions: celltypeDict,
+            filter: true,
             render(row: any) {
-                return h('div', {}, [
+                return h('div', [
                     h(
                         NTag,
                         {
-                            type: SpeciesColor(row.species),
+                            type: 'info',
                             size: 'small',
+                            round: true,
                         },
                         {
-                            default: () => row.species,
+                            default: () => {
+                                return row.cell_type
+                            },
                         }
                     ),
                 ])
             },
-        },
-        // id
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Publication DOI' }),
-                    'Publication DOI'
-                )
-            },
-            key: 'doi',
-            align: 'center',
-            ellipsis: {
-                tooltip: true,
-            },
-            width: col_width.doi,
-        },
-        // n_slices
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Number of Slices' }),
-                    'Number of Slices'
-                )
-            },
-            // fixed: 'left',
-            key: 'n_slices',
-            align: 'center',
-            sorter: true,
-            ellipsis: {
-                tooltip: true,
-            },
-            width: col_width.n_slices,
-        },
-        // n_cell_types
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Number of Cell Types' }),
-                    'Number of Cell Types'
-                )
-            },
-            key: 'n_cell_types',
-            align: 'center',
-            sorter: true,
-            ellipsis: {
-                tooltip: true,
-            },
-            width: col_width.n_cell_types,
-        },
-        // n_conformations
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Number of Conformations' }),
-                    'Number of Conformations'
-                )
-            },
-            key: 'n_conformations',
-            align: 'center',
-            sorter: true,
-            ellipsis: {
-                tooltip: true,
-            },
-            width: col_width.n_conformations,
-        },
-        // n_cells
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Total Number of Cells' }),
-                    'Total Number of Cells'
-                )
-            },
-            key: 'n_cells',
-            align: 'center',
-            sorter: true,
-            ellipsis: {
-                tooltip: true,
-            },
-            width: col_width.n_cells,
         },
         // actions
         {
@@ -478,7 +379,7 @@ const createColumns = (): DataTableColumns<RowData> => {
                                 type: 'info',
                                 onClick: () => detail(row),
                             },
-                            { default: () => 'Publication Details' }
+                            { default: () => 'Cell Type Detail' }
                         ),
                     ]
                 )
@@ -500,10 +401,10 @@ const paginationReactive = reactive({
     },
 })
 const handleSelectSet = async (value: any) => {
-    dataseturl.value = `/${value}/`
+    crusturl.value = `/${value}/`
 
     loading.value = true
-    const response = await axios.get(dataseturl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
@@ -517,16 +418,18 @@ const handleSelectSet = async (value: any) => {
 }
 
 const handleSorterChange = async sorter => {
-    sorter_dict.value = sorter
+    sorter_columnkey.value = sorter.columnKey
+    sorter_order.value = sorter.order
     searchinput.value = ''
     loading.value = true
-    const response = await axios.get(dataseturl.value, {
+    const response = await axios.get(crusturl.value, {
         baseURL: '/api',
         timeout: 100000,
         params: {
             page: pagevalue.value,
             pagesize: pageSize.value,
-            sorter: sorter_dict.value,
+            columnKey: sorter_columnkey.value,
+            order: sorter_order.value,
         },
     })
     const { data } = response
@@ -534,23 +437,24 @@ const handleSorterChange = async sorter => {
     loading.value = false
 }
 
-// const handleUpdateFilter = async filters => {
-//     filter_dict.value = filters
-//     loading.value = true
-//     const response = await axios.get(dataseturl.value, {
-//         baseURL: '/api',
-//         timeout: 100000,
-//         params: {
-//             page: pagevalue.value,
-//             pagesize: pageSize.value,
-//             sorter: sorter_dict.value,
-//             filter: filter_dict.value,
-//         },
-//     })
-//     const { data } = response
-//     phagedata.value = data
-//     loading.value = false
-// }
+const handleUpdateFilter = async filters => {
+    filter_dict.value = filters
+    loading.value = true
+    const response = await axios.get(crusturl.value, {
+        baseURL: '/api',
+        timeout: 100000,
+        params: {
+            page: pagevalue.value,
+            pagesize: pageSize.value,
+            columnKey: sorter_columnkey.value,
+            order: sorter_order.value,
+            filter: filter_dict.value,
+        },
+    })
+    const { data } = response
+    phagedata.value = data
+    loading.value = false
+}
 
 const godatahelper = () => {
     router.push({

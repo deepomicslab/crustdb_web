@@ -178,3 +178,32 @@ export const devDict = [
         value: 'Stage 57',
     },
 ]
+
+// Color: info, success, warning, error, normal
+
+export const SpeciesColor = (style: any) => {
+    if (style === 'Ambystoma mexicanum (Axolotl)') {
+        return 'success'
+    }
+    if (style === 'Homo sapiens (Human)') {
+        return 'info'
+    }
+    return 'warning'
+}
+
+export const STPlatformColor = (style: any) => {
+    if (style === 'Stereo-seq') {
+        return 'success'
+    }
+    if (style === 'CosMx') {
+        return 'info'
+    }
+    return 'warning' // MERFISH
+}
+
+export const DiseaseStageColor = (style: any) => {
+    if (style === 'Normal') {
+        return 'info'
+    }
+    return 'error'
+}

@@ -88,6 +88,10 @@ const menuOptions: MenuOption[] = [
                 key: '/database/slice',
             },
             {
+                label: 'Cell Type List',
+                key: '/database/celltype',
+            },
+            {
                 label: 'CyGraph Conformation List',
                 key: '/database/crustdb_main',
             },
