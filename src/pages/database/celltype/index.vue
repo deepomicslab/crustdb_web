@@ -167,12 +167,12 @@ onBeforeMount(async () => {
     })
     const { data } = response
     phagedata.value = data
-    crust_num.value = phagedata.value.length
+    crust_num.value = phagedata.value.count
     loading.value = false
 })
 
 const phageList = computed(() => {
-    return _.map(phagedata.value, (row: any) => {
+    return _.map(phagedata.value?.results, (row: any) => {
         return row
     })
 })
@@ -320,6 +320,9 @@ const resetsearch = async () => {
 
 const col_width = {
     cell_type: 100,
+    n_slices: 70,
+    n_cells: 70,
+    n_conformations: 80,
     actions: 100,
 }
 
@@ -353,6 +356,54 @@ const createColumns = (): DataTableColumns<RowData> => {
                     ),
                 ])
             },
+        },
+        // n_slices
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Slice Number' }),
+                    'slice number'
+                )
+            },
+            key: 'n_slices',
+            align: 'center',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.n_slices,
+        },
+        // n_cells
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Cell Number' }),
+                    'cell number'
+                )
+            },
+            key: 'n_cells',
+            align: 'center',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.n_cells,
+        },
+        // n_conformations
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Conformation Number' }),
+                    'Conformation number'
+                )
+            },
+            key: 'n_conformations',
+            align: 'center',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.n_conformations,
         },
         // actions
         {

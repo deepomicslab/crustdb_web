@@ -25,29 +25,48 @@
                 border
                 v-loading="loading"
             >
+                <el-descriptions-item :width="165" v-if="common_items.includes('cell_type')">
+                    <template #label>
+                        <div class="cell-item">Cell Type</div>
+                    </template>
+                    <!-- {{ common_item_values && common_item_values.cell_type }} -->
+                    {{ common_item_values.cell_type }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165" v-if="common_items.includes('cell_num')">
+                    <template #label>
+                        <div class="cell-item">Total Cell Number</div>
+                    </template>
+                    {{ common_item_values.cell_num }}
+                </el-descriptions-item>
                 <el-descriptions-item :width="165" v-if="common_items.includes('slice_id')">
                     <template #label>
                         <div class="cell-item">Slice ID</div>
                     </template>
-                    {{ phageList[0] && phageList[0].slice_id }}
+                    {{ common_item_values.slice_id }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165" v-if="common_items.includes('conformation_num')">
+                    <template #label>
+                        <div class="cell-item">Total Conformation Number</div>
+                    </template>
+                    {{ common_item_values.conformation_num }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165" v-if="common_items.includes('doi')">
                     <template #label>
                         <div class="cell-item">Publication DOI</div>
                     </template>
-                    {{ phageList[0] && phageList[0].doi }}
+                    {{ common_item_values.doi }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165" v-if="common_items.includes('st_platform')">
                     <template #label>
                         <div class="cell-item">ST Platform</div>
                     </template>
-                    {{ phageList[0] && phageList[0].st_platform }}
+                    {{ common_item_values.st_platform }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165" v-if="common_items.includes('disease_stage')">
                     <template #label>
                         <div class="cell-item">Disease Stage</div>
                     </template>
-                    {{ phageList[0] && phageList[0].disease_stage }}
+                    {{ common_item_values.disease_stage }}
                 </el-descriptions-item>
                 <el-descriptions-item
                     :width="165"
@@ -56,43 +75,25 @@
                     <template #label>
                         <div class="cell-item">Developmental Stage</div>
                     </template>
-                    {{ phageList[0] && phageList[0].developmental_stage }}
+                    {{ common_item_values.developmental_stage }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165" v-if="common_items.includes('sex')">
                     <template #label>
                         <div class="cell-item">Sex</div>
                     </template>
-                    {{ phageList[0] && phageList[0].sex }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165" v-if="common_items.includes('cell_type')">
-                    <template #label>
-                        <div class="cell-item">Cell Type</div>
-                    </template>
-                    {{ phageList[0] && phageList[0].cell_type }}
+                    {{ common_item_values.sex }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165" v-if="common_items.includes('species')">
                     <template #label>
                         <div class="cell-item">Species</div>
                     </template>
-                    {{ phageList[0] && phageList[0].species }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165" v-if="common_items.includes('conformation_num')">
-                    <template #label>
-                        <div class="cell-item">Conformation Number</div>
-                    </template>
-                    {{ phageList[0] && phageList[0].conformation_num }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165" v-if="common_items.includes('cell_num')">
-                    <template #label>
-                        <div class="cell-item">Cell Number</div>
-                    </template>
-                    {{ phageList[0] && phageList[0].cell_num }}
+                    {{ common_item_values.species }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165" v-if="common_items.includes('gene_num')">
                     <template #label>
-                        <div class="cell-item">Gene Number</div>
+                        <div class="cell-item">Total Gene Number</div>
                     </template>
-                    {{ phageList[0] && phageList[0].gene_num }}
+                    {{ common_item_values.gene_num }}
                 </el-descriptions-item>
             </el-descriptions>
         </div>
@@ -180,9 +181,7 @@ const datasets = ref('crustdb_main')
 const loading = ref(false)
 const searchinput = ref('')
 
-// const phagedata = useRequest(() => phageService.getPhageList(pagevalue.value, pageSize.value)).data
 const phagedata = ref()
-// const adata = ref()
 
 const crusturl = ref(`/crustdb_main/celltype/`)
 const route = useRoute()
@@ -192,94 +191,9 @@ const celltype = computed(() => route.query?.celltype as string)
 const filter_dict = ref('')
 const sorter_dict = ref('')
 
-// const common_show = ref(['individual', 'common'])
 const common_items = ref([])
 const uncommon_items = ref([])
-
-// const option = ref({})
-// const uniqueAnnotations = ref([])
-
-// let mylineEcharts
-
-// const visSymbolSize = (n_spots: number) => {
-//     if (n_spots > 20000) return 2
-//     if (n_spots > 10000) return 3
-//     if (n_spots > 7000) return 4
-//     if (n_spots > 3000) return 7
-//     return 12
-// }
-
-// const top_gap = (n_annotations: number) => {
-//     if (n_annotations < 20) return '90%'
-//     if (n_annotations < 29) return '85%'
-//     if (n_annotations < 34) return '80%'
-//     return '75%'
-// }
-
-// const preprocess_scatter = () => {
-//     uniqueAnnotations.value = Array.from(new Set(adata.value.annotation))
-//     const seriesData = uniqueAnnotations.value.map((annotation, index) => {
-//         const filteredData = adata.value.x.reduce((result, xValue, i) => {
-//             if (adata.value.annotation[i] === annotation) {
-//                 result.push([xValue, adata.value.y[i]])
-//             }
-//             return result
-//         }, [])
-//         return {
-//             name: annotation,
-//             type: 'scatter',
-//             symbolSize: visSymbolSize(adata.value.x.length),
-//             data: filteredData,
-//             emphasis: {
-//                 focus: 'series',
-//             },
-//             itemStyle: {
-//                 color: `hsl(${index * (360 / uniqueAnnotations.value.length)}, 70%, 50%)`,
-//             },
-//         }
-//     })
-
-//     option.value = {
-//         title: {
-//             text: `${phagedata.value.results[0].slice_id}`,
-//             left: 'center',
-//         },
-//         tooltip: {
-//             show: true,
-//             formatter(param) {
-//                 return `${param.seriesName}<br/>(${param.data[0]}, ${param.data[1]})` // Thhs is the standarized coordinates instead of the ones in the adata / mets.csv
-//             },
-//         },
-//         toolbox: {
-//             itemSize: 20,
-//             iconStyle: {
-//                 borderColor: '#34498e',
-//             },
-//             feature: {
-//                 saveAsImage: {},
-//             },
-//         },
-//         xAxis: {
-//             splitLine: { show: false },
-//             show: false,
-//         },
-//         yAxis: {
-//             splitLine: { show: false },
-//             show: false,
-//         },
-//         legend: {
-//             left: '10%',
-//             top: top_gap(uniqueAnnotations.value.length),
-//             // orient: 'horizontal',
-//             data: uniqueAnnotations.value,
-//         },
-//         series: seriesData,
-//     }
-// }
-
-// const chartOption = () => {
-//     mylineEcharts.setOption(option.value)
-// }
+const common_item_values = ref([])
 
 onBeforeMount(async () => {
     if (route.query?.dataset) {
@@ -297,12 +211,11 @@ onBeforeMount(async () => {
             cell_type: celltype.value,
         },
     })
-    const [data, data2, data3] = response.data.results
-    // console.log('data2', data2)
-    // console.log('data3', data3)
+    const [data, data2, data3, data4] = response.data.results
     phagedata.value = data
     common_items.value = data2
     uncommon_items.value = data3
+    common_item_values.value = data4
     loading.value = false
 
     // const response2 = await axios.get('/slice/adata/', {
@@ -317,14 +230,8 @@ onBeforeMount(async () => {
     // preprocess_scatter()
 })
 
-// const echartlineDom = ref<HTMLElement | null>(null)
-
 // onMounted(async () => {
 //     mylineEcharts = echarts.init(echartlineDom.value as HTMLElement)
-//     chartOption()
-// })
-
-// watch(adata, () => {
 //     chartOption()
 // })
 
@@ -450,28 +357,77 @@ const rowKey = (row: RowData) => {
 
 const col_width = {
     // total 2500
+    cell_type: 130,
+    cell_num: 105,
+    slice_id: 320,
+    conformations: 110,
     publication_doi: 170,
     st_platform: 120,
     species: 220,
     disease_stage: 180,
     developmental_stage: 150,
     sex: 70,
-    cell_type: 130,
-    slice_id: 320,
-    conformations: 110,
-    cell_num: 105,
     gene_num: 105,
     actions: 130,
 }
 
 const createColumns = (): DataTableColumns<RowData> => {
     const to_return_createColumns = []
-    const col_template = [
+    const col_template = {
         // {
         //     type: 'selection',
         // },
+        // cell_type
+        cell_type: {
+            title() {
+                return renderTooltip(h('div', null, { default: () => 'Cell Type' }), 'cell type')
+            },
+            key: 'cell_type',
+            align: 'center',
+            width: col_width.cell_type,
+            filterOptions: celltypeDict,
+            // filter(value: any, row: any) {
+            //     return row.cell_type === value
+            // },
+            filter: true,
+            render(row: any) {
+                return h('div', [
+                    h(
+                        NTag,
+                        {
+                            type: 'info',
+                            size: 'small',
+                            round: true,
+                        },
+                        {
+                            default: () => {
+                                return row.cell_type
+                            },
+                        }
+                    ),
+                ])
+            },
+        },
+        // cell_num
+        cell_num: {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Cell Number' }),
+                    'cell number'
+                )
+            },
+            key: 'cell_num',
+            align: 'center',
+            // sorter: 'default',
+            sorter: true,
+            // sortOrder: false,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.cell_num,
+        },
         // slice_id
-        {
+        slice_id: {
             title() {
                 return renderTooltip(h('div', null, { default: () => 'Slice ID' }), 'slice ID')
             },
@@ -483,8 +439,25 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             width: col_width.slice_id,
         },
+        // conformation_num
+        conformation_num: {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Conformations' }),
+                    'conformations'
+                )
+            },
+            key: 'conformation_num',
+            align: 'center',
+            // sorter: 'default',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.conformations,
+        },
         // publication_doi
-        {
+        doi: {
             title() {
                 return renderTooltip(
                     h('div', null, { default: () => 'Publication DOI' }),
@@ -500,7 +473,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             width: col_width.publication_doi,
         },
         // st_platform
-        {
+        st_platform: {
             title() {
                 return renderTooltip(
                     h('div', null, { default: () => 'ST Platform' }),
@@ -548,7 +521,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
         },
         // species
-        {
+        species: {
             title() {
                 return renderTooltip(h('div', null, { default: () => 'Species' }), 'species')
             },
@@ -588,7 +561,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
         },
         // disease_stage
-        {
+        disease_stage: {
             title() {
                 return renderTooltip(
                     h('div', null, { default: () => 'Disease Stage' }),
@@ -635,7 +608,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
         },
         // developmental_stage
-        {
+        developmental_stage: {
             title() {
                 return renderTooltip(
                     h('div', null, { default: () => 'Developmental Stage' }),
@@ -655,7 +628,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             filter: true,
         },
         // sex
-        {
+        sex: {
             title() {
                 return renderTooltip(h('div', null, { default: () => 'Sex' }), 'sex')
             },
@@ -668,74 +641,8 @@ const createColumns = (): DataTableColumns<RowData> => {
             // },
             filter: true,
         },
-        // cell_type
-        {
-            title() {
-                return renderTooltip(h('div', null, { default: () => 'Cell Type' }), 'cell type')
-            },
-            key: 'cell_type',
-            align: 'center',
-            width: col_width.cell_type,
-            filterOptions: celltypeDict,
-            // filter(value: any, row: any) {
-            //     return row.cell_type === value
-            // },
-            filter: true,
-            render(row: any) {
-                return h('div', [
-                    h(
-                        NTag,
-                        {
-                            type: 'info',
-                            size: 'small',
-                            round: true,
-                        },
-                        {
-                            default: () => {
-                                return row.cell_type
-                            },
-                        }
-                    ),
-                ])
-            },
-        },
-        // conformations
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Conformations' }),
-                    'conformations'
-                )
-            },
-            key: 'conformation_num',
-            align: 'center',
-            // sorter: 'default',
-            sorter: true,
-            ellipsis: {
-                tooltip: true,
-            },
-            width: col_width.conformations,
-        },
-        // cell_num
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Cell Number' }),
-                    'cell number'
-                )
-            },
-            key: 'cell_num',
-            align: 'center',
-            // sorter: 'default',
-            sorter: true,
-            // sortOrder: false,
-            ellipsis: {
-                tooltip: true,
-            },
-            width: col_width.cell_num,
-        },
         // gene_num
-        {
+        gene_num: {
             title() {
                 return renderTooltip(
                     h('div', null, { default: () => 'Gene Number' }),
@@ -756,7 +663,7 @@ const createColumns = (): DataTableColumns<RowData> => {
         // anchor_gene_proportion
         // inferred_trans_center_num
         // actions
-        {
+        actions: {
             title: 'Action',
             key: 'actions',
             align: 'center',
@@ -798,7 +705,7 @@ const createColumns = (): DataTableColumns<RowData> => {
                 )
             },
         },
-    ]
+    }
     const potential_items = [
         'slice_id',
         'doi',
@@ -812,13 +719,21 @@ const createColumns = (): DataTableColumns<RowData> => {
         'cell_num',
         'gene_num',
     ]
-    function myFunction(value, index) {
+
+    to_return_createColumns.push(col_template.slice_id)
+
+    function myFunction(value) {
+        if (value === 'slice_id') {
+            return
+        }
         if (uncommon_items.value.includes(value)) {
-            to_return_createColumns.push(col_template[index])
+            to_return_createColumns.push(col_template[value])
         }
     }
     potential_items.forEach(myFunction)
-    to_return_createColumns.push(col_template[col_template.length - 1])
+
+    to_return_createColumns.push(col_template.actions)
+
     return to_return_createColumns
 }
 
