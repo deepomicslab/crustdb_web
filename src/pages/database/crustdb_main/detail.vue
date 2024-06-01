@@ -94,6 +94,15 @@
 
         <div class="mt-5 ml-15">
             <div class="flex flex-row w-200">
+                <h1 class="text-3xl mt-9 ml-7 font-500 text-[#3262a8]">Vis</h1>
+            </div>
+            <div class="flex flex-row">
+                <mst />
+                <!-- <annotation /> -->
+            </div>
+        </div>
+        <div class="mt-5 ml-15">
+            <div class="flex flex-row w-200">
                 <h1 class="text-3xl mt-9 ml-7 font-500 text-[#3262a8]">Convergence Curve</h1>
             </div>
             <!-- <div class="flex flex-row justify-between mt-6 ml-8 w-285">
@@ -163,10 +172,13 @@ import { reactive, ref } from 'vue'
 import * as echarts from 'echarts'
 import _ from 'lodash'
 import { usePhageStore } from '@/store/phage'
-// import { useCrustDBStore } from '@/store/crustdb'
+import { useCrustDBStore } from '@/store/crustdb'
+
+import mst from '../../visualize/components/mst.vue'
+// import annotation from '../../visualize/components/annotation.vue'
 
 const phageStore = usePhageStore()
-// const crustdbStore = useCrustDBStore()
+const crustdbStore = useCrustDBStore()
 const loaddata = ref(false)
 const route = useRoute()
 const phageid = computed(() => route.query?.crustdb_main_id as number)
@@ -329,7 +341,6 @@ onBeforeMount(async () => {
     loaddata.value = true
     phageStore.phagedataloaded = false
     phageStore.phageid = phageid.value
-    // const response = await axios.get(`/phage/detail`, {
     const response = await axios.get(`/crustdb_main/detail`, {
         baseURL: '/api',
         timeout: 10000,
@@ -363,6 +374,36 @@ onBeforeMount(async () => {
     detailsdata.value = response2.data // show the 1st repeat, by default
     // crustdbStore.detailsDistanceList = detailsdata.value.distance_list
     loaddata.value = false
+
+    // ============== topology data ==============
+    let topology_response = null
+    if (repeatuid.value === '') {
+        topology_response = await axios.get(`/details/topology`, {
+            baseURL: '/api',
+            timeout: 10000,
+            params: {
+                crustdb_main_id: phagedata.value.uniq_data_uid, // details.repeat_data_uid
+            },
+        })
+    } else {
+        topology_response = await axios.get(`/details/topology`, {
+            baseURL: '/api',
+            timeout: 10000,
+            params: {
+                details_uid: repeatuid.value, // details.repeat_data_uid
+            },
+        })
+    }
+    // console.log('topology_response', topology_response)
+
+    const [topo_data, topo_data3] = topology_response.data
+    crustdbStore.nodesCoord = topo_data
+    // crustdbStore.nodeIndex = topo_data2
+    crustdbStore.edgeList = topo_data3
+    // console.log('topo_data', topo_data)
+    // console.log('topo_data2', topo_data2)
+    // console.log('topo_data3', topo_data3)
+    // console.log('detail crustdbStore.edgeList', crustdbStore.edgeList)
 })
 onMounted(async () => {
     mylineEcharts = echarts.init(echartlineDom.value as HTMLElement)
