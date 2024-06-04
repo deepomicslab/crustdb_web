@@ -335,25 +335,23 @@ const preprocess_3d = () => {
     const this_nodesCoord_3d = []
     const x_list = Array.from(new Set(nodesCoord_3d.value.x))
     x_list.forEach((element, idx) => {
-        this_nodesCoord_3d.push([element, nodesCoord_3d.value.y[idx], nodesCoord_3d.value.z[idx]])
+        this_nodesCoord_3d.push([
+            element,
+            nodesCoord_3d.value.y[idx],
+            nodesCoord_3d.value.z[idx],
+            nodesCoord_3d.value.node_name[idx],
+        ])
     })
 
-    // console.log('======================= this_nodesCoord_3d', this_nodesCoord_3d)
-
-    // const this_edgeList_3d = []
     const seriesData = [
         {
             data: this_nodesCoord_3d,
             type: 'scatter3D',
-            symbolSize: 2,
+            symbolSize: 7,
         },
     ]
     const edge_index_list = Array.from(new Set(edgeList_3d.value))
     edge_index_list.forEach(element => {
-        // this_edgeList_3d.push([this_nodesCoord_3d[element[0]], this_nodesCoord_3d[element[1]]])
-        // edge_indices = Array.from(new Set(element))
-        // console.log(element[0], element[1])
-        // break
         const this_line_data = [this_nodesCoord_3d[element[0]], this_nodesCoord_3d[element[1]]]
         seriesData.push({
             data: this_line_data,
@@ -366,7 +364,37 @@ const preprocess_3d = () => {
     })
 
     option_3d.value = {
-        tooltip: {},
+        tooltip: {
+            show: true,
+            formatter(param) {
+                // if (param.seriesName === 'line segment') {
+                //     return ''
+                // }
+                // return 'node'
+                return `Gene Name ${param.value[3]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}`
+            },
+        },
+        visualMap: {
+            // show: false,
+            dimension: 0, // x
+            min: -1,
+            max: 1,
+            inRange: {
+                color: [
+                    '#313695',
+                    '#4575b4',
+                    '#74add1',
+                    '#abd9e9',
+                    '#e0f3f8',
+                    '#ffffbf',
+                    '#fee090',
+                    '#fdae61',
+                    '#f46d43',
+                    '#d73027',
+                    '#a50026',
+                ],
+            },
+        },
         grid3D: {},
         xAxis3D: {},
         yAxis3D: {},
