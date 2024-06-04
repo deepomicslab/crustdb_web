@@ -336,18 +336,29 @@ const preprocess_3d = () => {
     const x_list = Array.from(new Set(nodesCoord_3d.value.x))
     x_list.forEach((element, idx) => {
         this_nodesCoord_3d.push([
-            element,
-            nodesCoord_3d.value.y[idx],
-            nodesCoord_3d.value.z[idx],
-            nodesCoord_3d.value.node_name[idx],
+            element, // x
+            nodesCoord_3d.value.y[idx], // y
+            nodesCoord_3d.value.z[idx], // z
+            parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // page_rank_score
+            nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
         ])
     })
+    const arrayColumn = (arr, n) => arr.map(x => x[n])
+    const array_col_3 = arrayColumn(this_nodesCoord_3d, 3) // page_rank_score
+    const min_page_rank_score = Math.min.apply(null, array_col_3)
+    const max_page_rank_score = Math.max.apply(null, array_col_3)
 
     const seriesData = [
         {
-            data: this_nodesCoord_3d,
+            // data: this_nodesCoord_3d,
             type: 'scatter3D',
             symbolSize: 7,
+            encode: {
+                x: 'x',
+                y: 'y',
+                z: 'z',
+                tooltip: [0, 1, 2, 3, 4],
+            },
         },
     ]
     const edge_index_list = Array.from(new Set(edgeList_3d.value))
@@ -371,14 +382,14 @@ const preprocess_3d = () => {
                 //     return ''
                 // }
                 // return 'node'
-                return `Gene Name ${param.value[3]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}`
+                return `Gene Name ${param.value[4]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}<br>- page_rank_score: ${param.value[3]}`
             },
         },
         visualMap: {
             // show: false,
-            dimension: 0, // x
-            min: -1,
-            max: 1,
+            dimension: 3, // page_rank_score
+            min: min_page_rank_score,
+            max: max_page_rank_score,
             inRange: {
                 color: [
                     '#313695',
@@ -400,6 +411,10 @@ const preprocess_3d = () => {
         yAxis3D: {},
         zAxis3D: {},
         series: seriesData,
+        dataset: {
+            dimensions: ['x', 'y', 'z', 'node_name', 'page_rank_score'],
+            source: this_nodesCoord_3d,
+        },
     }
 }
 
