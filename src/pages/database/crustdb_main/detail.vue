@@ -94,12 +94,17 @@
 
         <div class="mt-5 ml-15">
             <div class="flex flex-row w-200">
-                <h1 class="text-3xl mt-9 ml-7 font-500 text-[#3262a8]">Vis</h1>
+                <h1 class="text-3xl mt-5 ml-7 font-500 text-[#3262a8]">3D Vis</h1>
             </div>
             <div class="flex flex-row">
-                <mst />
-                <!-- <annotation /> -->
+                <div class="w-300 h-150 mb-10 mt-5 p-5 ml-8" style="box-shadow: 0 0 64px #cfd5db">
+                    <div id="my3dEcharts" class="h-140" ref="echart3dDom"></div>
+                </div>
             </div>
+            <!-- <div class="flex flex-row"> -->
+            <!-- <mst /> -->
+            <!-- <annotation /> -->
+            <!-- </div> -->
         </div>
         <div class="mt-5 ml-15">
             <div class="flex flex-row w-200">
@@ -170,11 +175,12 @@ import { CloudDownloadOutline as di, AddCircleOutline as selectIcon } from '@vic
 import axios from 'axios'
 import { reactive, ref } from 'vue'
 import * as echarts from 'echarts'
+import 'echarts-gl'
 import _ from 'lodash'
 import { usePhageStore } from '@/store/phage'
 import { useCrustDBStore } from '@/store/crustdb'
 
-import mst from '../../visualize/components/mst.vue'
+// import mst from '../../visualize/components/mst.vue'
 // import annotation from '../../visualize/components/annotation.vue'
 
 const phageStore = usePhageStore()
@@ -184,6 +190,7 @@ const route = useRoute()
 const phageid = computed(() => route.query?.crustdb_main_id as number)
 const repeatuid = computed(() => route.query?.details_uid as string)
 let mylineEcharts
+let my3dEcharts
 
 const phagedata = ref({
     st_platform: '',
@@ -210,7 +217,11 @@ const detailsdata = ref({
     distance_list: [],
 })
 
+const nodesCoord_3d = ref()
+const edgeList_3d = ref()
+
 const echartlineDom = ref<HTMLElement | null>(null)
+const echart3dDom = ref<HTMLElement | null>(null)
 // const linechartvalue = ref('Convergence of Conformation with Cytocraft')
 // const linechartoptions = [
 //     {
@@ -233,6 +244,8 @@ const checkList = ref([] as any[])
 const selectRepeatCheckList = ref([] as any[])
 const checkedRowKeysRef = ref<DataTableRowKey[]>([])
 // const router = useRouter()
+
+const option_3d = ref({})
 
 const downloadrequest = async () => {
     if (checkList.value.length === 0) {
@@ -317,6 +330,55 @@ const chartOption = () => {
         ],
     })
 }
+
+const preprocess_3d = () => {
+    const this_nodesCoord_3d = []
+    const x_list = Array.from(new Set(nodesCoord_3d.value.x))
+    x_list.forEach((element, idx) => {
+        this_nodesCoord_3d.push([element, nodesCoord_3d.value.y[idx], nodesCoord_3d.value.z[idx]])
+    })
+
+    // console.log('======================= this_nodesCoord_3d', this_nodesCoord_3d)
+
+    // const this_edgeList_3d = []
+    const seriesData = [
+        {
+            data: this_nodesCoord_3d,
+            type: 'scatter3D',
+            symbolSize: 2,
+        },
+    ]
+    const edge_index_list = Array.from(new Set(edgeList_3d.value))
+    edge_index_list.forEach(element => {
+        // this_edgeList_3d.push([this_nodesCoord_3d[element[0]], this_nodesCoord_3d[element[1]]])
+        // edge_indices = Array.from(new Set(element))
+        // console.log(element[0], element[1])
+        // break
+        const this_line_data = [this_nodesCoord_3d[element[0]], this_nodesCoord_3d[element[1]]]
+        seriesData.push({
+            data: this_line_data,
+            type: 'line3D',
+            lineStyle: {
+                color: '#5470C6',
+                width: 4,
+            },
+        })
+    })
+
+    option_3d.value = {
+        tooltip: {},
+        grid3D: {},
+        xAxis3D: {},
+        yAxis3D: {},
+        zAxis3D: {},
+        series: seriesData,
+    }
+}
+
+const chart3dOption = () => {
+    my3dEcharts.setOption(option_3d.value)
+}
+
 const updateRepeatList = () => {
     repeat_data_uid_list.value.length = 0
     for (let i = 0; i < phagedata.value.repeat_data_uid_list.length; i += 1) {
@@ -398,20 +460,37 @@ onBeforeMount(async () => {
 
     const [topo_data, topo_data3] = topology_response.data
     crustdbStore.nodesCoord = topo_data
+    nodesCoord_3d.value = topo_data
+
     // crustdbStore.nodeIndex = topo_data2
     crustdbStore.edgeList = topo_data3
-    // console.log('topo_data', topo_data)
-    // console.log('topo_data2', topo_data2)
-    // console.log('topo_data3', topo_data3)
-    // console.log('detail crustdbStore.edgeList', crustdbStore.edgeList)
+    edgeList_3d.value = topo_data3
+    // const this_nodesCoord_3d = []
+    // for (let i = 0; i < topo_data3.length; i += 1) {
+    //     this_nodesCoord_3d.push([topo_data.x[i], topo_data.y[i], topo_data.z[i]])
+    // }
+    // // const this_nodesCoord_3d = []
+    // // nodesCoord_3d.value.forEach(element => {
+    // //     console.log('element', element)
+    // //     this_nodesCoord_3d.push(element)
+    // // })
+    // // console.log('this_nodesCoord_3d', this_nodesCoord_3d)
+    // nodesCoord_3d.value = this_nodesCoord_3d
+    // console.log('nodesCoord_3d.value', nodesCoord_3d.value)
+    preprocess_3d()
 })
 onMounted(async () => {
     mylineEcharts = echarts.init(echartlineDom.value as HTMLElement)
+    my3dEcharts = echarts.init(echart3dDom.value as HTMLElement)
     chartOption()
+    chart3dOption()
 })
 
 watch(detailsdata, () => {
     chartOption()
+})
+watch(nodesCoord_3d, () => {
+    chart3dOption()
 })
 
 const pagination = reactive({

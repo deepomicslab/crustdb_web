@@ -8,7 +8,11 @@
                     <el-button @click="showswicth" v-show="!annoshow">View in Detail</el-button>
                 </div>
             </div>
-            <div style="box-shadow: 0 0 64px #cfd5db" class="w-310 h-200 mt-5 ml-10" v-show="annoshow">
+            <div
+                style="box-shadow: 0 0 64px #cfd5db"
+                class="w-310 h-200 mt-5 ml-10"
+                v-show="annoshow"
+            >
                 <annotation />
             </div>
         </div>
@@ -145,5 +149,4 @@ const pagination = reactive({
         pagination.page = 1
     },
 })
-
 </script>
