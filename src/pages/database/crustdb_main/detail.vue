@@ -96,6 +96,16 @@
             <div class="flex flex-row w-200">
                 <h1 class="text-3xl mt-5 ml-7 font-500 text-[#3262a8]">3D Vis</h1>
             </div>
+            <div class="mt-1.5 ml-0">
+                <el-button class="ml-5" @click="selectGraphType">
+                    <template #icon>
+                        <n-icon>
+                            <selectIcon />
+                        </n-icon>
+                    </template>
+                    Choose Graph Type
+                </el-button>
+            </div>
             <div class="flex flex-row">
                 <div class="w-300 h-150 mb-10 mt-5 p-5 ml-8" style="box-shadow: 0 0 64px #cfd5db">
                     <div id="my3dEcharts" class="h-140" ref="echart3dDom"></div>
@@ -105,20 +115,25 @@
             <!-- <mst /> -->
             <!-- <annotation /> -->
             <!-- </div> -->
+            <el-descriptions
+                class="w-330 text-xl mt-8"
+                :column="2"
+                size="large"
+                border
+                v-loading="loadtopologydata"
+            >
+                <el-descriptions-item :width="165">
+                    <template #label>
+                        <div class="cell-item">Topology Graph Attributes</div>
+                    </template>
+                    {{ graphSelectionStr }}
+                </el-descriptions-item>
+            </el-descriptions>
         </div>
         <div class="mt-5 ml-15">
             <div class="flex flex-row w-200">
                 <h1 class="text-3xl mt-9 ml-7 font-500 text-[#3262a8]">Convergence Curve</h1>
             </div>
-            <!-- <div class="flex flex-row justify-between mt-6 ml-8 w-285">
-                <n-form-item label="Please choose plot type" class="w-100">
-                    <n-select
-                        v-model:value="linechartvalue"
-                        :options="linechartoptions"
-                        @update:value="detailsdata"
-                    ></n-select>
-                </n-form-item>
-            </div> -->
             <div class="flex flex-row">
                 <div class="w-300 h-150 mb-10 mt-5 p-5 ml-8" style="box-shadow: 0 0 64px #cfd5db">
                     <div id="myEcharts" class="h-140" ref="echartlineDom"></div>
@@ -165,6 +180,28 @@
             </span>
         </template>
     </el-dialog>
+    <el-dialog
+        v-model="selectGraphTypeDialogVisible"
+        title="Select Graph Type"
+        width="30%"
+        align-center
+    >
+        <div>
+            <el-checkbox-group v-model="selectGraphTypeCheckList" :max="1">
+                <el-checkbox
+                    v-for="(v, idx) in graph_type_list"
+                    :key="v"
+                    :label="'(Graph' + (idx + 1) + ') ' + v"
+                />
+            </el-checkbox-group>
+        </div>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="selectGraphTypeDialogVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="selectGraphTypeRequest">Select</el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -186,6 +223,9 @@ import { useCrustDBStore } from '@/store/crustdb'
 const phageStore = usePhageStore()
 const crustdbStore = useCrustDBStore()
 const loaddata = ref(false)
+const loadtopologydata = ref(false)
+const graphSelectionStr = ref('')
+
 const route = useRoute()
 const phageid = computed(() => route.query?.crustdb_main_id as number)
 const repeatuid = computed(() => route.query?.details_uid as string)
@@ -217,31 +257,26 @@ const detailsdata = ref({
     distance_list: [],
 })
 
+const topologydata = ref([])
+
 const nodesCoord_3d = ref()
 const edgeList_3d = ref()
 
 const echartlineDom = ref<HTMLElement | null>(null)
 const echart3dDom = ref<HTMLElement | null>(null)
-// const linechartvalue = ref('Convergence of Conformation with Cytocraft')
-// const linechartoptions = [
-//     {
-//         label: 'ST Platform Distribution',
-//         value: 'ST Platform Distribution',
-//     },
-//     {
-//         label: 'ST Platform Distribution',
-//         value: 'ST Platform Distribution',
-//     },
-// ]
 
 const downloadphagedialogVisible = ref(false)
 
 const selectRepeatDialogVisible = ref(false)
+const selectGraphTypeDialogVisible = ref(false)
+
 const repeat_data_uid_list = ref([] as any[])
+const graph_type_list = ref([] as any[])
 
 const downloadtype = ref('')
 const checkList = ref([] as any[])
 const selectRepeatCheckList = ref([] as any[])
+const selectGraphTypeCheckList = ref([] as any[])
 const checkedRowKeysRef = ref<DataTableRowKey[]>([])
 // const router = useRouter()
 
@@ -260,28 +295,6 @@ const downloadrequest = async () => {
         )
     }
     checkList.value.length = 0
-}
-
-const selectRepeatRequest = async () => {
-    if (selectRepeatCheckList.value.length === 0) {
-        window.$message.warning('Please select one repeat', {
-            closable: true,
-            duration: 5000,
-        })
-    } else {
-        const data_uid = selectRepeatCheckList.value[0].split(' ')[2]
-        // console.log(data_uid) // Stage44.CP_1XOH
-        selectRepeatCheckList.value.length = 0 // clear the checkList
-        const response2 = await axios.get(`/details`, {
-            baseURL: '/api',
-            timeout: 10000,
-            params: {
-                details_uid: data_uid, // details.repeat_data_uid
-            },
-        })
-        detailsdata.value = response2.data
-        selectRepeatDialogVisible.value = false
-    }
 }
 
 const chartOption = () => {
@@ -422,6 +435,62 @@ const chart3dOption = () => {
     my3dEcharts.setOption(option_3d.value)
 }
 
+const selectRepeatRequest = async () => {
+    if (selectRepeatCheckList.value.length === 0) {
+        window.$message.warning('Please select one repeat', {
+            closable: true,
+            duration: 5000,
+        })
+    } else {
+        const data_uid = selectRepeatCheckList.value[0].split(' ')[2]
+        // console.log(data_uid) // Stage44.CP_1XOH
+        selectRepeatCheckList.value.length = 0 // clear the checkList
+        const response2 = await axios.get(`/details`, {
+            baseURL: '/api',
+            timeout: 10000,
+            params: {
+                details_uid: data_uid, // details.repeat_data_uid
+            },
+        })
+        detailsdata.value = response2.data
+        selectRepeatDialogVisible.value = false
+    }
+}
+
+const selectGraphTypeRequest = async () => {
+    console.log('graph_type_list1', graph_type_list.value)
+    if (selectGraphTypeCheckList.value.length === 0) {
+        window.$message.warning('Please select one repeat', {
+            closable: true,
+            duration: 5000,
+        })
+    } else {
+        // e.g., (Graph11)+topo_55-RNN_SNN-0.1_5.pkl ==> topo_55-RNN_SNN-0.1_5.pkl
+        const this_selection = selectGraphTypeCheckList.value[0]
+        graphSelectionStr.value = this_selection
+        const topology_response = await axios.get(`/details/topology`, {
+            baseURL: '/api',
+            timeout: 10000,
+            params: {
+                crustdb_main_id: phagedata.value.uniq_data_uid,
+                graph_selection_str: this_selection.split(' ')[1],
+            },
+        })
+        selectGraphTypeCheckList.value.length = 0
+        selectGraphTypeDialogVisible.value = false
+
+        const [topo_data, topo_data3] = topology_response.data
+        crustdbStore.nodesCoord = topo_data
+        nodesCoord_3d.value = topo_data
+
+        crustdbStore.edgeList = topo_data3
+        edgeList_3d.value = topo_data3
+        console.log('graph_type_list2', graph_type_list.value)
+        preprocess_3d()
+    }
+    console.log('graph_type_list3', graph_type_list.value)
+}
+
 const updateRepeatList = () => {
     repeat_data_uid_list.value.length = 0
     for (let i = 0; i < phagedata.value.repeat_data_uid_list.length; i += 1) {
@@ -430,10 +499,22 @@ const updateRepeatList = () => {
         )
     }
 }
+const updateGraphTypeList = () => {
+    graph_type_list.value.length = 0
+    graph_type_list.value = topologydata.value
+}
 const selectRepeat = () => {
     updateRepeatList()
     selectRepeatDialogVisible.value = true
 }
+const selectGraphType = () => {
+    if (graph_type_list.value.length === 0) {
+        // --------------------------------------------------------------------------------------------------------------------------------------- 可能会有问题，记录一下
+        updateGraphTypeList()
+    }
+    selectGraphTypeDialogVisible.value = true
+}
+
 const download = () => {
     updateRepeatList()
     downloadtype.value = 'single'
@@ -481,6 +562,17 @@ onBeforeMount(async () => {
     loaddata.value = false
 
     // ============== topology data ==============
+    loadtopologydata.value = true
+    let topology_list_response = null
+    topology_list_response = await axios.get(`/details/topology_graphlist`, {
+        baseURL: '/api',
+        timeout: 10000,
+        params: {
+            crustdb_main_id: phagedata.value.uniq_data_uid, // details.repeat_data_uid
+        },
+    })
+    topologydata.value = topology_list_response.data
+
     let topology_response = null
     if (repeatuid.value === '') {
         topology_response = await axios.get(`/details/topology`, {
@@ -499,28 +591,15 @@ onBeforeMount(async () => {
             },
         })
     }
-    // console.log('topology_response', topology_response)
 
     const [topo_data, topo_data3] = topology_response.data
     crustdbStore.nodesCoord = topo_data
     nodesCoord_3d.value = topo_data
 
-    // crustdbStore.nodeIndex = topo_data2
     crustdbStore.edgeList = topo_data3
     edgeList_3d.value = topo_data3
-    // const this_nodesCoord_3d = []
-    // for (let i = 0; i < topo_data3.length; i += 1) {
-    //     this_nodesCoord_3d.push([topo_data.x[i], topo_data.y[i], topo_data.z[i]])
-    // }
-    // // const this_nodesCoord_3d = []
-    // // nodesCoord_3d.value.forEach(element => {
-    // //     console.log('element', element)
-    // //     this_nodesCoord_3d.push(element)
-    // // })
-    // // console.log('this_nodesCoord_3d', this_nodesCoord_3d)
-    // nodesCoord_3d.value = this_nodesCoord_3d
-    // console.log('nodesCoord_3d.value', nodesCoord_3d.value)
     preprocess_3d()
+    loadtopologydata.value = false
 })
 onMounted(async () => {
     mylineEcharts = echarts.init(echartlineDom.value as HTMLElement)
