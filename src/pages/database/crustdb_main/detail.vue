@@ -2,6 +2,52 @@
     <div class="flex flex-col mx-1/10 justify-start">
         <div class="w-300 mt-18 ml-10">
             <div class="flex flex-row w-350 border-b-2 border-gray-300">
+                <div class="text-4xl font-500 mb-8">Graph Information</div>
+                <div class="mt-1.5 ml-0">
+                    <el-button class="ml-5" @click="selectGraphType">
+                        <template #icon>
+                            <n-icon>
+                                <selectIcon />
+                            </n-icon>
+                        </template>
+                        Choose Graph Type
+                    </el-button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5 ml-15">
+            <div class="flex flex-row w-200">
+                <h1 class="text-3xl mt-5 ml-7 font-500 text-[#3262a8]">3D Vis</h1>
+            </div>
+            <el-descriptions
+                class="w-330 text-xl mt-8"
+                :column="2"
+                size="large"
+                border
+                v-loading="loadtopologydata"
+            >
+                <el-descriptions-item :width="165">
+                    <template #label>
+                        <div class="cell-item">Topology Graph Attributes</div>
+                    </template>
+                    {{ graphSelectionStr }}
+                </el-descriptions-item>
+            </el-descriptions>
+            <div class="flex flex-row">
+                <div class="w-300 h-150 mb-10 mt-5 p-5 ml-8" style="box-shadow: 0 0 64px #cfd5db">
+                    <div id="my3dEcharts" class="h-140" ref="echart3dDom"></div>
+                </div>
+            </div>
+            <!-- <div class="flex flex-row"> -->
+            <!-- <mst /> -->
+            <!-- <annotation /> -->
+            <!-- </div> -->
+        </div>
+    </div>
+    <div class="flex flex-col mx-1/10 justify-start">
+        <div class="w-300 mt-18 ml-10">
+            <div class="flex flex-row w-350 border-b-2 border-gray-300">
                 <div class="text-4xl font-500 mb-8">CyGraph Conformation</div>
                 <div class="mt-1.5 ml-10">
                     <el-button class="ml-5" @click="download">
@@ -92,44 +138,6 @@
             </el-descriptions>
         </div>
 
-        <div class="mt-5 ml-15">
-            <div class="flex flex-row w-200">
-                <h1 class="text-3xl mt-5 ml-7 font-500 text-[#3262a8]">3D Vis</h1>
-            </div>
-            <div class="mt-1.5 ml-0">
-                <el-button class="ml-5" @click="selectGraphType">
-                    <template #icon>
-                        <n-icon>
-                            <selectIcon />
-                        </n-icon>
-                    </template>
-                    Choose Graph Type
-                </el-button>
-            </div>
-            <div class="flex flex-row">
-                <div class="w-300 h-150 mb-10 mt-5 p-5 ml-8" style="box-shadow: 0 0 64px #cfd5db">
-                    <div id="my3dEcharts" class="h-140" ref="echart3dDom"></div>
-                </div>
-            </div>
-            <!-- <div class="flex flex-row"> -->
-            <!-- <mst /> -->
-            <!-- <annotation /> -->
-            <!-- </div> -->
-            <el-descriptions
-                class="w-330 text-xl mt-8"
-                :column="2"
-                size="large"
-                border
-                v-loading="loadtopologydata"
-            >
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Topology Graph Attributes</div>
-                    </template>
-                    {{ graphSelectionStr }}
-                </el-descriptions-item>
-            </el-descriptions>
-        </div>
         <div class="mt-5 ml-15">
             <div class="flex flex-row w-200">
                 <h1 class="text-3xl mt-9 ml-7 font-500 text-[#3262a8]">Convergence Curve</h1>
@@ -257,7 +265,7 @@ const detailsdata = ref({
     distance_list: [],
 })
 
-const topologydata = ref([])
+const topologyselectiondata = ref([])
 
 const nodesCoord_3d = ref()
 const edgeList_3d = ref()
@@ -472,7 +480,6 @@ const selectGraphTypeRequest = async () => {
             baseURL: '/api',
             timeout: 10000,
             params: {
-                crustdb_main_id: phagedata.value.uniq_data_uid,
                 graph_selection_str: this_selection.split(' ')[1],
             },
         })
@@ -485,10 +492,8 @@ const selectGraphTypeRequest = async () => {
 
         crustdbStore.edgeList = topo_data3
         edgeList_3d.value = topo_data3
-        console.log('graph_type_list2', graph_type_list.value)
         preprocess_3d()
     }
-    console.log('graph_type_list3', graph_type_list.value)
 }
 
 const updateRepeatList = () => {
@@ -501,7 +506,7 @@ const updateRepeatList = () => {
 }
 const updateGraphTypeList = () => {
     graph_type_list.value.length = 0
-    graph_type_list.value = topologydata.value
+    graph_type_list.value = topologyselectiondata.value
 }
 const selectRepeat = () => {
     updateRepeatList()
@@ -564,33 +569,35 @@ onBeforeMount(async () => {
     // ============== topology data ==============
     loadtopologydata.value = true
     let topology_list_response = null
-    topology_list_response = await axios.get(`/details/topology_graphlist`, {
-        baseURL: '/api',
-        timeout: 10000,
-        params: {
-            crustdb_main_id: phagedata.value.uniq_data_uid, // details.repeat_data_uid
-        },
-    })
-    topologydata.value = topology_list_response.data
-
-    let topology_response = null
     if (repeatuid.value === '') {
-        topology_response = await axios.get(`/details/topology`, {
+        topology_list_response = await axios.get(`/details/topology_graphlist`, {
             baseURL: '/api',
             timeout: 10000,
             params: {
-                crustdb_main_id: phagedata.value.uniq_data_uid, // details.repeat_data_uid
+                crustdb_main_id: phagedata.value.uniq_data_uid, // 默认展示第一个 repeat
             },
         })
     } else {
-        topology_response = await axios.get(`/details/topology`, {
+        topology_list_response = await axios.get(`/details/topology_graphlist`, {
             baseURL: '/api',
             timeout: 10000,
             params: {
-                details_uid: repeatuid.value, // details.repeat_data_uid
+                details_uid: repeatuid.value, // details.repeat_data_uid 用户选择一个 repeat
             },
         })
     }
+    topologyselectiondata.value = topology_list_response.data // 返回该 repeat 对应的 graph list
+    const this_selection = topologyselectiondata.value[0]
+    graphSelectionStr.value = this_selection
+    console.log('topologyselectiondata.value', topologyselectiondata.value[0])
+
+    const topology_response = await axios.get(`/details/topology`, {
+        baseURL: '/api',
+        timeout: 10000,
+        params: {
+            graph_selection_str: topologyselectiondata.value[0], // details.repeat_data_uid
+        },
+    })
 
     const [topo_data, topo_data3] = topology_response.data
     crustdbStore.nodesCoord = topo_data
