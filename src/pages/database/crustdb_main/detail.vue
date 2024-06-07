@@ -29,9 +29,51 @@
             >
                 <el-descriptions-item :width="165">
                     <template #label>
-                        <div class="cell-item">Topology Graph Attributes</div>
+                        <div class="cell-item">Graph Type Selection</div>
                     </template>
                     {{ graphSelectionStr }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165" v-if="graph_info">
+                    <template #label>
+                        <div class="cell-item">Average Branching Factor</div>
+                    </template>
+                    {{ graph_info.average_branching_factor }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165" v-if="graph_info">
+                    <template #label>
+                        <div class="cell-item">Modularity</div>
+                    </template>
+                    {{ graph_info.modularity }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165" v-if="graph_info">
+                    <template #label>
+                        <div class="cell-item">Span</div>
+                    </template>
+                    {{ graph_info.span }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165" v-if="graph_info">
+                    <template #label>
+                        <div class="cell-item">Assortativity</div>
+                    </template>
+                    {{ graph_info.assortativity }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165" v-if="graph_info">
+                    <template #label>
+                        <div class="cell-item">Degree Centrality</div>
+                    </template>
+                    {{ graph_info.degree_centrality }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165" v-if="graph_info">
+                    <template #label>
+                        <div class="cell-item">Closeness Centrality</div>
+                    </template>
+                    {{ graph_info.closeness_centrality }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165" v-if="graph_info">
+                    <template #label>
+                        <div class="cell-item">Betweenness Centrality</div>
+                    </template>
+                    {{ graph_info.betweenness_centrality }}
                 </el-descriptions-item>
             </el-descriptions>
             <div class="flex flex-row">
@@ -269,6 +311,7 @@ const topologyselectiondata = ref([])
 
 const nodesCoord_3d = ref()
 const edgeList_3d = ref()
+const graph_info = ref()
 
 const echartlineDom = ref<HTMLElement | null>(null)
 const echart3dDom = ref<HTMLElement | null>(null)
@@ -486,12 +529,14 @@ const selectGraphTypeRequest = async () => {
         selectGraphTypeCheckList.value.length = 0
         selectGraphTypeDialogVisible.value = false
 
-        const [topo_data, topo_data3] = topology_response.data
+        const [topo_data, topo_data3, topo_data4] = topology_response.data
         crustdbStore.nodesCoord = topo_data
         nodesCoord_3d.value = topo_data
 
         crustdbStore.edgeList = topo_data3
         edgeList_3d.value = topo_data3
+
+        graph_info.value = topo_data4
         preprocess_3d()
     }
 }
@@ -599,12 +644,13 @@ onBeforeMount(async () => {
         },
     })
 
-    const [topo_data, topo_data3] = topology_response.data
+    const [topo_data, topo_data3, topo_data4] = topology_response.data
     crustdbStore.nodesCoord = topo_data
     nodesCoord_3d.value = topo_data
 
     crustdbStore.edgeList = topo_data3
     edgeList_3d.value = topo_data3
+    graph_info.value = topo_data4
     preprocess_3d()
     loadtopologydata.value = false
 })
