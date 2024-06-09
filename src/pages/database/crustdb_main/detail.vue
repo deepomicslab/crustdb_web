@@ -117,6 +117,13 @@
                     <div id="my2dEcharts" class="h-140" ref="echart2dDom"></div>
                 </div>
             </div>
+            <!-- <div class="flex flex-row">
+                <div class="w-300 h-150 mb-10 mt-5 p-5 ml-8" style="box-shadow: 0 0 64px #cfd5db">
+                    <el-scrollbar class="h-200" v-loading="loadtopologydata">
+                        <div id="my2dEcharts" class="h-140" ref="echart2dDom"></div>
+                    </el-scrollbar>
+                </div>
+            </div> -->
             <div v-loading="loadtopologydata" class="h-420">
                 <n-data-table
                     :data="phageList"
@@ -304,7 +311,7 @@
 import { CloudDownloadOutline as di, AddCircleOutline as selectIcon } from '@vicons/ionicons5'
 //
 import axios from 'axios'
-import { reactive, ref } from 'vue'
+import { reactive, ref, isProxy, toRaw } from 'vue'
 import * as echarts from 'echarts'
 import 'echarts-gl'
 import { NTooltip } from 'naive-ui'
@@ -358,6 +365,7 @@ const topologyselectiondata = ref([])
 const nodesCoord_3d = ref()
 const edgeList_3d = ref()
 const graph_info = ref()
+const mst_parentchild_relation = ref()
 
 const echartlineDom = ref<HTMLElement | null>(null)
 const echart3dDom = ref<HTMLElement | null>(null)
@@ -465,7 +473,7 @@ const preprocess_3d = () => {
         {
             // data: this_nodesCoord_3d,
             type: 'scatter3D',
-            symbolSize: 7,
+            symbolSize: 12,
             encode: {
                 x: 'x',
                 y: 'y',
@@ -488,6 +496,9 @@ const preprocess_3d = () => {
     })
 
     option_3d.value = {
+        title: {
+            text: graphSelectionStr.value,
+        },
         tooltip: {
             show: true,
             formatter(param) {
@@ -504,20 +515,9 @@ const preprocess_3d = () => {
             min: min_page_rank_score,
             max: max_page_rank_score,
             inRange: {
-                color: [
-                    '#313695',
-                    '#4575b4',
-                    '#74add1',
-                    '#abd9e9',
-                    '#e0f3f8',
-                    '#ffffbf',
-                    '#fee090',
-                    '#fdae61',
-                    '#f46d43',
-                    '#d73027',
-                    '#a50026',
-                ],
+                color: ['#2F93C8', '#AEC48F', '#FFDB5C', '#F98862', '#E53C2B'],
             },
+            precision: 4,
         },
         grid3D: {},
         xAxis3D: {},
@@ -531,51 +531,126 @@ const preprocess_3d = () => {
     }
 }
 const preprocess_2d = () => {
-    // ====================================== 2D =====================================
-    const this_2d_edges = []
-    const edge_index_list = Array.from(new Set(edgeList_3d.value))
-    edge_index_list.forEach(element => {
-        this_2d_edges.push({
-            source: element[0],
-            target: element[1],
+    // mst 用 tree graph
+    if (graphSelectionStr.value.includes('MST')) {
+        const this_nodesCoord_3d = []
+        const x_list = Array.from(new Set(nodesCoord_3d.value.x))
+        x_list.forEach((element, idx) => {
+            this_nodesCoord_3d.push([
+                element, // x
+                nodesCoord_3d.value.y[idx], // y
+                nodesCoord_3d.value.z[idx], // z
+                parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // page_rank_score
+                nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
+            ])
         })
-    })
-    // console.log('this_2d_edges', this_2d_edges)
-    const this_2d_nodes = []
-    const nodename_list = Array.from(new Set(nodesCoord_3d.value.node_name))
-    nodename_list.forEach((element, idx) => {
-        this_2d_nodes.push({
-            name: element, // node_name (i.e. gene name)
-            id: idx,
-        })
-    })
-    // this_2d_edges.push({ source: 0, target: 1 })
-    // this_2d_nodes.push({ name: 'sdgf', id: 0 })
-    // this_2d_nodes.push({ name: 'ZZZZ', id: 1 })
-    // console.log('this_2d_nodes', this_2d_nodes)
-    option_2d.value = {
-        series: [
-            {
-                type: 'graph',
-                layout: 'force',
-                label: {
-                    position: 'right',
-                    formatter: '{b}',
-                },
-                draggable: true,
-                force: {
-                    // edgeLength: 10,
-                    repulsion: 50,
-                    // gravity: 0.3,
-                },
-                data: this_2d_nodes,
-                edges: this_2d_edges,
-                lineStyle: {
-                    color: '',
-                    curveness: 0,
-                },
+        const arrayColumn = (arr, n) => arr.map(x => x[n])
+        const array_col_3 = arrayColumn(this_nodesCoord_3d, 3) // page_rank_score    const min_page_rank_score = Math.min.apply(null, array_col_3)
+        const min_page_rank_score = Math.min.apply(null, array_col_3)
+        const max_page_rank_score = Math.max.apply(null, array_col_3)
+        let this_mst_parentchild_relation = mst_parentchild_relation.value
+        if (isProxy(mst_parentchild_relation.value)) {
+            this_mst_parentchild_relation = toRaw(mst_parentchild_relation.value)
+        }
+        // console.log('this_mst_parentchild_relation', this_mst_parentchild_relation)
+        option_2d.value = {
+            title: {
+                text: graphSelectionStr.value,
             },
-        ],
+            tooltip: {
+                trigger: 'item',
+                triggerOn: 'mousemove',
+            },
+            visualMap: {
+                type: 'continuous',
+                min: min_page_rank_score,
+                max: max_page_rank_score,
+                inRange: {
+                    color: ['#2F93C8', '#AEC48F', '#FFDB5C', '#F98862', '#E53C2B'],
+                },
+                precision: 4,
+            },
+            series: [
+                {
+                    type: 'tree',
+                    //   data: [mydata],
+                    data: [this_mst_parentchild_relation],
+                    symbol: 'circle',
+                    fontSize: 10,
+                    labelLayout: {
+                        hideOverlap: true,
+                    },
+                    symbolSize: 9,
+                    label: {
+                        position: 'left',
+                        verticalAlign: 'middle',
+                        align: 'right',
+                        fontSize: 9,
+                    },
+                    leaves: {
+                        label: {
+                            position: 'right',
+                            verticalAlign: 'middle',
+                            align: 'left',
+                        },
+                    },
+                    emphasis: {
+                        focus: 'descendant',
+                    },
+                    expandAndCollapse: false,
+                    animationDuration: 550,
+                    animationDurationUpdate: 750,
+                    roam: true, // 图可以在页面整体放缩
+                },
+            ],
+        }
+    }
+    // 其他的用 force directed graph
+    else {
+        const this_2d_edges = []
+        const edge_index_list = Array.from(new Set(edgeList_3d.value))
+        edge_index_list.forEach(element => {
+            this_2d_edges.push({
+                source: element[0],
+                target: element[1],
+            })
+        })
+        const this_2d_nodes = []
+        const nodename_list = Array.from(new Set(nodesCoord_3d.value.node_name))
+        nodename_list.forEach((element, idx) => {
+            this_2d_nodes.push({
+                name: element, // node_name (i.e. gene name)
+                id: idx,
+            })
+        })
+        option_2d.value = {
+            title: {
+                text: graphSelectionStr.value,
+            },
+            series: [
+                {
+                    type: 'graph',
+                    layout: 'force',
+                    label: {
+                        position: 'right',
+                        formatter: '{b}',
+                    },
+                    draggable: true,
+                    force: {
+                        edgeLength: 10,
+                        repulsion: 50,
+                        gravity: 0.3,
+                    },
+                    data: this_2d_nodes,
+                    edges: this_2d_edges,
+                    lineStyle: {
+                        color: '',
+                        curveness: 0,
+                    },
+                    roam: true, // 图可以在页面整体放缩
+                },
+            ],
+        }
     }
 }
 
@@ -733,7 +808,9 @@ onBeforeMount(async () => {
         })
     }
     topologyselectiondata.value = topology_list_response.data // 返回该 repeat 对应的 graph list
-    const this_selection = topologyselectiondata.value[6] // 默认展示第一个 graph =================================================================================================
+    // 默认展示第一个 graph =================================================================================================
+    // index 6 is mst
+    const this_selection = topologyselectiondata.value[6]
     graphSelectionStr.value = this_selection
     // console.log('topologyselectiondata.value', this_selection)
 
@@ -745,7 +822,7 @@ onBeforeMount(async () => {
         },
     })
 
-    const [topo_data, topo_data3, topo_data4] = topology_response.data
+    const [topo_data, topo_data3, topo_data4, topo_data5] = topology_response.data
     crustdbStore.nodesCoord = topo_data
     nodesCoord_3d.value = topo_data
     // console.log('nodesCoord_3d.value', nodesCoord_3d.value)
@@ -753,6 +830,9 @@ onBeforeMount(async () => {
     crustdbStore.edgeList = topo_data3
     edgeList_3d.value = topo_data3
     graph_info.value = topo_data4
+    mst_parentchild_relation.value = topo_data5
+    // console.log('mst_parentchild_relation', mst_parentchild_relation.value)
+
     preprocess_3d()
     preprocess_2d()
     loadtopologydata.value = false
@@ -783,16 +863,26 @@ const phageList = computed(() => {
     if (nodesCoord_3d.value) {
         const x_list = Array.from(new Set(nodesCoord_3d.value.x))
         x_list.forEach((element, idx) => {
+            // console.log(
+            //     'degree',
+            //     nodesCoord_3d.value.degrees[idx],
+            //     typeof nodesCoord_3d.value.degrees[idx]
+            // )
             this_phageList.push({
                 x: element, // x
                 y: nodesCoord_3d.value.y[idx], // y
                 z: nodesCoord_3d.value.z[idx], // z
                 node_name: nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
-                degrees: nodesCoord_3d.value.degrees[idx],
-                degree_centrality: nodesCoord_3d.value.degree_centrality[idx],
-                betweenness: nodesCoord_3d.value.betweenness[idx], // betweenness (i.e. gene name)
-                closeness_centrality: nodesCoord_3d.value.closeness_centrality[idx],
-                page_rank_score: parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // page_rank_score
+                degrees: parseInt(nodesCoord_3d.value.degrees[idx], 10),
+                degree_centrality:
+                    Math.round(parseFloat(nodesCoord_3d.value.degree_centrality[idx]) * 1e4) / 1e4,
+                betweenness:
+                    Math.round(parseFloat(nodesCoord_3d.value.betweenness[idx]) * 1e4) / 1e4,
+                closeness_centrality:
+                    Math.round(parseFloat(nodesCoord_3d.value.closeness_centrality[idx]) * 1e4) /
+                    1e4,
+                page_rank_score:
+                    Math.round(parseFloat(nodesCoord_3d.value.page_rank_score[idx]) * 1e4) / 1e4,
             })
         })
     }
@@ -815,7 +905,7 @@ const pagination = reactive({
 })
 
 const col_width = {
-    node_name: 100,
+    node_name: 70,
     degrees: 60,
     degree_centrality: 60,
     betweenness: 60,
@@ -841,16 +931,12 @@ const rowKey = (row: RowData) => {
 }
 const createColumns = (): DataTableColumns<RowData> => {
     return [
-        // {
-        //     type: 'selection',
-        // },
         {
             title() {
                 return renderTooltip(h('div', null, { default: () => 'Gene Name' }), 'Gene Name')
             },
             key: 'node_name',
             align: 'center',
-            // sorter: 'default',
             sorter: true,
             ellipsis: {
                 tooltip: true,
@@ -863,18 +949,27 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'degrees',
             align: 'center',
-            // sorter: 'default',
             sorter: true,
             ellipsis: {
                 tooltip: true,
             },
             width: col_width.degrees,
+            // render(row: any) {
+            //     // return parseInt(row.degrees)
+            //     // return row.degrees.toFixed(0)
+            //     return h('div', null, {
+            //         default: () => {
+            //             console.log(typeof row.degrees, row.degrees)
+            //             return row.degrees.toFixed(0)
+            //         },
+            //     })
+            // },
         },
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'degree_centrality' }),
-                    'degree_centrality'
+                    h('div', null, { default: () => 'Degree Centrality' }),
+                    'degree centrality'
                 )
             },
             key: 'degree_centrality',
@@ -888,7 +983,7 @@ const createColumns = (): DataTableColumns<RowData> => {
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'betweenness' }),
+                    h('div', null, { default: () => 'Betweenness' }),
                     'betweenness'
                 )
             },
@@ -903,8 +998,8 @@ const createColumns = (): DataTableColumns<RowData> => {
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'closeness_centrality' }),
-                    'closeness_centrality'
+                    h('div', null, { default: () => 'Closeness Centrality' }),
+                    'closeness centrality'
                 )
             },
             key: 'closeness_centrality',
@@ -918,8 +1013,8 @@ const createColumns = (): DataTableColumns<RowData> => {
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'page_rank_score' }),
-                    'page_rank_score'
+                    h('div', null, { default: () => 'Page Rank Score' }),
+                    'page rank score'
                 )
             },
             key: 'page_rank_score',
