@@ -90,6 +90,50 @@
     <div class="flex flex-col mx-1/10 justify-start">
         <div class="w-300 mt-18 ml-10">
             <div class="flex flex-row w-350 border-b-2 border-gray-300">
+                <div class="text-4xl font-500 mb-8">Graph Nodes</div>
+            </div>
+        </div>
+
+        <div class="mt-5 ml-15">
+            <div class="flex flex-row w-200">
+                <h1 class="text-3xl mt-5 ml-7 font-500 text-[#3262a8]">2D Vis</h1>
+            </div>
+            <!-- <el-descriptions
+                class="w-330 text-xl mt-8"
+                :column="2"
+                size="large"
+                border
+                v-loading="loadtopologydata"
+            >
+                <el-descriptions-item :width="165">
+                    <template #label>
+                        <div class="cell-item">Graph Type Selection</div>
+                    </template>
+                    {{ graphSelectionStr }}
+                </el-descriptions-item>
+            </el-descriptions> -->
+            <div class="flex flex-row">
+                <div class="w-300 h-150 mb-10 mt-5 p-5 ml-8" style="box-shadow: 0 0 64px #cfd5db">
+                    <div id="my2dEcharts" class="h-140" ref="echart2dDom"></div>
+                </div>
+            </div>
+            <div v-loading="loadtopologydata" class="h-420">
+                <n-data-table
+                    :data="phageList"
+                    :columns="columns"
+                    :max-height="700"
+                    :row-key="rowKey"
+                    :scroll-x="1100"
+                />
+                <!-- @update:checked-row-keys="handleCheckNode"
+                @update:filters="handleUpdateFilterNode"
+                @update:sorter="handleSorterChangeNode" -->
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-col mx-1/10 justify-start">
+        <div class="w-300 mt-18 ml-10">
+            <div class="flex flex-row w-350 border-b-2 border-gray-300">
                 <div class="text-4xl font-500 mb-8">CyGraph Conformation</div>
                 <div class="mt-1.5 ml-10">
                     <el-button class="ml-5" @click="download">
@@ -263,6 +307,7 @@ import axios from 'axios'
 import { reactive, ref } from 'vue'
 import * as echarts from 'echarts'
 import 'echarts-gl'
+import { NTooltip } from 'naive-ui'
 import _ from 'lodash'
 import { usePhageStore } from '@/store/phage'
 import { useCrustDBStore } from '@/store/crustdb'
@@ -281,6 +326,7 @@ const phageid = computed(() => route.query?.crustdb_main_id as number)
 const repeatuid = computed(() => route.query?.details_uid as string)
 let mylineEcharts
 let my3dEcharts
+let my2dEcharts
 
 const phagedata = ref({
     st_platform: '',
@@ -315,6 +361,7 @@ const graph_info = ref()
 
 const echartlineDom = ref<HTMLElement | null>(null)
 const echart3dDom = ref<HTMLElement | null>(null)
+const echart2dDom = ref<HTMLElement | null>(null)
 
 const downloadphagedialogVisible = ref(false)
 
@@ -332,6 +379,7 @@ const checkedRowKeysRef = ref<DataTableRowKey[]>([])
 // const router = useRouter()
 
 const option_3d = ref({})
+const option_2d = ref({})
 
 const downloadrequest = async () => {
     if (checkList.value.length === 0) {
@@ -396,6 +444,7 @@ const chartOption = () => {
 }
 
 const preprocess_3d = () => {
+    // ====================================== 3D =====================================
     const this_nodesCoord_3d = []
     const x_list = Array.from(new Set(nodesCoord_3d.value.x))
     x_list.forEach((element, idx) => {
@@ -481,9 +530,60 @@ const preprocess_3d = () => {
         },
     }
 }
+const preprocess_2d = () => {
+    // ====================================== 2D =====================================
+    const this_2d_edges = []
+    const edge_index_list = Array.from(new Set(edgeList_3d.value))
+    edge_index_list.forEach(element => {
+        this_2d_edges.push({
+            source: element[0],
+            target: element[1],
+        })
+    })
+    // console.log('this_2d_edges', this_2d_edges)
+    const this_2d_nodes = []
+    const nodename_list = Array.from(new Set(nodesCoord_3d.value.node_name))
+    nodename_list.forEach((element, idx) => {
+        this_2d_nodes.push({
+            name: element, // node_name (i.e. gene name)
+            id: idx,
+        })
+    })
+    // this_2d_edges.push({ source: 0, target: 1 })
+    // this_2d_nodes.push({ name: 'sdgf', id: 0 })
+    // this_2d_nodes.push({ name: 'ZZZZ', id: 1 })
+    // console.log('this_2d_nodes', this_2d_nodes)
+    option_2d.value = {
+        series: [
+            {
+                type: 'graph',
+                layout: 'force',
+                label: {
+                    position: 'right',
+                    formatter: '{b}',
+                },
+                draggable: true,
+                force: {
+                    // edgeLength: 10,
+                    repulsion: 50,
+                    // gravity: 0.3,
+                },
+                data: this_2d_nodes,
+                edges: this_2d_edges,
+                lineStyle: {
+                    color: '',
+                    curveness: 0,
+                },
+            },
+        ],
+    }
+}
 
 const chart3dOption = () => {
     my3dEcharts.setOption(option_3d.value)
+}
+const chart2dOption = () => {
+    my2dEcharts.setOption(option_2d.value)
 }
 
 const selectRepeatRequest = async () => {
@@ -509,7 +609,7 @@ const selectRepeatRequest = async () => {
 }
 
 const selectGraphTypeRequest = async () => {
-    console.log('graph_type_list1', graph_type_list.value)
+    // console.log('graph_type_list1', graph_type_list.value)
     if (selectGraphTypeCheckList.value.length === 0) {
         window.$message.warning('Please select one repeat', {
             closable: true,
@@ -538,6 +638,7 @@ const selectGraphTypeRequest = async () => {
 
         graph_info.value = topo_data4
         preprocess_3d()
+        preprocess_2d()
     }
 }
 
@@ -632,33 +733,37 @@ onBeforeMount(async () => {
         })
     }
     topologyselectiondata.value = topology_list_response.data // 返回该 repeat 对应的 graph list
-    const this_selection = topologyselectiondata.value[0]
+    const this_selection = topologyselectiondata.value[6] // 默认展示第一个 graph =================================================================================================
     graphSelectionStr.value = this_selection
-    console.log('topologyselectiondata.value', topologyselectiondata.value[0])
+    // console.log('topologyselectiondata.value', this_selection)
 
     const topology_response = await axios.get(`/details/topology`, {
         baseURL: '/api',
         timeout: 10000,
         params: {
-            graph_selection_str: topologyselectiondata.value[0], // details.repeat_data_uid
+            graph_selection_str: this_selection, // details.repeat_data_uid
         },
     })
 
     const [topo_data, topo_data3, topo_data4] = topology_response.data
     crustdbStore.nodesCoord = topo_data
     nodesCoord_3d.value = topo_data
+    // console.log('nodesCoord_3d.value', nodesCoord_3d.value)
 
     crustdbStore.edgeList = topo_data3
     edgeList_3d.value = topo_data3
     graph_info.value = topo_data4
     preprocess_3d()
+    preprocess_2d()
     loadtopologydata.value = false
 })
 onMounted(async () => {
     mylineEcharts = echarts.init(echartlineDom.value as HTMLElement)
     my3dEcharts = echarts.init(echart3dDom.value as HTMLElement)
+    my2dEcharts = echarts.init(echart2dDom.value as HTMLElement)
     chartOption()
     chart3dOption()
+    chart2dOption()
 })
 
 watch(detailsdata, () => {
@@ -666,6 +771,33 @@ watch(detailsdata, () => {
 })
 watch(nodesCoord_3d, () => {
     chart3dOption()
+    chart2dOption()
+})
+
+const phageList = computed(() => {
+    // console.log('-------------------------nodesCoord_3d', nodesCoord_3d.value)
+    // return _.map(nodesCoord_3d.value?.results, (row: any) => {
+    //     return row
+    // })
+    const this_phageList = []
+    if (nodesCoord_3d.value) {
+        const x_list = Array.from(new Set(nodesCoord_3d.value.x))
+        x_list.forEach((element, idx) => {
+            this_phageList.push({
+                x: element, // x
+                y: nodesCoord_3d.value.y[idx], // y
+                z: nodesCoord_3d.value.z[idx], // z
+                node_name: nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
+                degrees: nodesCoord_3d.value.degrees[idx],
+                degree_centrality: nodesCoord_3d.value.degree_centrality[idx],
+                betweenness: nodesCoord_3d.value.betweenness[idx], // betweenness (i.e. gene name)
+                closeness_centrality: nodesCoord_3d.value.closeness_centrality[idx],
+                page_rank_score: parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // page_rank_score
+            })
+        })
+    }
+    // console.log('===========================this_phageList', this_phageList)
+    return this_phageList
 })
 
 const pagination = reactive({
@@ -681,4 +813,125 @@ const pagination = reactive({
         pagination.page = 1
     },
 })
+
+const col_width = {
+    node_name: 100,
+    degrees: 60,
+    degree_centrality: 60,
+    betweenness: 60,
+    closeness_centrality: 60,
+    page_rank_score: 60,
+}
+
+type RowData = {
+    degrees: number
+    degree_centrality: number
+    betweenness: number
+    closeness_centrality: number
+    page_rank_score: number
+}
+const renderTooltip = (trigger: any, content: any) => {
+    return h(NTooltip, null, {
+        trigger: () => trigger,
+        default: () => content,
+    })
+}
+const rowKey = (row: RowData) => {
+    return row.id
+}
+const createColumns = (): DataTableColumns<RowData> => {
+    return [
+        // {
+        //     type: 'selection',
+        // },
+        {
+            title() {
+                return renderTooltip(h('div', null, { default: () => 'Gene Name' }), 'Gene Name')
+            },
+            key: 'node_name',
+            align: 'center',
+            // sorter: 'default',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.node_name,
+        },
+        {
+            title() {
+                return renderTooltip(h('div', null, { default: () => 'degrees' }), 'degrees')
+            },
+            key: 'degrees',
+            align: 'center',
+            // sorter: 'default',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.degrees,
+        },
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'degree_centrality' }),
+                    'degree_centrality'
+                )
+            },
+            key: 'degree_centrality',
+            align: 'center',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.degree_centrality,
+        },
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'betweenness' }),
+                    'betweenness'
+                )
+            },
+            key: 'betweenness',
+            align: 'center',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.betweenness,
+        },
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'closeness_centrality' }),
+                    'closeness_centrality'
+                )
+            },
+            key: 'closeness_centrality',
+            align: 'center',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.closeness_centrality,
+        },
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'page_rank_score' }),
+                    'page_rank_score'
+                )
+            },
+            key: 'page_rank_score',
+            align: 'center',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.page_rank_score,
+        },
+    ]
+}
+
+const columns = createColumns()
 </script>
