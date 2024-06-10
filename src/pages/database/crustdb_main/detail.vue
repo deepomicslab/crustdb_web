@@ -404,6 +404,18 @@ const downloadrequest = async () => {
     checkList.value.length = 0
 }
 
+const colormap = [
+    '#313695',
+    '#4575b4',
+    '#74add1',
+    '#abd9e9',
+    // '#fee090',
+    '#fdae61',
+    '#f46d43',
+    '#d73027',
+    '#a50026',
+]
+
 const chartOption = () => {
     mylineEcharts.setOption({
         title: {
@@ -418,8 +430,6 @@ const chartOption = () => {
             },
             feature: {
                 dataView: { readOnly: true },
-                // magicType: { type: ['line', 'bar'] },
-                // restore: {},
                 saveAsImage: {},
             },
         },
@@ -471,7 +481,6 @@ const preprocess_3d = () => {
 
     const seriesData = [
         {
-            // data: this_nodesCoord_3d,
             type: 'scatter3D',
             symbolSize: 12,
             encode: {
@@ -502,20 +511,15 @@ const preprocess_3d = () => {
         tooltip: {
             show: true,
             formatter(param) {
-                // if (param.seriesName === 'line segment') {
-                //     return ''
-                // }
-                // return 'node'
                 return `Gene Name ${param.value[4]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}<br>- page_rank_score: ${param.value[3]}`
             },
         },
         visualMap: {
-            // show: false,
             dimension: 3, // page_rank_score
             min: min_page_rank_score,
             max: max_page_rank_score,
             inRange: {
-                color: ['#2F93C8', '#AEC48F', '#FFDB5C', '#F98862', '#E53C2B'],
+                color: colormap,
             },
             precision: 4,
         },
@@ -558,15 +562,29 @@ const preprocess_2d = () => {
                 text: graphSelectionStr.value,
             },
             tooltip: {
+                show: true,
                 trigger: 'item',
                 triggerOn: 'mousemove',
+                formatter(param) {
+                    return param.name
+                },
+            },
+            toolbox: {
+                itemSize: 20,
+                iconStyle: {
+                    borderColor: '#34498e',
+                },
+                feature: {
+                    dataView: { readOnly: true },
+                    saveAsImage: {},
+                },
             },
             visualMap: {
                 type: 'continuous',
                 min: min_page_rank_score,
                 max: max_page_rank_score,
                 inRange: {
-                    color: ['#2F93C8', '#AEC48F', '#FFDB5C', '#F98862', '#E53C2B'],
+                    color: colormap,
                 },
                 precision: 4,
             },
@@ -603,6 +621,10 @@ const preprocess_2d = () => {
                     roam: true, // 图可以在页面整体放缩
                 },
             ],
+            lineStyle: {
+                color: '#2f4554',
+                width: 4,
+            },
         }
     }
     // 其他的用 force directed graph
@@ -621,11 +643,46 @@ const preprocess_2d = () => {
             this_2d_nodes.push({
                 name: element, // node_name (i.e. gene name)
                 id: idx,
+                value: parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // page_rank_score
             })
         })
+        const arrayColumnValue = arr => arr.map(x => x.value)
+        const array_col_2 = arrayColumnValue(this_2d_nodes) // page_rank_score    const min_page_rank_score = Math.min.apply(null, array_col_3)
+        const min_page_rank_score = Math.min.apply(null, array_col_2)
+        const max_page_rank_score = Math.max.apply(null, array_col_2)
         option_2d.value = {
             title: {
                 text: graphSelectionStr.value,
+            },
+            tooltip: {
+                show: true,
+                trigger: 'item',
+                triggerOn: 'mousemove',
+                formatter(param) {
+                    if (param.value) {
+                        return `Gene Name ${param.name} <br>- page_rank_score: ${param.value}`
+                    }
+                    return ''
+                },
+            },
+            toolbox: {
+                itemSize: 20,
+                iconStyle: {
+                    borderColor: '#34498e',
+                },
+                feature: {
+                    dataView: { readOnly: true },
+                    saveAsImage: {},
+                },
+            },
+            visualMap: {
+                type: 'continuous',
+                min: min_page_rank_score,
+                max: max_page_rank_score,
+                inRange: {
+                    color: colormap,
+                },
+                precision: 4,
             },
             series: [
                 {
@@ -644,8 +701,8 @@ const preprocess_2d = () => {
                     data: this_2d_nodes,
                     edges: this_2d_edges,
                     lineStyle: {
-                        color: '',
-                        curveness: 0,
+                        // color: '#2f4554',
+                        width: 2,
                     },
                     roam: true, // 图可以在页面整体放缩
                 },
@@ -954,16 +1011,6 @@ const createColumns = (): DataTableColumns<RowData> => {
                 tooltip: true,
             },
             width: col_width.degrees,
-            // render(row: any) {
-            //     // return parseInt(row.degrees)
-            //     // return row.degrees.toFixed(0)
-            //     return h('div', null, {
-            //         default: () => {
-            //             console.log(typeof row.degrees, row.degrees)
-            //             return row.degrees.toFixed(0)
-            //         },
-            //     })
-            // },
         },
         {
             title() {
