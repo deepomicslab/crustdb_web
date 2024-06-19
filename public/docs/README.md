@@ -12,7 +12,7 @@ list
 -   esbenp.prettier-vscode
 -   stylelint.vscode-stylelint
 -   -   dbaeumer.vscode-eslint
--   esbenp.prettier-vscode
+<!-- -   esbenp.prettier-vscode
 -   stylelint.vscode-stylelint-   dbaeumer.vscode-eslint
 -   esbenp.prettier-vscode
 -   stylelint.vscode-stylelint-   dbaeumer.vscode-eslint
@@ -29,5 +29,5 @@ list
 -   esbenp.prettier-vscode
 -   stylelint.vscode-stylelint-   dbaeumer.vscode-eslint
 -   esbenp.prettier-vscode
--   stylelint.vscode-stylelint
+-   stylelint.vscode-stylelint -->
 

@@ -20,13 +20,7 @@
             <div class="flex flex-row w-200">
                 <h1 class="text-3xl mt-5 ml-7 font-500 text-[#3262a8]">3D Vis</h1>
             </div>
-            <el-descriptions
-                class="w-330 text-xl mt-8"
-                :column="2"
-                size="large"
-                border
-                v-loading="loadtopologydata"
-            >
+            <el-descriptions class="w-330 text-xl mt-8" :column="2" size="large" border v-loading="loadtopologydata">
                 <el-descriptions-item :width="165">
                     <template #label>
                         <div class="cell-item">Graph Type Selection</div>
@@ -125,16 +119,8 @@
                 </div>
             </div> -->
             <div v-loading="loadtopologydata" class="h-420">
-                <n-data-table
-                    :data="phageList"
-                    :columns="columns"
-                    :max-height="700"
-                    :row-key="rowKey"
-                    :scroll-x="1100"
-                />
-                <!-- @update:checked-row-keys="handleCheckNode"
-                @update:filters="handleUpdateFilterNode"
-                @update:sorter="handleSorterChangeNode" -->
+                <n-data-table :data="phageList" :columns="columns" :max-height="700" :row-key="rowKey" :scroll-x="1100"
+                    @update:sorter="handleSorterChange" />
             </div>
         </div>
     </div>
@@ -165,13 +151,7 @@
             </div>
 
             <!-- Phage Informatin table -->
-            <el-descriptions
-                class="w-330 text-xl mt-8"
-                :column="2"
-                size="large"
-                border
-                v-loading="loaddata"
-            >
+            <el-descriptions class="w-330 text-xl mt-8" :column="2" size="large" border v-loading="loaddata">
                 <el-descriptions-item :width="165">
                     <template #label>
                         <div class="cell-item">Publication Link</div>
@@ -242,19 +222,10 @@
             </div>
         </div>
     </div>
-    <el-dialog
-        v-model="downloadphagedialogVisible"
-        title="Select download data"
-        width="30%"
-        align-center
-    >
+    <el-dialog v-model="downloadphagedialogVisible" title="Select download data" width="30%" align-center>
         <div>
             <el-checkbox-group v-model="checkList" :max="1">
-                <el-checkbox
-                    v-for="v in repeat_data_uid_list"
-                    :key="v"
-                    :label="'Download ' + v + '.zip'"
-                />
+                <el-checkbox v-for="v in repeat_data_uid_list" :key="v" :label="'Download ' + v + '.zip'" />
             </el-checkbox-group>
         </div>
         <template #footer>
@@ -267,11 +238,8 @@
     <el-dialog v-model="selectRepeatDialogVisible" title="Select repeat #" width="30%" align-center>
         <div>
             <el-checkbox-group v-model="selectRepeatCheckList" :max="1">
-                <el-checkbox
-                    v-for="(v, idx) in repeat_data_uid_list"
-                    :key="v"
-                    :label="'(Repeat #' + (idx + 1) + ') ' + v"
-                />
+                <el-checkbox v-for="(v, idx) in repeat_data_uid_list" :key="v"
+                    :label="'(Repeat #' + (idx + 1) + ') ' + v" />
             </el-checkbox-group>
         </div>
         <template #footer>
@@ -281,19 +249,16 @@
             </span>
         </template>
     </el-dialog>
-    <el-dialog
-        v-model="selectGraphTypeDialogVisible"
-        title="Select Graph Type"
-        width="30%"
-        align-center
-    >
+    <el-dialog v-model="selectGraphTypeDialogVisible" title="Select Graph Type" width="30%" align-center>
         <div>
             <el-checkbox-group v-model="selectGraphTypeCheckList" :max="1">
-                <el-checkbox
-                    v-for="(v, idx) in graph_type_list"
-                    :key="v"
-                    :label="'(Graph' + (idx + 1) + ') ' + v"
-                />
+                <!-- :cols does not work, only n-gi 限制所有选项在一列 -->
+                <n-grid :y-gap="8" :cols="10">
+                    <n-gi>
+                        <el-checkbox v-for="(v, idx) in graph_type_list" :key="v"
+                            :label="'(Graph' + (idx + 1) + ') ' + v" />
+                    </n-gi>
+                </n-grid>
             </el-checkbox-group>
         </div>
         <template #footer>
@@ -316,14 +281,14 @@ import * as echarts from 'echarts'
 import 'echarts-gl'
 import { NTooltip } from 'naive-ui'
 import _ from 'lodash'
-import { usePhageStore } from '@/store/phage'
-import { useCrustDBStore } from '@/store/crustdb'
+// import { usePhageStore } from '@/store/phage'
+// import { useCrustDBStore } from '@/store/crustdb'
 
 // import mst from '../../visualize/components/mst.vue'
 // import annotation from '../../visualize/components/annotation.vue'
 
-const phageStore = usePhageStore()
-const crustdbStore = useCrustDBStore()
+// const phageStore = usePhageStore()
+// const crustdbStore = useCrustDBStore()
 const loaddata = ref(false)
 const loadtopologydata = ref(false)
 const graphSelectionStr = ref('')
@@ -366,6 +331,8 @@ const nodesCoord_3d = ref()
 const edgeList_3d = ref()
 const graph_info = ref()
 const mst_parentchild_relation = ref()
+const nodeattr_data = ref()
+const topology_id = ref(0)
 
 const echartlineDom = ref<HTMLElement | null>(null)
 const echart3dDom = ref<HTMLElement | null>(null)
@@ -503,6 +470,10 @@ const preprocess_3d = () => {
             },
         })
     })
+
+    // console.log('---------')
+    // console.log('seriesData', seriesData.length)
+    // console.log('this_nodesCoord_3d', this_nodesCoord_3d.length)
 
     option_3d.value = {
         title: {
@@ -740,6 +711,28 @@ const selectRepeatRequest = async () => {
     }
 }
 
+const graph_type_map = str => {
+    // console.log('str', str)
+    const tmp_algo = str.split(' ')[1]
+    // console.log('tmp_algo', tmp_algo)
+    let tmp_para = str.split(' ')[2]
+    // console.log('tmp_para', tmp_para)
+    if (tmp_algo === 'KNN') {
+        tmp_para = `KNN-${tmp_para.slice(1, -1).split('=')[1]}.pkl`
+    } else if (tmp_algo === 'KNN-SNN') {
+        tmp_para = `KNN_SNN-${tmp_para.slice(1, -1).split('=')[1]}.pkl`
+    } else if (tmp_algo === 'RNN') {
+        tmp_para = `RNN-${tmp_para.slice(1, -1).split('=')[1]}.pkl`
+    } else if (tmp_algo === 'RNN-SNN') {
+        tmp_para = `RNN_SNN-${tmp_para.slice(1, -1).split(',')[0].split('=')[1]}_${tmp_para.split(',')[1].split('=')[1]
+            }.pkl`
+    } else if (tmp_algo === 'MST') {
+        tmp_para = 'MST-MST.pkl'
+    }
+    // console.log('tmp_para', tmp_para)
+    return `${topology_id.value}-${tmp_para}`
+}
+
 const selectGraphTypeRequest = async () => {
     // console.log('graph_type_list1', graph_type_list.value)
     if (selectGraphTypeCheckList.value.length === 0) {
@@ -749,28 +742,42 @@ const selectGraphTypeRequest = async () => {
         })
     } else {
         // e.g., (Graph11)+topo_55-RNN_SNN-0.1_5.pkl ==> topo_55-RNN_SNN-0.1_5.pkl
-        const this_selection = selectGraphTypeCheckList.value[0]
+        const this_selection = graph_type_map(selectGraphTypeCheckList.value[0])
+        // console.log(selectGraphTypeCheckList.value[0], this_selection)
+        // const this_selection = '(Graph11) topo_55-RNN_SNN-0.1_5.pkl'
         graphSelectionStr.value = this_selection
         const topology_response = await axios.get(`/details/topology`, {
             baseURL: '/api',
             timeout: 10000,
             params: {
-                graph_selection_str: this_selection.split(' ')[1],
+                // graph_selection_str: this_selection.split(' ')[1],
+                graph_selection_str: this_selection,
             },
         })
         selectGraphTypeCheckList.value.length = 0
         selectGraphTypeDialogVisible.value = false
 
         const [topo_data, topo_data3, topo_data4] = topology_response.data
-        crustdbStore.nodesCoord = topo_data
+        // crustdbStore.nodesCoord = topo_data
         nodesCoord_3d.value = topo_data
 
-        crustdbStore.edgeList = topo_data3
+        // crustdbStore.edgeList = topo_data3
         edgeList_3d.value = topo_data3
 
         graph_info.value = topo_data4
         preprocess_3d()
         preprocess_2d()
+
+        const topology_nodeattr_response = await axios.get(`/details/topology_nodeattr`, {
+            baseURL: '/api',
+            timeout: 10000,
+            params: {
+                // graph_selection_str: this_selection.split(' ')[1],
+                graph_selection_str: this_selection,
+            },
+        })
+        const [topo_data6] = topology_nodeattr_response.data
+        nodeattr_data.value = topo_data6
     }
 }
 
@@ -782,13 +789,38 @@ const updateRepeatList = () => {
         )
     }
 }
-const updateGraphTypeList = () => {
-    graph_type_list.value.length = 0
-    graph_type_list.value = topologyselectiondata.value
-}
 const selectRepeat = () => {
     updateRepeatList()
     selectRepeatDialogVisible.value = true
+}
+
+const updateGraphTypeList = () => {
+    graph_type_list.value.length = 0
+    // graph_type_list.value = topologyselectiondata.value
+    for (let i = 0; i < topologyselectiondata.value.length; i += 1) {
+        const tmp = topologyselectiondata.value[i].split('-')
+        const tmp_topologyid = tmp[0]
+        topology_id.value = tmp_topologyid
+        const tmp_algo = tmp[1]
+        // console.log('tmp', tmp[2])
+        // console.log("tmp[2].split('.')[0]", tmp[2].split('.')[0])
+        let tmp_para = tmp[2]
+        tmp_para = tmp_para.substring(0, tmp_para.length - 4)
+        if (tmp_algo === 'KNN') {
+            tmp_para = `KNN (k=${tmp_para.split('_')[0]})`
+        } else if (tmp_algo === 'KNN_SNN') {
+            tmp_para = `KNN-SNN (k=${tmp_para.split('_')[0]})`
+        } else if (tmp_algo === 'RNN') {
+            tmp_para = `RNN (r=${tmp_para.split('_')[0]})`
+        } else if (tmp_algo === 'RNN_SNN') {
+            tmp_para = `RNN-SNN (r=${tmp_para.split('_')[0]}, k=${tmp_para.split('_')[1]})`
+        } else if (tmp_algo === 'MST') {
+            tmp_para = 'MST'
+        }
+        graph_type_list.value.push(tmp_para)
+    }
+    // console.log('topologyselectiondata', topologyselectiondata.value[0]) // topologyid_103-KNN-5.pkl
+    // console.log('graph_type_list', graph_type_list.value)
 }
 const selectGraphType = () => {
     if (graph_type_list.value.length === 0) {
@@ -808,8 +840,8 @@ const download = () => {
 onBeforeMount(async () => {
     // From table crustdb_main
     loaddata.value = true
-    phageStore.phagedataloaded = false
-    phageStore.phageid = phageid.value
+    // phageStore.phagedataloaded = false
+    // phageStore.phageid = phageid.value
     const response = await axios.get(`/crustdb_main/detail`, {
         baseURL: '/api',
         timeout: 10000,
@@ -867,7 +899,7 @@ onBeforeMount(async () => {
     topologyselectiondata.value = topology_list_response.data // 返回该 repeat 对应的 graph list
     // 默认展示第一个 graph =================================================================================================
     // index 6 is mst
-    const this_selection = topologyselectiondata.value[6]
+    const this_selection = topologyselectiondata.value[0]
     graphSelectionStr.value = this_selection
     // console.log('topologyselectiondata.value', this_selection)
 
@@ -880,18 +912,27 @@ onBeforeMount(async () => {
     })
 
     const [topo_data, topo_data3, topo_data4, topo_data5] = topology_response.data
-    crustdbStore.nodesCoord = topo_data
+    // crustdbStore.nodesCoord = topo_data
     nodesCoord_3d.value = topo_data
-    // console.log('nodesCoord_3d.value', nodesCoord_3d.value)
 
-    crustdbStore.edgeList = topo_data3
+    // crustdbStore.edgeList = topo_data3
     edgeList_3d.value = topo_data3
     graph_info.value = topo_data4
     mst_parentchild_relation.value = topo_data5
-    // console.log('mst_parentchild_relation', mst_parentchild_relation.value)
 
     preprocess_3d()
     preprocess_2d()
+
+    const topology_nodeattr_response = await axios.get(`/details/topology_nodeattr`, {
+        baseURL: '/api',
+        timeout: 10000,
+        params: {
+            graph_selection_str: this_selection, // details.repeat_data_uid
+        },
+    })
+    const [topo_data6] = topology_nodeattr_response.data
+    nodeattr_data.value = topo_data6
+
     loadtopologydata.value = false
 })
 onMounted(async () => {
@@ -912,39 +953,40 @@ watch(nodesCoord_3d, () => {
 })
 
 const phageList = computed(() => {
-    // console.log('-------------------------nodesCoord_3d', nodesCoord_3d.value)
-    // return _.map(nodesCoord_3d.value?.results, (row: any) => {
-    //     return row
-    // })
     const this_phageList = []
-    if (nodesCoord_3d.value) {
-        const x_list = Array.from(new Set(nodesCoord_3d.value.x))
+    if (nodeattr_data.value) {
+        const x_list = Array.from(new Set(nodeattr_data.value.x))
         x_list.forEach((element, idx) => {
-            // console.log(
-            //     'degree',
-            //     nodesCoord_3d.value.degrees[idx],
-            //     typeof nodesCoord_3d.value.degrees[idx]
-            // )
             this_phageList.push({
                 x: element, // x
-                y: nodesCoord_3d.value.y[idx], // y
-                z: nodesCoord_3d.value.z[idx], // z
-                node_name: nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
-                degrees: parseInt(nodesCoord_3d.value.degrees[idx], 10),
+                // y: nodesCoord_3d.value.y[idx], // y
+                // z: nodesCoord_3d.value.z[idx], // z
+                node_name: nodeattr_data.value.node_name[idx], // node_name (i.e. gene name)
+                degrees: parseInt(nodeattr_data.value.degrees[idx], 10),
                 degree_centrality:
-                    Math.round(parseFloat(nodesCoord_3d.value.degree_centrality[idx]) * 1e4) / 1e4,
+                    Math.round(parseFloat(nodeattr_data.value.degree_centrality[idx]) * 1e4) / 1e4,
                 betweenness:
-                    Math.round(parseFloat(nodesCoord_3d.value.betweenness[idx]) * 1e4) / 1e4,
+                    Math.round(parseFloat(nodeattr_data.value.betweenness[idx]) * 1e4) / 1e4,
                 closeness_centrality:
-                    Math.round(parseFloat(nodesCoord_3d.value.closeness_centrality[idx]) * 1e4) /
+                    Math.round(parseFloat(nodeattr_data.value.closeness_centrality[idx]) * 1e4) /
                     1e4,
                 page_rank_score:
-                    Math.round(parseFloat(nodesCoord_3d.value.page_rank_score[idx]) * 1e4) / 1e4,
+                    Math.round(parseFloat(nodeattr_data.value.page_rank_score[idx]) * 1e4) / 1e4,
             })
         })
     }
-    // console.log('===========================this_phageList', this_phageList)
     return this_phageList
+    // console.log('===========================this_phageList', this_phageList)
+    // console.log(
+    //     '-----------> sorted',
+    //     this_phageList.sort(function (a, b) {
+    //         return a.node_name - b.node_name
+    //     })
+    // )
+    // console.log('======              this_phageList', this_phageList)
+    // return this_phageList.sort(function (a, b) {
+    //     return a.node_name - b.node_name
+    // })
 })
 
 const pagination = reactive({
@@ -960,6 +1002,21 @@ const pagination = reactive({
         pagination.page = 1
     },
 })
+
+const handleSorterChange = async sorter => {
+    loadtopologydata.value = true
+    const topology_nodeattr_response = await axios.get(`/details/topology_nodeattr`, {
+        baseURL: '/api',
+        timeout: 10000,
+        params: {
+            graph_selection_str: graphSelectionStr.value, // details.repeat_data_uid
+            sorter,
+        },
+    })
+    const [topo_data6] = topology_nodeattr_response.data
+    nodeattr_data.value = topo_data6
+    loadtopologydata.value = false
+}
 
 const col_width = {
     node_name: 70,
