@@ -119,7 +119,7 @@
         align-center
     >
         <div>
-            <el-checkbox-group v-model="checkList" :max="1">
+            <el-checkbox-group v-model="checkListtoShow" :max="1">
                 <el-checkbox v-for="v in taskresultdatakeys" :key="v" :label="v" />
             </el-checkbox-group>
         </div>
@@ -137,7 +137,7 @@
         align-center
     >
         <div>
-            <el-checkbox-group v-model="checkList">
+            <el-checkbox-group v-model="checkListtoDownload">
                 <el-checkbox v-for="v in taskresultdatakeys" :key="v" :label="v" />
             </el-checkbox-group>
         </div>
@@ -157,24 +157,16 @@
 import * as echarts from 'echarts'
 import axios from 'axios'
 import _ from 'lodash'
-// import { usetaskStore } from '@/store/task'
-// import { CloudDownloadOutline as downicon } from '@vicons/ionicons5'
-// import { Reader } from '@vicons/ionicons5'
-// import { lifestyleoption } from '@/utils/overview'
-// import log from '../../log.vue'
 import { decrypt } from '@/utils/crypto'
 
-// const dialogVisible = ref(false)
 const route = useRoute()
 const echartlineDom = ref<HTMLElement | null>(null)
-// const taskStore = usetaskStore()
 const taskid = computed(() => {
     return decrypt(
         route.query?.taskid as string,
         'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
     )
 })
-// const lifestyledata = ref([] as any[])
 
 const taskdata = ref({
     results: {
@@ -197,22 +189,23 @@ const loaddata = ref(false)
 let mylineEcharts: echarts.ECharts
 const choosecelltypetoshowdialogVisible = ref(false)
 const choosecelltypetodownloaddialogVisible = ref(false)
-const checkList = ref([] as any[])
+const checkListtoShow = ref([] as any[])
+const checkListtoDownload = ref([] as any[])
 
 const selecttoshowcancelrequest = () => {
-    checkList.value.length = 0
+    checkListtoShow.value.length = 0
     choosecelltypetoshowdialogVisible.value = false
 }
 
 const selecttoshowconfirmrequest = () => {
-    if (checkList.value.length === 0) {
+    if (checkListtoShow.value.length === 0) {
         window.$message.warning('Please select one cell type to show', {
             closable: true,
             duration: 5000,
         })
     } else {
-        const selectedCellType = checkList.value[0]
-        checkList.value.length = 0 // clear the checkList
+        const selectedCellType = checkListtoShow.value[0]
+        checkListtoShow.value.length = 0 // clear the checkList
         detailsdata.value = taskresultdata.value[selectedCellType]
         choosecelltypetoshowdialogVisible.value = false
     }
@@ -223,23 +216,25 @@ const choosecelltypetoshow = () => {
 }
 
 const selecttodownloadcancelrequest = () => {
-    checkList.value.length = 0
+    checkListtoDownload.value.length = 0
     choosecelltypetodownloaddialogVisible.value = false
 }
 
 const selecttodownloadallrequest = () => {
-    checkList.value = toRaw(taskresultdatakeys.value)
+    taskresultdatakeys.value.forEach((element: any) => {
+        checkListtoDownload.value.push(element)
+    })
 }
 
 const selecttodownloadconfirmrequest = () => {
-    if (checkList.value.length === 0) {
+    if (checkListtoDownload.value.length === 0) {
         window.$message.warning('Please select at least one cell type to download', {
             closable: true,
             duration: 5000,
         })
     } else {
         window.open(
-            `/api/tasks/zip/?taskid=${taskdata.value.results.id}&celltypes=${checkList.value}`,
+            `/api/tasks/zip/?taskid=${taskdata.value.results.id}&celltypes=${checkListtoDownload.value}`,
             '_blank'
         )
     }
@@ -272,31 +267,8 @@ onBeforeMount(async () => {
 
     taskresultdatakeys.value = data1
     taskresultdata.value = data2
-    // console.log('taskresultdatakeys', taskresultdatakeys.value[0])
     detailsdata.value = taskresultdata.value[taskresultdatakeys.value[0]]
-    // console.log('taskresultdatakeys', taskresultdatakeys.value)
-    // console.log('taskresultdata', taskresultdata.value)
     loaddata.value = false
-
-    // const response = await axios.get(`tasks/result/modules/`, {
-    //     baseURL: '/api',
-    //     timeout: 10000,
-    //     params: {
-    //         module: 'lifestyle',
-    //         taskid: taskid.value,
-    //     },
-    // })
-    // const { data } = response
-    // lifestyledata.value = data.results
-
-    // const lifestyleCounts = _.countBy(data.results, 'lifestyle')
-
-    // const result = _.map(lifestyleCounts, (value, key) => {
-    //     return { value, name: key }
-    // })
-    // lifestyleoption.series[0].data = result
-    // const myEcharts = echarts.init(echartlineDom.value as HTMLElement)
-    // myEcharts.setOption(lifestyleoption)
 })
 
 const chartOption = () => {
