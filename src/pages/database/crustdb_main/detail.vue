@@ -20,7 +20,13 @@
             <div class="flex flex-row w-200">
                 <h1 class="text-3xl mt-5 ml-7 font-500 text-[#3262a8]">3D Vis</h1>
             </div>
-            <el-descriptions class="w-330 text-xl mt-8" :column="2" size="large" border v-loading="loadtopologydata">
+            <el-descriptions
+                class="w-330 text-xl mt-8"
+                :column="2"
+                size="large"
+                border
+                v-loading="loadtopologydata"
+            >
                 <el-descriptions-item :width="165">
                     <template #label>
                         <div class="cell-item">Graph Type Selection</div>
@@ -119,8 +125,14 @@
                 </div>
             </div> -->
             <div v-loading="loadtopologydata" class="h-420">
-                <n-data-table :data="phageList" :columns="columns" :max-height="700" :row-key="rowKey" :scroll-x="1100"
-                    @update:sorter="handleSorterChange" />
+                <n-data-table
+                    :data="phageList"
+                    :columns="columns"
+                    :max-height="700"
+                    :row-key="rowKey"
+                    :scroll-x="1100"
+                    @update:sorter="handleSorterChange"
+                />
             </div>
         </div>
     </div>
@@ -151,7 +163,13 @@
             </div>
 
             <!-- Phage Informatin table -->
-            <el-descriptions class="w-330 text-xl mt-8" :column="2" size="large" border v-loading="loaddata">
+            <el-descriptions
+                class="w-330 text-xl mt-8"
+                :column="2"
+                size="large"
+                border
+                v-loading="loaddata"
+            >
                 <el-descriptions-item :width="165">
                     <template #label>
                         <div class="cell-item">Publication Link</div>
@@ -222,10 +240,19 @@
             </div>
         </div>
     </div>
-    <el-dialog v-model="downloadphagedialogVisible" title="Select download data" width="30%" align-center>
+    <el-dialog
+        v-model="downloadphagedialogVisible"
+        title="Select download data"
+        width="30%"
+        align-center
+    >
         <div>
             <el-checkbox-group v-model="checkList" :max="1">
-                <el-checkbox v-for="v in repeat_data_uid_list" :key="v" :label="'Download ' + v + '.zip'" />
+                <el-checkbox
+                    v-for="v in repeat_data_uid_list"
+                    :key="v"
+                    :label="'Download ' + v + '.zip'"
+                />
             </el-checkbox-group>
         </div>
         <template #footer>
@@ -238,8 +265,11 @@
     <el-dialog v-model="selectRepeatDialogVisible" title="Select repeat #" width="30%" align-center>
         <div>
             <el-checkbox-group v-model="selectRepeatCheckList" :max="1">
-                <el-checkbox v-for="(v, idx) in repeat_data_uid_list" :key="v"
-                    :label="'(Repeat #' + (idx + 1) + ') ' + v" />
+                <el-checkbox
+                    v-for="(v, idx) in repeat_data_uid_list"
+                    :key="v"
+                    :label="'(Repeat #' + (idx + 1) + ') ' + v"
+                />
             </el-checkbox-group>
         </div>
         <template #footer>
@@ -249,14 +279,22 @@
             </span>
         </template>
     </el-dialog>
-    <el-dialog v-model="selectGraphTypeDialogVisible" title="Select Graph Type" width="30%" align-center>
+    <el-dialog
+        v-model="selectGraphTypeDialogVisible"
+        title="Select Graph Type"
+        width="30%"
+        align-center
+    >
         <div>
             <el-checkbox-group v-model="selectGraphTypeCheckList" :max="1">
                 <!-- :cols does not work, only n-gi 限制所有选项在一列 -->
                 <n-grid :y-gap="8" :cols="10">
                     <n-gi>
-                        <el-checkbox v-for="(v, idx) in graph_type_list" :key="v"
-                            :label="'(Graph' + (idx + 1) + ') ' + v" />
+                        <el-checkbox
+                            v-for="(v, idx) in graph_type_list"
+                            :key="v"
+                            :label="'(Graph' + (idx + 1) + ') ' + v"
+                        />
                     </n-gi>
                 </n-grid>
             </el-checkbox-group>
@@ -724,8 +762,9 @@ const graph_type_map = str => {
     } else if (tmp_algo === 'RNN') {
         tmp_para = `RNN-${tmp_para.slice(1, -1).split('=')[1]}.pkl`
     } else if (tmp_algo === 'RNN-SNN') {
-        tmp_para = `RNN_SNN-${tmp_para.slice(1, -1).split(',')[0].split('=')[1]}_${tmp_para.split(',')[1].split('=')[1]
-            }.pkl`
+        tmp_para = `RNN_SNN-${tmp_para.slice(1, -1).split(',')[0].split('=')[1]}_${
+            tmp_para.split(',')[1].split('=')[1]
+        }.pkl`
     } else if (tmp_algo === 'MST') {
         tmp_para = 'MST-MST.pkl'
     }

@@ -160,6 +160,27 @@ const menuOptions: MenuOption[] = [
         icon: renderIcon(AnalysisIcon),
         children: [
             {
+                label: 'CytoCraft Conformation',
+                key: '/analysis/conformation/',
+                children: [
+                    {
+                        label: 'Craft',
+                        key: '/analysis/conformation/craft',
+                        children: [
+                            {
+                                label: 'Single Celltype Mode',
+                                key: '/analysis/conformation/craft/single_celltype',
+                            },
+                            {
+                                label: 'Multi-Celltype Mode',
+                                key: '/analysis/conformation/craft/multi_celltype',
+                            },
+                        ],
+                    },
+                ],
+            },
+
+            {
                 label: () =>
                     h(
                         RouterLink,

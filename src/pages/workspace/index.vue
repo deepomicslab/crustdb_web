@@ -3,7 +3,13 @@
         <div class="flex flex-col my-2 w-200 mt-20">
             <div class="text-4xl mt-5 font-600 text-center">Task Query</div>
             <div class="flex flex-col mt-5 justify-center items-center">
-                <el-input size="small" placeholder="Please enter your task ID" class="w-170 h-10 s">
+                <el-input
+                    type="text"
+                    v-model:value="inputdata.taskid"
+                    size="small"
+                    placeholder="Please enter your task ID"
+                    class="w-170 h-10 s"
+                >
                     <template #append>
                         <el-button type="primary" :icon="Search">Search</el-button>
                     </template>
@@ -28,7 +34,7 @@
                     If you encounter any further errors, please do not hesitate to contact us via
                     email at
                     <strong class="text-[#ee7e7d] font-400 mx-1 text-[18px]">
-                        <a href="mailto:syang58-c@my.cityu.edu.hk">syang58-c@my.cityu.edu.hk</a>
+                        <a href="mailto:syang58-c@my.cityu.edu.hk">xxx-c@my.cityu.edu.hk</a>
                     </strong>
 
                     . We assure you that our team is dedicated to resolving any issues as quickly
@@ -42,7 +48,9 @@
             <div class="mt-1.5 flex flex-row justify-center items-center refr w-200">
                 <div class="text-4xl text-3 font-500">Submitted Task(s)</div>
                 <n-button class="ml-3" size="large" round @click="refresh($event)" color="#626aef">
-                    <el-icon class="mr-2"><Refresh /></el-icon>
+                    <el-icon class="mr-2">
+                        <Refresh />
+                    </el-icon>
                     Refresh Status
                 </n-button>
             </div>
@@ -56,12 +64,14 @@
                 :columns="columns"
                 :data="taskList"
                 :row-key="rowKey"
+                :scroll-x="1500"
+                :max-height="1600"
                 :pagination="pagination"
             />
         </div>
     </div>
     <el-dialog v-model="dialogVisible" title="Task Log" width="75%">
-        <log v-model:taskid="taskid" :moduleName="''" :enableTab="true" :enableTable="true" />
+        <log v-model:taskid="taskid" :enableTab="true" :enableTable="true" />
     </el-dialog>
 </template>
 
@@ -71,18 +81,23 @@ import type { DataTableColumns } from 'naive-ui'
 import { h } from 'vue'
 import { NButton, NTag } from 'naive-ui'
 import {} from '@vicons/ionicons5'
-import { Search, Refresh } from '@element-plus/icons-vue' /* RefreshRight */
+import { Search, Refresh, InfoFilled } from '@element-plus/icons-vue' /* RefreshRight */
 import axios from 'axios'
 // import { ElNotification } from 'element-plus'
 import { useUserIdGenerator } from '@/utils/userIdGenerator'
 import log from '../task/log.vue'
 import { encrypt } from '@/utils/crypto'
 
+const inputdata = ref({
+    taskid: '',
+})
+
 const userid = ref()
 const loading = ref(false)
 const taskdata = ref([] as any[])
 const dialogVisible = ref(false)
 const taskid = ref('')
+
 onBeforeMount(async () => {
     const { isCookieExist, userId, getUserIdFromCookie } = useUserIdGenerator()
 
@@ -100,6 +115,7 @@ onBeforeMount(async () => {
         })
         const { data } = response
         taskdata.value = data.results
+        console.log(taskdata.value)
         loading.value = false
     } else {
         window.$message.warning('Please agree with cookie', {
@@ -115,10 +131,11 @@ const taskList = computed(() => {
 
 type RowData = {
     id: number
-    name: string
     analysis_type: string
-    created_at: string
+    is_demo_input: boolean
     status: any
+    created_at: string
+    actions: any
 }
 const rowKey = (row: RowData) => {
     return row.id
@@ -127,6 +144,7 @@ const rowKey = (row: RowData) => {
 const router = useRouter()
 
 const viewdetail = (row: any) => {
+    console.log('row.status', row.status)
     if (row.status === 'Success') {
         if (row.analysis_type === 'Annotation Pipline') {
             router.push({
@@ -139,9 +157,10 @@ const viewdetail = (row: any) => {
                 },
             })
         }
-        if (row.analysis_type === 'Phenotype Annotation') {
+        if (row.analysis_type === 'Single Celltype Mode') {
             router.push({
-                path: '/task/result/annopipline',
+                // path: '/task/result/single_celltype_mode/lifestyle.vue',
+                path: '/task/result/conformation/single_celltype_mode',
                 query: {
                     taskid: encrypt(
                         row.id,
@@ -150,185 +169,9 @@ const viewdetail = (row: any) => {
                 },
             })
         }
-        if (row.analysis_type === 'Structural Annotation') {
+        if (row.analysis_type === 'Multi-Celltype Mode') {
             router.push({
-                path: '/task/result/annopipline',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'Functional Annotation') {
-            router.push({
-                path: '/task/result/annopipline',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'Completeness Assessment') {
-            router.push({
-                path: '/task/result/annopipline/quality',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'Host Assignment') {
-            router.push({
-                path: '/task/result/annopipline/host',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'Lifestyle Prediction') {
-            router.push({
-                path: '/task/result/annopipline/lifestyle',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'Transcription Terminator Annotation') {
-            router.push({
-                path: '/task/result/annopipline/terminator',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'ORF prediction & Protein classification') {
-            router.push({
-                path: '/task/result/annopipline',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'Transmembrane Protein Annotation') {
-            router.push({
-                path: '/task/result/annopipline/trans',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'Taxonomic Annotation') {
-            router.push({
-                path: '/task/result/annopipline/taxonomic',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'tRNA & tmRNA gene annotation') {
-            router.push({
-                path: '/task/result/annopipline/trna',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'Anti-CRISPR Protein Annotation') {
-            router.push({
-                path: '/task/result/annopipline/anticrispr',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'CRISPR Array Annotation') {
-            router.push({
-                path: '/task/result/annopipline/crispr',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'Virulent Factor & Antimicrobial Resistance Gene Detection') {
-            router.push({
-                path: '/task/result/annopipline/arvf',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'Sequence Clustering') {
-            router.push({
-                path: '/task/result/comparison/cluster',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'Comparative Tree Construction') {
-            router.push({
-                path: '/task/result/comparison/tree',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'Sequence Alignment') {
-            router.push({
-                path: '/task/result/comparison/alignment',
-                query: {
-                    taskid: encrypt(
-                        row.id,
-                        'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2'
-                    ),
-                },
-            })
-        }
-        if (row.analysis_type === 'Genome Comparison') {
-            router.push({
-                path: '/task/result/comparison',
+                path: '/task/result/multi_celltype_mode',
                 query: {
                     taskid: encrypt(
                         row.id,
@@ -413,16 +256,40 @@ const createColumns = (): DataTableColumns<RowData> => {
             width: 80,
         },
         {
-            title: 'Task Name',
-            key: 'name',
+            title: 'Species',
+            key: 'species',
             align: 'center',
-            fixed: 'left',
-            width: 120,
-            ellipsis: {
-                tooltip: true,
+            width: 80,
+            filterOptions: [
+                {
+                    label: 'Human',
+                    value: 'Human',
+                },
+                {
+                    label: 'Mouse',
+                    value: 'Mouse',
+                },
+                {
+                    label: 'Mice',
+                    value: 'Mice',
+                },
+                {
+                    label: 'Axolotls',
+                    value: 'Axolotls',
+                },
+                {
+                    label: 'Axolotl',
+                    value: 'Axolotl',
+                },
+                {
+                    label: 'Monkey',
+                    value: 'Monkey',
+                },
+            ],
+            filter(value: any, row: any) {
+                return row.species === value
             },
         },
-
         {
             title: 'Analysis Type',
             key: 'analysis_type',
@@ -430,39 +297,23 @@ const createColumns = (): DataTableColumns<RowData> => {
             width: 100,
             filterOptions: [
                 {
-                    label: 'Annotation Pipline',
-                    value: 'Annotation Pipline',
+                    label: 'Single Celltype Mode',
+                    value: 'Single Celltype Mode',
                 },
                 {
-                    label: 'Completeness Analysis',
-                    value: 'Completeness Analysis',
-                },
-                {
-                    label: 'Host Prediction',
-                    value: 'Host Prediction',
-                },
-                {
-                    label: 'tRNA Detection',
-                    value: 'tRNA Detection',
-                },
-                {
-                    label: 'Sequence Cluster',
-                    value: 'Sequence Cluster',
-                },
-                {
-                    label: 'Phylogenetic Tree',
-                    value: 'Phylogenetic Tree',
+                    label: 'Multi-Celltype Mode',
+                    value: 'Multi-Celltype Mode',
                 },
             ],
             filter(value: any, row: any) {
-                return row.status === value
+                return row.analysis_type === value
             },
         },
         {
             title: 'Status',
             key: 'status',
             align: 'center',
-            width: 100,
+            width: 80,
             filterOptions: [
                 {
                     label: 'Success',
@@ -577,37 +428,41 @@ const columns = createColumns()
 .el-input {
     --el-input-border-radius: 20px;
 }
+
 .el-input:hover {
     --el-input-hover-border-color: #626aef;
     --el-input-focus-border-color: #626aef;
     --el-input-border-color: #626aef;
 }
+
 .s >>> .el-input__wrapper {
     padding: 1px 20px;
     font-size: medium;
     color: #495057;
 }
+
 .s >>> .el-input-group__append {
     background-color: #626aef;
     color: white;
     font-size: 13px;
 }
+
 .s >>> .el-input-group__append:hover {
     background-color: white;
     color: #626aef;
     --el-input-border-color: #626aef;
 }
+
 .tb >>> .n-data-table.n-data-table--bordered .n-data-table-wrapper {
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
 }
+
 .tb >>> .n-data-table .n-data-table-wrapper {
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
 }
-/* th {
-    
-} */
+
 .tb >>> .n-data-table .n-data-table-th {
     --n-th-font-weight: bold;
     --n-th-icon-color: white;

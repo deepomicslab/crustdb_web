@@ -4,34 +4,25 @@
             <el-descriptions class="text-lg" :column="2" size="large" border v-loading="loading">
                 <el-descriptions-item>
                     <template #label>
-                        <div class="cell-item">taskid</div>
+                        <div class="cell-item">Task ID</div>
                     </template>
-                    {{ taskid }}
+                    {{ taskdata.results.id }}
                 </el-descriptions-item>
                 <el-descriptions-item>
                     <template #label>
-                        <div class="cell-item">name</div>
+                        <div class="cell-item">Using Demo File</div>
                     </template>
-                    {{ taskdata.results.name }}
+                    {{ taskdata.results.is_demo_input }}
                 </el-descriptions-item>
                 <el-descriptions-item>
                     <template #label>
-                        <div class="cell-item">modulelist</div>
+                        <div class="cell-item">Species</div>
                     </template>
-                    <div class="flex flex-row justify-start w-110 flex-wrap">
-                        <el-tag
-                            v-for="key in taskdata.results.modulelist"
-                            :key="key"
-                            type="primary"
-                            class="ml-2 mb-2"
-                        >
-                            {{ key }}
-                        </el-tag>
-                    </div>
+                    {{ taskdata.results.species }}
                 </el-descriptions-item>
                 <el-descriptions-item>
                     <template #label>
-                        <div class="cell-item">task_status</div>
+                        <div class="cell-item">Task Status</div>
                     </template>
                     <el-tag
                         :type="taskdata.results.status === 'Success' ? 'success' : 'warning'"
@@ -42,13 +33,13 @@
                 </el-descriptions-item>
                 <el-descriptions-item>
                     <template #label>
-                        <div class="cell-item">analysis_type</div>
+                        <div class="cell-item">Analysis Type</div>
                     </template>
                     {{ taskdata.results.analysis_type }}
                 </el-descriptions-item>
                 <el-descriptions-item>
                     <template #label>
-                        <div class="cell-item">created_at</div>
+                        <div class="cell-item">Created At</div>
                     </template>
                     {{ taskdata.results.created_at }}
                 </el-descriptions-item>
@@ -62,29 +53,43 @@
                 @tab-click="handletabClick"
                 v-loading="loading"
             >
-                <el-tab-pane v-for="key in taskdata.results.modulelist" :key="key" :name="key">
+                <!-- <el-tab-pane v-for="key in taskdata.results.modulelist" :key="key" :name="key">
                     <template #label>
                         <span class="custom-tabs-label text-2xl">
                             <span>{{ key }}</span>
                         </span>
                     </template>
-                </el-tab-pane>
+                </el-tab-pane> -->
+                Craft Log
                 <el-scrollbar :class="logStyle" v-loading="consoleloading">
-                    <n-code
-                        :code="taskmoduledetail.tasklogoutput + taskmoduledetail.tasklogerror"
-                        word-wrap
-                        show-line-numbers
-                    />
+                    <n-code :code="taskmoduledetail.craftlog" word-wrap show-line-numbers />
+                </el-scrollbar>
+                <br />
+                Sbatch Log
+                <el-scrollbar :class="logStyle" v-loading="consoleloading">
+                    <n-code :code="taskmoduledetail.sbatchlog" word-wrap show-line-numbers />
+                </el-scrollbar>
+                <br />
+                Sbatch Error
+                <el-scrollbar :class="logStyle" v-loading="consoleloading">
+                    <n-code :code="taskmoduledetail.sbatcherror" word-wrap show-line-numbers />
                 </el-scrollbar>
             </el-tabs>
         </div>
         <div class="w-full" v-if="!props.enableTab">
-            <el-scrollbar class="h-150 bg-dark p-4 text-light" v-loading="consoleloading">
-                <n-code
-                    :code="taskmoduledetail.tasklogoutput + taskmoduledetail.tasklogerror"
-                    word-wrap
-                    show-line-numbers
-                />
+            Craft Log
+            <el-scrollbar :class="logStyle" v-loading="consoleloading">
+                <n-code :code="taskmoduledetail.craftlog" word-wrap show-line-numbers />
+            </el-scrollbar>
+            <br />
+            Sbatch Log
+            <el-scrollbar :class="logStyle" v-loading="consoleloading">
+                <n-code :code="taskmoduledetail.sbatchlog" word-wrap show-line-numbers />
+            </el-scrollbar>
+            <br />
+            Sbatch Error
+            <el-scrollbar :class="logStyle" v-loading="consoleloading">
+                <n-code :code="taskmoduledetail.sbatcherror" word-wrap show-line-numbers />
             </el-scrollbar>
         </div>
     </div>
@@ -102,31 +107,28 @@ const props = defineProps({
     taskid: String,
     enableTable: Boolean,
     enableTab: Boolean,
-    moduleName: String,
 })
-const moduleName = computed(() => props.moduleName as String)
 const taskid = computed(() => {
     return props.taskid as string
 })
 const activeName = ref('')
 const taskdata = ref({
     results: {
-        modulelist: [] as any[],
-        task_detail: {
-            analysis_type: '',
-            task_status: '',
-        },
-        status: '',
+        id: 0,
+        user_id: 0,
+        is_demo_input: true,
         analysis_type: '',
+        species: '',
+        status: '',
         created_at: '',
-        name: '',
+        input_path: [] as any[],
     },
 })
 const taskmoduledetail = ref({
-    module_id: '',
     status: '',
-    tasklogoutput: '',
-    tasklogerror: '',
+    sbatchlog: '',
+    sbatcherror: '',
+    craftlog: '',
 })
 const loading = ref(false)
 const consoleloading = ref(false)
@@ -142,7 +144,6 @@ const logStyle = ref('h-150 bg-dark p-4 text-light')
 const fetchData = async () => {
     loading.value = true
     consoleloading.value = true
-    let module
     if (props.enableTab || props.enableTable) {
         const response2 = await axios.get(`/tasks/detail/`, {
             baseURL: '/api',
@@ -152,17 +153,14 @@ const fetchData = async () => {
             },
         })
         taskdata.value = response2.data
-        const { modulelist } = response2.data.results
-        taskdata.value.results.modulelist = JSON.parse(modulelist.replace(/'/g, '"'))
-        taskdata.value.results.task_detail = JSON.parse(response2.data.results.task_detail)
-        const firstModule = taskdata.value.results.modulelist.slice(0, 1)[0]
-        activeName.value = firstModule
-        module = firstModule
+        // console.log('response2.data.results', response2.data.results)
+        // const { modulelist } = response2.data.results
+        // taskdata.value.results.modulelist = JSON.parse(modulelist.replace(/'/g, '"'))
+        // taskdata.value.results.task_detail = JSON.parse(response2.data.results.task_detail)
+        // const firstModule = taskdata.value.results.modulelist.slice(0, 1)[0]
+        // activeName.value = firstModule
+        // module = firstModule
         loading.value = false
-    }
-
-    if (!module) {
-        module = moduleName.value
     }
 
     const response3 = await axios.get(`/tasks/detail/log/`, {
@@ -170,11 +168,11 @@ const fetchData = async () => {
         timeout: 100000,
         params: {
             taskid: taskid.value,
-            moudlename: module,
         },
     })
-    taskmoduledetail.value.tasklogerror = response3.data.task_error
-    taskmoduledetail.value.tasklogoutput = response3.data.task_log
+    taskmoduledetail.value.sbatchlog = response3.data.sbatch_log
+    taskmoduledetail.value.sbatcherror = response3.data.sbatch_error
+    taskmoduledetail.value.craftlog = response3.data.craft_log
     consoleloading.value = false
 }
 
@@ -196,8 +194,9 @@ const handletabClick = async (tab: any) => {
             moudlename: tab.props.name,
         },
     })
-    taskmoduledetail.value.tasklogerror = response3.data.task_error
-    taskmoduledetail.value.tasklogoutput = response3.data.task_log
+    taskmoduledetail.value.sbatchlog = response3.data.sbatch_log
+    taskmoduledetail.value.sbatcherror = response3.data.sbatch_error
+    taskmoduledetail.value.craftlog = response3.data.craft_log
     consoleloading.value = false
 }
 </script>

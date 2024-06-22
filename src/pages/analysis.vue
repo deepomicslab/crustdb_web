@@ -141,6 +141,27 @@ const menuOptions: MenuOption[] = [
     //     key: '/analysis/helper',
     // },
     {
+        label: 'CytoCraft Conformation',
+        key: '/analysis/conformation/',
+        children: [
+            {
+                label: 'Craft',
+                key: '/analysis/conformation/craft',
+                children: [
+                    {
+                        label: 'Single Celltype Mode',
+                        key: '/analysis/conformation/craft/single_celltype',
+                    },
+                    {
+                        label: 'Multi-Celltype Mode',
+                        key: '/analysis/conformation/craft/multi_celltype',
+                    },
+                ],
+            },
+        ],
+    },
+
+    {
         label: () =>
             h(
                 RouterLink,
@@ -306,7 +327,7 @@ const activeKey = ref<string>(route.path)
 watch(
     () => route.path,
     () => {
-        console.log(route.path)
+        // console.log(route.path)
         activeKey.value = route.path
     }
 )
