@@ -47,10 +47,9 @@
                 </div>
                 <div class="font-600 text-3xl ml-20 mt-10">
                     1. Input Sequence
-                    <!-- href="https://phagescope.deepomics.org/dataExample/data_demo/sequence.fasta" -->
                     <n-button
                         text
-                        href="https://cygraph.deepomics.org/dataExample/data_demo/test.csv"
+                        href="https://cygraph.deepomics.org/demo_input/craft_single_celltype/Mice_endo/SS200000108BR_A3A4_scgem.Endothelial_cell.csv"
                         tag="a"
                         target="_blank"
                         type="primary"
