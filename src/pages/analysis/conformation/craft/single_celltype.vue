@@ -55,7 +55,7 @@
                         type="primary"
                         class="text-lg"
                     >
-                        See Input Example of Single Celltype Mode Analysis
+                        See Input Example of Single Celltype Mode (Species Mice)
                     </n-button>
                 </div>
                 <div class="ml-25 mt-5 flex flex-row mb-5">
