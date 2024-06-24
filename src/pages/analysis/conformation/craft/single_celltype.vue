@@ -9,7 +9,7 @@
                         size="large"
                         color="#EE7E7D"
                         class="text-white hover:text-white focus:text-white active:text-white ml-70"
-                        @click="submitdemo"
+                        @click="openrundemodialog"
                     >
                         Run Demo
                     </el-button>
@@ -163,6 +163,19 @@
             </div>
         </el-scrollbar>
     </div>
+    <el-dialog
+        v-model="rundemodialogVisible"
+        title="Do you confirm to run demo?"
+        width="30%"
+        align-center
+    >
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="canceldemo">No</el-button>
+                <el-button type="primary" @click="submitdemo">Yes</el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 <script setup lang="ts">
 import type { UploadFileInfo } from 'naive-ui'
@@ -177,6 +190,7 @@ const submitfile = ref<File>()
 const inputtype = ref('upload')
 const pastefile = ref('')
 const userid = ref('')
+const rundemodialogVisible = ref(false)
 
 // const choosecelltypedialogVisible = ref(false)
 const speciesoptions = [
@@ -364,6 +378,15 @@ const submit = async () => {
         }
     }
 }
+
+const openrundemodialog = () => {
+    rundemodialogVisible.value = true
+}
+
+const canceldemo = () => {
+    rundemodialogVisible.value = false
+}
+
 const submitdemo = async () => {
     const submitdata = new FormData()
     // submitdata.append('modulelist', JSON.stringify(modulelist.value))
