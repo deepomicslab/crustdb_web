@@ -10,7 +10,7 @@
                         </el-button>
                     </div>
                 </div>
-                <div class="mt-1.5 ml-0">
+                <div class="mt-1.5 ml-0" v-if="craftsuccess">
                     <div class="text-4xl font-500 mb-4">
                         <el-button type="primary" class="ml-5" @click="choosecelltypetodownload">
                             Download Result
@@ -46,10 +46,7 @@
                     <template #label>
                         <div class="cell-item">Task Status</div>
                     </template>
-                    <el-tag
-                        :type="taskdata.results.status === 'Success' ? 'success' : 'warning'"
-                        size="large"
-                    >
+                    <el-tag :type="getStatus(taskdata.results.status)" size="large">
                         {{ taskdata.results.status }}
                     </el-tag>
                 </el-descriptions-item>
@@ -65,25 +62,25 @@
                     </template>
                     {{ taskdata.results.created_at }}
                 </el-descriptions-item>
-                <el-descriptions-item :width="165">
+                <el-descriptions-item :width="165" v-if="craftsuccess">
                     <template #label>
                         <div class="cell-item">Seed</div>
                     </template>
                     {{ detailsdata && detailsdata.seed }}
                 </el-descriptions-item>
-                <el-descriptions-item :width="165">
+                <el-descriptions-item :width="165" v-if="craftsuccess">
                     <template #label>
                         <div class="cell-item">Sample Name</div>
                     </template>
                     {{ detailsdata && detailsdata.sample_name }}
                 </el-descriptions-item>
-                <el-descriptions-item :width="165">
+                <el-descriptions-item :width="165" v-if="craftsuccess">
                     <template #label>
                         <div class="cell-item">Threshold for gene filter</div>
                     </template>
                     {{ detailsdata && detailsdata.gene_filter_threshold }}
                 </el-descriptions-item>
-                <el-descriptions-item :width="165">
+                <el-descriptions-item :width="165" v-if="craftsuccess">
                     <template #label>
                         <div class="cell-item">
                             Proportion of genes used for Rotation Derivation
@@ -91,13 +88,13 @@
                     </template>
                     {{ detailsdata && detailsdata.anchor_gene_proportion }}
                 </el-descriptions-item>
-                <el-descriptions-item :width="165">
+                <el-descriptions-item :width="165" v-if="craftsuccess">
                     <template #label>
                         <div class="cell-item">Task ID</div>
                     </template>
                     {{ detailsdata && detailsdata.task_id }}
                 </el-descriptions-item>
-                <el-descriptions-item :width="165">
+                <el-descriptions-item :width="165" v-if="craftsuccess">
                     <template #label>
                         <div class="cell-item">Number of total Transcription centers</div>
                     </template>
@@ -105,11 +102,19 @@
                 </el-descriptions-item>
             </el-descriptions>
         </div>
-        <div class="mt-18">
+        <div class="mt-18" v-if="craftsuccess">
             <div class="text-3xl mt-5 ml-7 font-500 text-[#3262a8]">Convergence Curve</div>
         </div>
-        <div class="mt-5">
+        <div class="mt-5" v-if="craftsuccess">
             <div id="myEcharts" class="h-140" ref="echartlineDom"></div>
+        </div>
+        <div class="mt-18" v-if="!craftsuccess">
+            <div class="text-3xl mt-5 ml-7 font-500 text-[#3262a8]">Craft Output</div>
+        </div>
+        <div class="mt-18" v-if="!craftsuccess && detailsdata">
+            <el-scrollbar :class="logStyle" v-loading="consoleloading">
+                <n-code :code="detailsdata.log_lines" word-wrap show-line-numbers />
+            </el-scrollbar>
         </div>
     </div>
     <el-dialog
@@ -158,6 +163,26 @@ import * as echarts from 'echarts'
 import axios from 'axios'
 import _ from 'lodash'
 import { decrypt } from '@/utils/crypto'
+
+const craftsuccess = ref(true)
+const logStyle = ref('h-150 bg-dark p-4 text-light')
+const consoleloading = ref(false)
+
+const getStatus = (status: any) => {
+    if (status === 'Running') {
+        return 'info'
+    }
+    if (status === 'Success') {
+        return 'success'
+    }
+    if (status === 'Failed' || status === 'Suspended') {
+        return 'error'
+    }
+    if (status === 'Created') {
+        return 'warning'
+    }
+    return 'warning'
+}
 
 const route = useRoute()
 const echartlineDom = ref<HTMLElement | null>(null)
@@ -253,67 +278,89 @@ onBeforeMount(async () => {
         },
     })
     taskdata.value = response2.data
+    if (taskdata.value.results.status === 'Failed') {
+        craftsuccess.value = false
+    }
 
-    loaddata.value = true
-    const response3 = await axios.get(`/tasks/detail/result/`, {
-        baseURL: '/api',
-        timeout: 10000,
-        params: {
-            taskid: taskid.value,
-            celltype: '',
-        },
-    })
-    const [data1, data2] = response3.data
+    if (taskdata.value.results.status === 'Success') {
+        loaddata.value = true
+        const response3 = await axios.get(`/tasks/detail/result/`, {
+            baseURL: '/api',
+            timeout: 10000,
+            params: {
+                taskid: taskid.value,
+                celltype: '',
+            },
+        })
+        const [data1, data2] = response3.data
 
-    taskresultdatakeys.value = data1
-    taskresultdata.value = data2
-    detailsdata.value = taskresultdata.value[taskresultdatakeys.value[0]]
-    loaddata.value = false
+        taskresultdatakeys.value = data1
+        taskresultdata.value = data2
+        detailsdata.value = taskresultdata.value[taskresultdatakeys.value[0]]
+        loaddata.value = false
+    } else if (taskdata.value.results.status === 'Failed') {
+        consoleloading.value = true
+        const response3 = await axios.get(`/tasks/detail/result_log/`, {
+            baseURL: '/api',
+            timeout: 100000,
+            params: {
+                taskid: taskid.value,
+            },
+        })
+        const [data1, data2] = response3.data
+
+        taskresultdatakeys.value = data1
+        taskresultdata.value = data2
+        detailsdata.value = taskresultdata.value[taskresultdatakeys.value[0]]
+        consoleloading.value = false
+    }
 })
 
 const chartOption = () => {
-    mylineEcharts.setOption({
-        title: {
-            text: `Convergence of Cytocraft Conformation`,
-            left: 'center',
-        },
-        tooltip: {},
-        toolbox: {
-            itemSize: 20,
-            iconStyle: {
-                borderColor: '#34498e',
+    if (taskdata.value.results.status === 'Success') {
+        mylineEcharts.setOption({
+            title: {
+                text: `Convergence of Cytocraft Conformation`,
+                left: 'center',
             },
-            feature: {
-                dataView: { readOnly: true },
-                saveAsImage: {},
+            tooltip: {},
+            toolbox: {
+                itemSize: 20,
+                iconStyle: {
+                    borderColor: '#34498e',
+                },
+                feature: {
+                    dataView: { readOnly: true },
+                    saveAsImage: {},
+                },
             },
-        },
-        xAxis: {
-            name: 'Iteration',
-            nameLocation: 'middle',
-            nameGap: 30,
-            scale: true,
-            data: _.range(detailsdata.value.distance_list.length),
-            axisLabel: {
-                rotate: 0,
-                fontSize: 13,
+            xAxis: {
+                name: 'Iteration',
+                nameLocation: 'middle',
+                nameGap: 30,
+                scale: true,
+                data: _.range(detailsdata.value.distance_list.length),
+                axisLabel: {
+                    rotate: 0,
+                    fontSize: 13,
+                },
             },
-        },
-        yAxis: {
-            name: 'cvRMSD',
-            nameLocation: 'middle',
-            nameGap: 30,
-            scale: true,
-            type: 'value',
-        },
-        series: [
-            {
-                name: 'Iteration number',
-                type: 'line',
-                data: detailsdata.value.distance_list,
+            yAxis: {
+                name: 'cvRMSD',
+                nameLocation: 'middle',
+                nameGap: 30,
+                scale: true,
+                type: 'value',
             },
-        ],
-    })
+            series: [
+                {
+                    name: 'Iteration number',
+                    type: 'line',
+                    data: detailsdata.value.distance_list,
+                },
+            ],
+        })
+    }
 }
 
 onMounted(async () => {

@@ -192,7 +192,7 @@ const canceltask = async (thistaskid: any) => {
 }
 
 const viewdetail = (row: any) => {
-    if (row.status === 'Success') {
+    if (row.status === 'Success' || row.status === 'Failed') {
         if (row.analysis_type === 'Single Celltype Mode') {
             router.push({
                 path: '/task/result/conformation/single_celltype_mode',
@@ -214,12 +214,15 @@ const viewdetail = (row: any) => {
                 },
             })
         }
-    } else if (row.status === 'Failed') {
-        window.$message.warning('Task is Failed, please view task detail ', {
-            closable: true,
-            duration: 5000,
-        })
-    } else if (row.status === 'Running') {
+    }
+    // ======= Archive =======
+    // else if (row.status === 'Failed') {
+    //     window.$message.warning('Task is Failed, please view task detail ', {
+    //         closable: true,
+    //         duration: 5000,
+    //     })
+    // }
+    else if (row.status === 'Running') {
         window.$message.warning('Task is Running, please wait for a moment ', {
             closable: true,
             duration: 5000,
@@ -289,7 +292,7 @@ const action_list = (row: any) => {
                 }
             )
         )
-    } else if (row.status === 'Success') {
+    } else if (row.status === 'Success' || row.status === 'Failed') {
         this_list.push(
             h(
                 NButton,
