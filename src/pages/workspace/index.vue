@@ -115,7 +115,6 @@ onBeforeMount(async () => {
         })
         const { data } = response
         taskdata.value = data.results
-        console.log(taskdata.value)
         loading.value = false
     } else {
         window.$message.warning('Please agree with cookie', {
@@ -128,6 +127,15 @@ onBeforeMount(async () => {
 const taskList = computed(() => {
     return taskdata.value
 })
+
+// const taskList = computed({
+//     get() {
+//         return taskdata.value
+//     },
+//     set() {
+//         taskList.value = taskdata.value
+//     },
+// })
 
 type RowData = {
     id: number
@@ -143,8 +151,37 @@ const rowKey = (row: RowData) => {
 
 const router = useRouter()
 
+const refreshfunction = async () => {
+    loading.value = true
+    const response = await axios.get(`/tasks/list/`, {
+        baseURL: '/api',
+        timeout: 50000,
+        params: {
+            userid: userid.value,
+        },
+    })
+    const { data } = response
+    taskdata.value = data.results
+    loading.value = false
+}
+
+const refresh = async (event: any) => {
+    const ts = event.target
+    ts.blur()
+    refreshfunction()
+}
+
+const canceltask = async (thistaskid: any) => {
+    const postdata = new FormData()
+    postdata.append('taskid', thistaskid)
+    await axios.post(`/tasks/cancel/`, postdata, {
+        baseURL: '/api',
+        timeout: 10000,
+    })
+    refreshfunction()
+}
+
 const viewdetail = (row: any) => {
-    console.log('row.status', row.status)
     if (row.status === 'Success') {
         if (row.analysis_type === 'Single Celltype Mode') {
             router.push({
@@ -185,23 +222,6 @@ const viewdetail = (row: any) => {
     }
 }
 
-const refresh = async (event: any) => {
-    const ts = event.target
-    ts.blur()
-    loading.value = true
-
-    const response = await axios.get(`/tasks/list/`, {
-        baseURL: '/api',
-        timeout: 50000,
-        params: {
-            userid: userid.value,
-        },
-    })
-    const { data } = response
-    taskdata.value = data.results
-    loading.value = false
-}
-
 const getStatus = (status: any) => {
     if (status === 'Running') {
         return 'info'
@@ -209,7 +229,7 @@ const getStatus = (status: any) => {
     if (status === 'Success') {
         return 'success'
     }
-    if (status === 'Failed') {
+    if (status === 'Failed' || status === 'Suspended') {
         return 'error'
     }
     if (status === 'Created') {
@@ -232,6 +252,92 @@ const pagination = reactive({
         pagination.page = 1
     },
 })
+
+const action_list = (row: any) => {
+    const this_list = []
+    if (row.status === 'Created' || row.status === 'Running') {
+        this_list.push(
+            h(
+                NButton,
+                {
+                    strong: true,
+                    size: 'small',
+                    type: 'primary',
+                    // disabled: row.status === 'Success' || row.status === 'Suspended',
+                    color: '#35488E',
+                    style: {
+                        width: '100px',
+                    },
+                    onClick: () => {
+                        canceltask(row.id)
+                    },
+                },
+                {
+                    default: () => {
+                        return 'Cancel Task'
+                    },
+                }
+            )
+        )
+    } else if (row.status === 'Success') {
+        this_list.push(
+            h(
+                NButton,
+                {
+                    strong: true,
+                    size: 'small',
+                    type: 'primary',
+                    // disabled: row.status !== 'Success',
+                    color: '#35488E',
+                    style: {
+                        width: '100px',
+                    },
+                    onClick: () => {
+                        viewdetail(row)
+                    },
+                },
+                {
+                    default: () => {
+                        return 'View Result'
+                    },
+                }
+            )
+        )
+    }
+    this_list.push(
+        h(
+            NButton,
+            {
+                strong: true,
+                size: 'small',
+                type: 'primary',
+                color: '#35758e',
+                style: {
+                    width: '75px',
+                },
+                onClick: () => {
+                    dialogVisible.value = true
+                    taskid.value = row.id
+                },
+            },
+            {
+                default: () => {
+                    return 'Task Log'
+                },
+            }
+        )
+    )
+    return this_list
+}
+
+const colwidth = {
+    id: 70,
+    species: 50,
+    analysis_type: 80,
+    status: 50,
+    created_at: 90,
+    actions: 80,
+}
 const createColumns = (): DataTableColumns<RowData> => {
     return [
         {
@@ -240,13 +346,13 @@ const createColumns = (): DataTableColumns<RowData> => {
             align: 'center',
             sorter: 'default',
             defaultSortOrder: 'ascend',
-            width: 80,
+            width: colwidth.id,
         },
         {
             title: 'Species',
             key: 'species',
             align: 'center',
-            width: 80,
+            width: colwidth.species,
             filterOptions: [
                 {
                     label: 'Human',
@@ -281,7 +387,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             title: 'Analysis Type',
             key: 'analysis_type',
             align: 'center',
-            width: 100,
+            width: colwidth.analysis_type,
             filterOptions: [
                 {
                     label: 'Single Celltype Mode',
@@ -300,7 +406,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             title: 'Status',
             key: 'status',
             align: 'center',
-            width: 80,
+            width: colwidth.status,
             filterOptions: [
                 {
                     label: 'Success',
@@ -341,13 +447,13 @@ const createColumns = (): DataTableColumns<RowData> => {
             title: 'Created Time',
             key: 'created_at',
             align: 'center',
-            width: 100,
+            width: colwidth.created_at,
         },
         {
             title: 'Actions',
             key: 'actions',
             align: 'center',
-            width: 100,
+            width: colwidth.actions,
             fixed: 'right',
             render(row: any) {
                 return h(
@@ -358,50 +464,7 @@ const createColumns = (): DataTableColumns<RowData> => {
                             justifyContent: 'space-around',
                         },
                     },
-                    [
-                        h(
-                            NButton,
-                            {
-                                strong: true,
-                                size: 'small',
-                                type: 'primary',
-                                disabled: row.status !== 'Success',
-                                color: '#35488E',
-                                style: {
-                                    width: '100px',
-                                },
-                                onClick: () => {
-                                    viewdetail(row)
-                                },
-                            },
-                            {
-                                default: () => {
-                                    return 'view result'
-                                },
-                            }
-                        ),
-                        h(
-                            NButton,
-                            {
-                                strong: true,
-                                size: 'small',
-                                type: 'primary',
-                                color: '#35758e',
-                                style: {
-                                    width: '75px',
-                                },
-                                onClick: () => {
-                                    dialogVisible.value = true
-                                    taskid.value = row.id
-                                },
-                            },
-                            {
-                                default: () => {
-                                    return 'task log'
-                                },
-                            }
-                        ),
-                    ]
+                    action_list(row)
                 )
             },
         },

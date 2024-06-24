@@ -24,10 +24,7 @@
                     <template #label>
                         <div class="cell-item">Task Status</div>
                     </template>
-                    <el-tag
-                        :type="taskdata.results.status === 'Success' ? 'success' : 'warning'"
-                        size="large"
-                    >
+                    <el-tag :type="getStatus(taskdata.results.status)" size="large">
                         {{ taskdata.results.status }}
                     </el-tag>
                 </el-descriptions-item>
@@ -103,6 +100,22 @@ import axios from 'axios'
 // const route = useRoute()
 // const taskid = computed(() => route.query?.taskid as string)
 
+const getStatus = (status: any) => {
+    if (status === 'Running') {
+        return 'info'
+    }
+    if (status === 'Success') {
+        return 'success'
+    }
+    if (status === 'Failed' || status === 'Suspended') {
+        return 'error'
+    }
+    if (status === 'Created') {
+        return 'warning'
+    }
+    return 'warning'
+}
+
 const props = defineProps({
     taskid: String,
     enableTable: Boolean,
@@ -160,6 +173,7 @@ const fetchData = async () => {
         // const firstModule = taskdata.value.results.modulelist.slice(0, 1)[0]
         // activeName.value = firstModule
         // module = firstModule
+        console.log('taskdata.value', taskdata.value)
         loading.value = false
     }
 
