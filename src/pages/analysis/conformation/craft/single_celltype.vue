@@ -46,7 +46,17 @@
                     to see the precomputed demo results immediately.
                 </div>
                 <div class="font-600 text-3xl ml-20 mt-10">
-                    1. Input Sequence
+                    1. Specify Celltype
+                    <n-form-item class="w-75">
+                        <n-select
+                            v-model:value="thisspeciesoption"
+                            :options="speciesoptions"
+                            placeholder="Search Species"
+                        />
+                    </n-form-item>
+                </div>
+                <div class="font-600 text-3xl ml-20 mt-10">
+                    2. Input CSV File
                     <n-button
                         text
                         href="https://cygraph.deepomics.org/demo_input/craft_single_celltype/Mice_endo/SS200000108BR_A3A4_scgem.Endothelial_cell.csv"
@@ -97,7 +107,7 @@
                                         class="text-sp mt-3 mb-3 text-opacity-100"
                                         style="color: #f07167"
                                     >
-                                        CSV file size should be less than __MB
+                                        CSV file size should be less than 100MB
                                     </p>
                                     <p class="text-sp mb-3 text-opacity-100" style="color: #f07167">
                                         <!-- Supported formats: .fasta / .fa -->
@@ -168,6 +178,44 @@ const inputtype = ref('upload')
 const pastefile = ref('')
 const userid = ref('')
 
+// const choosecelltypedialogVisible = ref(false)
+const speciesoptions = [
+    {
+        label: 'Mice',
+        value: 'Mice',
+    },
+    {
+        label: 'Mouse',
+        value: 'Mouse',
+        disabled: true,
+    },
+    {
+        label: 'Human',
+        value: 'Human',
+        disabled: true,
+    },
+    {
+        label: 'Axolotls',
+        value: 'Axolotls',
+        disabled: true,
+    },
+    {
+        label: 'Axolotl',
+        value: 'Axolotl',
+        disabled: true,
+    },
+    {
+        label: 'Monkey',
+        value: 'Monkey',
+        disabled: true,
+    },
+]
+const thisspeciesoption = ref('')
+
+watch(thisspeciesoption, () => {
+    console.log(thisspeciesoption.value)
+})
+
 const exampleSwicth = ref(false)
 
 const examplechange = async () => {
@@ -200,8 +248,8 @@ const handleFileListChange = (data: UploadFileInfo[]) => {
     } else if (data[0].file?.size === 0 || data[0].file?.size === undefined) {
         window.$message.error('Uploaded file cannot be empty.', { closable: true, duration: 5000 })
         data.pop()
-    } else if (data[0].file.size / 1024 / 1024 > 10) {
-        window.$message.error('Uploaded file cannot exceed 10MB.', {
+    } else if (data[0].file.size / 1024 / 1024 > 100) {
+        window.$message.error('Uploaded file cannot exceed 100MB.', {
             closable: true,
             duration: 5000,
         })
@@ -221,6 +269,11 @@ const remove = () => {
     submitfile.value = undefined
     fileList.value.pop()
 }
+
+// const choosecelltype = () => {
+//     choosecelltypedialogVisible.value = true
+// }
+
 const router = useRouter()
 
 const godemo = () => {
@@ -239,15 +292,22 @@ const submit = async () => {
     // submitdata.append('modulelist', JSON.stringify(modulelist.value))
     const precheck = ref(false)
     // check empty
+    if (thisspeciesoption.value === '') {
+        window.$message.error('Please specify species', {
+            closable: true,
+            duration: 5000,
+        })
+    }
+    submitdata.append('species', thisspeciesoption.value)
     if (inputtype.value === 'upload') {
         if (typeof submitfile.value === 'undefined') {
-            window.$message.error('Please upload file', {
+            window.$message.error('Please upload CSV file', {
                 closable: true,
                 duration: 5000,
             })
             precheck.value = false
         } else {
-            submitdata.append('submitfile', submitfile.value as File)
+            submitdata.append('CSV', submitfile.value as File)
             precheck.value = true
         }
     } else if (inputtype.value === 'paste') {
@@ -268,7 +328,6 @@ const submit = async () => {
         submitdata.append('userid', userid.value)
         //submitdata.append('user', 'demo')
         submitdata.append('inputtype', inputtype.value)
-        submitdata.append('species', 'Mice') // customise at this time
         const response = await axios.post(`/analyze/craft_single_celltype/`, submitdata, {
             baseURL: '/api',
             timeout: 10000,
@@ -303,7 +362,7 @@ const submitdemo = async () => {
         submitdata.append('userid', userid.value)
         //submitdata.append('user', 'demo')
         submitdata.append('inputtype', 'rundemo')
-        submitdata.append('species', 'Mice') // customise at this time
+        submitdata.append('species', 'Mice') // customised at this time
         // const response = await axios.post(`/analyze/pipline/`, submitdata, {
         const response = await axios.post(`/analyze/craft_single_celltype/`, submitdata, {
             baseURL: '/api',
