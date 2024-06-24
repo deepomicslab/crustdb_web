@@ -212,26 +212,26 @@ const speciesoptions = [
 ]
 const thisspeciesoption = ref('')
 
-watch(thisspeciesoption, () => {
-    console.log(thisspeciesoption.value)
-})
+// watch(thisspeciesoption, () => {
+//     console.log(thisspeciesoption.value)
+// })
 
 const exampleSwicth = ref(false)
 
 const examplechange = async () => {
-    console.log('exampleSwicth.value', exampleSwicth.value)
+    // console.log('exampleSwicth.value', exampleSwicth.value)
     if (exampleSwicth.value) {
         const fileURL = new URL(
             // '../../../../../public/dataExample/data_demo/sequence.fasta',
-            // '../../../../../public/demo_input/craft_single_celltype/Mice_endo/SS200000108BR_A3A4_scgem.Endothelial_cell.csv',
-            '../../../../../public/demo_input/craft_single_celltype/Mice_endo/test.csv',
+            '../../../../../public/demo_input/craft_single_celltype/Mice_endo/SS200000108BR_A3A4_scgem.Endothelial_cell.partial.csv',
+            // '../../../../../public/demo_input/craft_single_celltype/Mice_endo/test.csv',
             // 'https://phagescope.deepomics.org/dataExample/data_demo/sequence.fasta',
             import.meta.url
         )
+        // fetch(fileURL).catch(err => console.log('Request Failed', err))
         const response = await fetch(fileURL)
-        console.log(response)
         const content = await response.text()
-        console.log(content)
+        // console.log(content)
         pastefile.value = content
     } else {
         pastefile.value = ''
@@ -288,17 +288,21 @@ const godemo = () => {
 
 const submit = async () => {
     const submitdata = new FormData()
-    // submitdata.append('rundemo', 'false')
-    // submitdata.append('modulelist', JSON.stringify(modulelist.value))
     const precheck = ref(false)
-    // check empty
+
     if (thisspeciesoption.value === '') {
         window.$message.error('Please specify species', {
             closable: true,
             duration: 5000,
         })
+        precheck.value = false
     }
+    // console.log('inputtype.value', inputtype.value)
     submitdata.append('species', thisspeciesoption.value)
+    submitdata.append('analysistype', 'Single Celltype Mode')
+    submitdata.append('userid', userid.value)
+    submitdata.append('inputtype', inputtype.value)
+
     if (inputtype.value === 'upload') {
         if (typeof submitfile.value === 'undefined') {
             window.$message.error('Please upload CSV file', {
@@ -307,12 +311,15 @@ const submit = async () => {
             })
             precheck.value = false
         } else {
+            // console.log('inputtype.value', inputtype.value)
+            // console.log('submitfile.value', submitfile.value)
             submitdata.append('CSV', submitfile.value as File)
             precheck.value = true
         }
     } else if (inputtype.value === 'paste') {
         if (pastefile.value.length > 0) {
-            submitdata.append('file', pastefile.value)
+            // console.log('inputtype.value', inputtype.value)
+            submitdata.append('CSVfile', pastefile.value)
             precheck.value = true
         } else {
             window.$message.error('Please input data in CSV format', {
@@ -324,29 +331,36 @@ const submit = async () => {
     }
 
     if (precheck.value) {
-        submitdata.append('analysistype', 'Single Celltype Mode')
-        submitdata.append('userid', userid.value)
-        //submitdata.append('user', 'demo')
-        submitdata.append('inputtype', inputtype.value)
-        const response = await axios.post(`/analyze/craft_single_celltype/`, submitdata, {
-            baseURL: '/api',
-            timeout: 10000,
-        })
-        const { data } = response
-        console.log(data)
-        if (data.status === 'Create Success') {
-            window.$message.success(data.message, {
-                closable: true,
-                duration: 5000,
+
+        // for (var pair of submitdata.entries()) {
+        //     console.log(pair[0] + ', ' + pair[1]);
+        // }
+        try {
+            const response = await axios.post(`/analyze/craft_single_celltype/`, submitdata, {
+                baseURL: '/api',
+                timeout: 100000,
+                headers: { 'Content-Type': 'multipart/form-data' },
+                maxBodyLength: Infinity,
+                maxContentLength: Infinity,
             })
-            router.push({
-                path: '/workspace/',
-            })
-        } else {
-            window.$message.error(data.message, {
-                closable: true,
-                duration: 5000,
-            })
+            const { data } = response
+
+            if (data.status === 'Create Success') {
+                window.$message.success(data.message, {
+                    closable: true,
+                    duration: 5000,
+                })
+                router.push({
+                    path: '/workspace/',
+                })
+            } else {
+                window.$message.error(data.message, {
+                    closable: true,
+                    duration: 5000,
+                })
+            }
+        } catch (err) {
+            console.log(err)
         }
     }
 }
@@ -369,7 +383,7 @@ const submitdemo = async () => {
             timeout: 10000,
         })
         const { data } = response
-        console.log(data)
+        // console.log(data)
         if (data.status === 'Create Success') {
             window.$message.success(data.message, {
                 closable: true,
