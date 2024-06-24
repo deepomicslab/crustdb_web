@@ -55,7 +55,7 @@
                 </n-button>
             </div>
             <div class="text-lg text-gray-600 mt-3">
-                You can click refresh button to refresh task status.
+                Click refresh button to refresh task status.
             </div>
         </div>
 
@@ -98,7 +98,16 @@ const taskdata = ref([] as any[])
 const dialogVisible = ref(false)
 const taskid = ref('')
 
+const refreshTaskResultfromDB = async () => {
+    await axios.post(`/tasks/refresh/`, null, {
+        baseURL: '/api',
+        timeout: 10000,
+    })
+}
+
 onBeforeMount(async () => {
+    refreshTaskResultfromDB()
+
     const { isCookieExist, userId, getUserIdFromCookie } = useUserIdGenerator()
 
     getUserIdFromCookie()
@@ -168,6 +177,7 @@ const refreshfunction = async () => {
 const refresh = async (event: any) => {
     const ts = event.target
     ts.blur()
+    refreshTaskResultfromDB()
     refreshfunction()
 }
 
@@ -345,7 +355,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             key: 'id',
             align: 'center',
             sorter: 'default',
-            defaultSortOrder: 'ascend',
+            defaultSortOrder: 'descend',
             width: colwidth.id,
         },
         {
