@@ -39,7 +39,7 @@
                     <el-icon class="text-lg mt-1 mr-2 text-[#34498E]">
                         <InfoFilled />
                     </el-icon>
-                    It takes a few minutes to
+                    It takes a few hours to
                     <p class="text-[#EE7E7D] mx-2" @click="godemo">RUN DEMO.</p>
                     Click
                     <p class="text-[#EE7E7D] mx-2">VIEW DEMO RESULT</p>
