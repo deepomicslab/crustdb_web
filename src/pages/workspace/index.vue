@@ -242,7 +242,7 @@ const getStatus = (status: any) => {
     if (status === 'Success') {
         return 'success'
     }
-    if (status === 'Failed' || status === 'Suspended') {
+    if (status === 'Failed' || status === 'Canceled') {
         return 'error'
     }
     if (status === 'Created') {
@@ -276,7 +276,7 @@ const action_list = (row: any) => {
                     strong: true,
                     size: 'small',
                     type: 'primary',
-                    // disabled: row.status === 'Success' || row.status === 'Suspended',
+                    // disabled: row.status === 'Success' || row.status === 'Canceled',
                     color: '#35488E',
                     style: {
                         width: '100px',

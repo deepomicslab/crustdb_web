@@ -46,7 +46,7 @@
                     to see the precomputed demo results immediately.
                 </div>
                 <div class="font-600 text-3xl ml-20 mt-10">
-                    1. Specify Celltype
+                    1. Specify Species
                     <n-form-item class="w-75">
                         <n-select
                             v-model:value="thisspeciesoption"
@@ -56,7 +56,7 @@
                     </n-form-item>
                 </div>
                 <div class="font-600 text-3xl ml-20 mt-10">
-                    2. Input CSV File
+                    2. Input Gene Expression Matrix
                     <n-button
                         text
                         href="https://cygraph.deepomics.org/demo_input/craft_single_celltype/Mice_endo/SS200000108BR_A3A4_scgem.Endothelial_cell.csv"
@@ -68,28 +68,17 @@
                         See Input Example of Single Celltype Mode (Species Mice)
                     </n-button>
                 </div>
-                <div class="ml-25 mt-5 flex flex-row mb-5">
-                    <div class="font-500 text-2xl">Select an input type:</div>
-
-                    <div class="ml-5">
-                        <n-radio-group v-model:value="inputtype">
-                            <n-radio-button value="upload">UPLOAD FILE</n-radio-button>
-                            <n-radio-button value="paste">PASTE CSV FILE</n-radio-button>
-                        </n-radio-group>
-                    </div>
-                </div>
 
                 <div class="flex flex-row justify-center">
                     <div
                         class="rounded w-190 h-90 mt-5 rounded-2xl"
                         style="box-shadow: 0 0 64px #cfd5db"
-                        v-if="inputtype === 'upload'"
                     >
                         <n-upload
                             v-model:file-list="fileList"
                             directory-dnd
                             :default-upload="false"
-                            accept=".csv"
+                            accept=".csv, .tsv, .txt"
                             @update:file-list="handleFileListChange"
                             @remove="remove"
                             show-remove-button
@@ -107,47 +96,24 @@
                                         class="text-sp mt-3 mb-3 text-opacity-100"
                                         style="color: #f07167"
                                     >
-                                        CSV file size should be less than 100MB
+                                        File size should be less than 100MB
                                     </p>
                                     <p class="text-sp mb-3 text-opacity-100" style="color: #f07167">
-                                        <!-- Supported formats: .fasta / .fa -->
-                                        Supported formats: .csv
+                                        Supported formats: .csv / .tsv / .txt
                                     </p>
                                 </div>
                             </n-upload-dragger>
                         </n-upload>
                     </div>
-
-                    <div
-                        class="rounded w-240 h-100 mt-5 rounded-2xl flex-col flex justify-center items-center"
-                        style="box-shadow: 0 0 64px #cfd5db"
-                        v-if="inputtype === 'paste'"
-                    >
-                        <div class="text-lg mb-6 w-190">Paste a CSV file.</div>
-                        <div class="w-190 mt-1 flex flex-row text-lg">
-                            <n-input
-                                round
-                                placeholder="cell,x,y,geneID,MIDCount"
-                                type="textarea"
-                                clearable
-                                :rows="10"
-                                v-model:value="pastefile"
-                            ></n-input>
-                        </div>
-                        <div class="mt-4">
-                            <el-switch
-                                active-text="Use Example"
-                                size="large"
-                                class="mr-7"
-                                v-model="exampleSwicth"
-                                @change="examplechange"
-                            />
-                            <!-- <n-button-group>
-                                <n-button round size="large" class="w-50">Paste</n-button>
-                                <n-button round size="large" class="w-50">Copy</n-button>
-                            </n-button-group> -->
-                        </div>
-                    </div>
+                </div>
+                <div class="font-600 text-3xl ml-20 mt-10">
+                    3. Specify File Separator
+                    <n-form-item class="w-75">
+                        <n-select
+                            v-model:value="thisfileseparatoroption"
+                            :options="fileseparatoroptions"
+                        />
+                    </n-form-item>
                 </div>
                 <div class="mt-20 flex flex-row justify-center">
                     <el-button
@@ -181,18 +147,14 @@
 import type { UploadFileInfo } from 'naive-ui'
 import { InfoFilled } from '@element-plus/icons-vue'
 import axios from 'axios'
-// import { FormInst } from 'naive-ui'
 import { useUserIdGenerator } from '@/utils/userIdGenerator'
 import { encrypt } from '@/utils/crypto'
 
 const fileList = ref<UploadFileInfo[]>([])
 const submitfile = ref<File>()
-const inputtype = ref('upload')
-const pastefile = ref('')
 const userid = ref('')
 const rundemodialogVisible = ref(false)
 
-// const choosecelltypedialogVisible = ref(false)
 const speciesoptions = [
     {
         label: 'Mice',
@@ -224,37 +186,27 @@ const speciesoptions = [
         disabled: true,
     },
 ]
+const fileseparatoroptions = [
+    {
+        label: "tab '\\t'",
+        value: 'tab',
+    },
+    {
+        label: "space ' '",
+        value: 'space',
+    },
+    {
+        label: "comma ','",
+        value: 'comma',
+    },
+]
 const thisspeciesoption = ref('')
+const thisfileseparatoroption = ref('')
 
-// watch(thisspeciesoption, () => {
-//     console.log(thisspeciesoption.value)
-// })
-
-const exampleSwicth = ref(false)
-
-const examplechange = async () => {
-    // console.log('exampleSwicth.value', exampleSwicth.value)
-    if (exampleSwicth.value) {
-        const fileURL = new URL(
-            // '../../../../../public/dataExample/data_demo/sequence.fasta',
-            '../../../../../public/demo_input/craft_single_celltype/Mice_endo/SS200000108BR_A3A4_scgem.Endothelial_cell.partial.csv',
-            // '../../../../../public/demo_input/craft_single_celltype/Mice_endo/test.csv',
-            // 'https://phagescope.deepomics.org/dataExample/data_demo/sequence.fasta',
-            import.meta.url
-        )
-        // fetch(fileURL).catch(err => console.log('Request Failed', err))
-        const response = await fetch(fileURL)
-        const content = await response.text()
-        // console.log(content)
-        pastefile.value = content
-    } else {
-        pastefile.value = ''
-    }
-}
 /* eslint-disable */
 const handleFileListChange = (data: UploadFileInfo[]) => {
-    if (data[0].name.match(/(.csv)$/g) === null) {
-        window.$message.error('Uploaded file must be in CSV format.', {
+    if (data[0].name.match(/(.csv)$/g) === null && data[0].name.match(/(.tsv)$/g) && data[0].name.match(/(.txt)$/g)) {
+        window.$message.error('Uploaded file must be in .csv / .tsv / .txt format.', {
             closable: true,
             duration: 5000,
         })
@@ -284,10 +236,6 @@ const remove = () => {
     fileList.value.pop()
 }
 
-// const choosecelltype = () => {
-//     choosecelltypedialogVisible.value = true
-// }
-
 const router = useRouter()
 
 const godemo = () => {
@@ -310,38 +258,31 @@ const submit = async () => {
             duration: 5000,
         })
         precheck.value = false
+        return
     }
-    // console.log('inputtype.value', inputtype.value)
+    if (thisfileseparatoroption.value === '') {
+        window.$message.error('Please specify file separator', {
+            closable: true,
+            duration: 5000,
+        })
+        precheck.value = false
+        return
+    }
     submitdata.append('species', thisspeciesoption.value)
+    submitdata.append('fileseparator', thisfileseparatoroption.value)
     submitdata.append('analysistype', 'Single Celltype Mode')
     submitdata.append('userid', userid.value)
-    submitdata.append('inputtype', inputtype.value)
+    submitdata.append('inputtype', 'upload')
 
-    if (inputtype.value === 'upload') {
-        if (typeof submitfile.value === 'undefined') {
-            window.$message.error('Please upload CSV file', {
-                closable: true,
-                duration: 5000,
-            })
-            precheck.value = false
-        } else {
-            // console.log('inputtype.value', inputtype.value)
-            // console.log('submitfile.value', submitfile.value)
-            submitdata.append('CSV', submitfile.value as File)
-            precheck.value = true
-        }
-    } else if (inputtype.value === 'paste') {
-        if (pastefile.value.length > 0) {
-            // console.log('inputtype.value', inputtype.value)
-            submitdata.append('CSVfile', pastefile.value)
-            precheck.value = true
-        } else {
-            window.$message.error('Please input data in CSV format', {
-                closable: true,
-                duration: 5000,
-            })
-            precheck.value = false
-        }
+    if (typeof submitfile.value === 'undefined') {
+        window.$message.error('Please upload gene expression matrix', {
+            closable: true,
+            duration: 5000,
+        })
+        precheck.value = false
+    } else {
+        submitdata.append('CSV', submitfile.value as File)
+        precheck.value = true
     }
 
     if (precheck.value) {
@@ -389,24 +330,19 @@ const canceldemo = () => {
 
 const submitdemo = async () => {
     const submitdata = new FormData()
-    // submitdata.append('modulelist', JSON.stringify(modulelist.value))
-    // submitdata.append('rundemo', 'true')
     const precheck = ref(true)
 
     if (precheck.value) {
-        // submitdata.append('analysistype', 'Lifestyle Prediction')
         submitdata.append('analysistype', 'Single Celltype Mode')
         submitdata.append('userid', userid.value)
-        //submitdata.append('user', 'demo')
         submitdata.append('inputtype', 'rundemo')
+        submitdata.append('fileseparator', 'comma')
         submitdata.append('species', 'Mice') // customised at this time
-        // const response = await axios.post(`/analyze/pipline/`, submitdata, {
         const response = await axios.post(`/analyze/craft_single_celltype/`, submitdata, {
             baseURL: '/api',
             timeout: 10000,
         })
         const { data } = response
-        // console.log(data)
         if (data.status === 'Create Success') {
             window.$message.success(data.message, {
                 closable: true,

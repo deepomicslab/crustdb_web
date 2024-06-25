@@ -107,7 +107,7 @@ const getStatus = (status: any) => {
     if (status === 'Success') {
         return 'success'
     }
-    if (status === 'Failed' || status === 'Suspended') {
+    if (status === 'Failed' || status === 'Canceled') {
         return 'error'
     }
     if (status === 'Created') {
