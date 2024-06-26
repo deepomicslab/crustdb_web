@@ -205,7 +205,7 @@ const viewdetail = (row: any) => {
             })
         } else if (row.analysis_type === 'Multi-Celltype Mode') {
             router.push({
-                path: '/task/result/multi_celltype_mode',
+                path: '/task/result/conformation/multi_celltype_mode',
                 query: {
                     taskid: encrypt(
                         row.id,

@@ -336,7 +336,7 @@ const submitdemo = async () => {
         submitdata.append('analysistype', 'Single Celltype Mode')
         submitdata.append('userid', userid.value)
         submitdata.append('inputtype', 'rundemo')
-        submitdata.append('fileseparator', 'comma')
+        submitdata.append('fileseparator', 'tab')
         submitdata.append('species', 'Mice') // customised at this time
         const response = await axios.post(`/analyze/craft_single_celltype/`, submitdata, {
             baseURL: '/api',

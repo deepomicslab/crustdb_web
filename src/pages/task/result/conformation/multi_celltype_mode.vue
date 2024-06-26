@@ -3,13 +3,13 @@
         <div class="mt-18">
             <div class="flex flex-row border-b-2 border-gray-300">
                 <div class="text-4xl font-500 mb-8">Task Result Page</div>
-                <!-- <div class="mt-1.5 ml-0">
+                <div class="mt-1.5 ml-0">
                     <div class="text-4xl font-500 mb-4">
                         <el-button type="primary" class="ml-5" @click="choosecelltypetoshow">
                             Choose Cell Type
                         </el-button>
                     </div>
-                </div> -->
+                </div>
                 <div class="mt-1.5 ml-0" v-if="craftsuccess">
                     <div class="text-4xl font-500 mb-4">
                         <el-button type="primary" class="ml-5" @click="choosecelltypetodownload">
@@ -236,9 +236,9 @@ const selecttoshowconfirmrequest = () => {
     }
 }
 
-// const choosecelltypetoshow = () => {
-//     choosecelltypetoshowdialogVisible.value = true
-// }
+const choosecelltypetoshow = () => {
+    choosecelltypetoshowdialogVisible.value = true
+}
 
 const selecttodownloadcancelrequest = () => {
     checkListtoDownload.value.length = 0
