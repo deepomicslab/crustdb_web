@@ -4,20 +4,33 @@
             <div class="flex flex-col h-400">
                 <div class="font-600 ml-20 mt-16 flex flex-row border-b-2 w-9/10 pb-5">
                     <div class="text-4xl text-[#253959]">Multi-Celltype Mode</div>
-                    <el-button round size="large" color="#EE7E7D"
+                    <el-button
+                        round
+                        size="large"
+                        color="#EE7E7D"
                         class="text-white hover:text-white focus:text-white active:text-white ml-70"
-                        @click="openrundemodialog">
+                        @click="openrundemodialog"
+                    >
                         Run Demo
                     </el-button>
-                    <el-button round size="large" color="#EE7E7D"
-                        class="ml-5 text-white hover:text-white focus:text-white active:text-white" @click="godemo">
+                    <el-button
+                        round
+                        size="large"
+                        color="#EE7E7D"
+                        class="ml-5 text-white hover:text-white focus:text-white active:text-white"
+                        @click="godemo"
+                    >
                         View Demo Result
                     </el-button>
                     <el-button round size="large" color="#34498E" @click="gosubmithelper">
                         Submission Helper
                     </el-button>
                     <el-button round size="large" color="#34498E" class="ml-5">
-                        <a href="https://github.com/deepomicslab/PhageScope/issues" target="_blank" class="btn">
+                        <a
+                            href="https://github.com/deepomicslab/PhageScope/issues"
+                            target="_blank"
+                            class="btn"
+                        >
                             Report bug
                         </a>
                     </el-button>
@@ -44,18 +57,32 @@
                 </div> -->
 
                 <div class="font-600 text-3xl ml-20 mt-10">
-                    2. Input Gene Expression Matrix
-                    <n-button text
+                    1. Input Gene Expression Matrix
+                    <n-button
+                        text
                         href="https://cygraph.deepomics.org/demo_input/craft_multi_celltype/merfish_ileum/baysor_transcripts.gem.csv"
-                        tag="a" target="_blank" type="primary" class="text-lg">
+                        tag="a"
+                        target="_blank"
+                        type="primary"
+                        class="text-lg"
+                    >
                         See Input Example of Multi-Celltype Mode (Species Mice)
                     </n-button>
                 </div>
                 <div class="flex flex-row justify-center">
-                    <div class="rounded w-190 h-90 mt-5 rounded-2xl" style="box-shadow: 0 0 64px #cfd5db">
-                        <n-upload v-model:file-list="csvFileList" directory-dnd :default-upload="false"
-                            accept=".csv, .tsv, .txt" @update:file-list="handleCSVFileListChange"
-                            @remove="csvFileRemove" show-remove-button>
+                    <div
+                        class="rounded w-190 h-90 mt-5 rounded-2xl"
+                        style="box-shadow: 0 0 64px #cfd5db"
+                    >
+                        <n-upload
+                            v-model:file-list="csvFileList"
+                            directory-dnd
+                            :default-upload="false"
+                            accept=".csv, .tsv, .txt"
+                            @update:file-list="handleCSVFileListChange"
+                            @remove="csvFileRemove"
+                            show-remove-button
+                        >
                             <n-upload-dragger>
                                 <div class="flex flex-col justify-center items-center">
                                     <div class="text-[90px] mt-10" style="color: #028090">
@@ -65,7 +92,10 @@
                                         Click or drag a file to this area to upload your file
                                     </p>
 
-                                    <p class="text-sp mt-3 mb-3 text-opacity-100" style="color: #f07167">
+                                    <p
+                                        class="text-sp mt-3 mb-3 text-opacity-100"
+                                        style="color: #f07167"
+                                    >
                                         File size should be less than 100MB
                                     </p>
                                     <p class="text-sp mb-3 text-opacity-100" style="color: #f07167">
@@ -78,18 +108,32 @@
                 </div>
 
                 <div class="font-600 text-3xl ml-20 mt-10">
-                    3. Input Cell Features
-                    <n-button text
+                    2. Input Cell Features
+                    <n-button
+                        text
                         href="https://cygraph.deepomics.org/demo_input/craft_multi_celltype/merfish_ileum/baysor_cell_feature.csv"
-                        tag="a" target="_blank" type="primary" class="text-lg">
+                        tag="a"
+                        target="_blank"
+                        type="primary"
+                        class="text-lg"
+                    >
                         See Input Example of Multi-Celltype Mode (Species Mice)
                     </n-button>
                 </div>
                 <div class="flex flex-row justify-center">
-                    <div class="rounded w-190 h-90 mt-5 rounded-2xl" style="box-shadow: 0 0 64px #cfd5db">
-                        <n-upload v-model:file-list="featureFileList" directory-dnd :default-upload="false"
-                            accept=".csv, .tsv, .txt" @update:file-list="handleFeatureFileListChange"
-                            @remove="featureFileRemove" show-remove-button>
+                    <div
+                        class="rounded w-190 h-90 mt-5 rounded-2xl"
+                        style="box-shadow: 0 0 64px #cfd5db"
+                    >
+                        <n-upload
+                            v-model:file-list="featureFileList"
+                            directory-dnd
+                            :default-upload="false"
+                            accept=".csv, .tsv, .txt"
+                            @update:file-list="handleFeatureFileListChange"
+                            @remove="featureFileRemove"
+                            show-remove-button
+                        >
                             <n-upload-dragger>
                                 <div class="flex flex-col justify-center items-center">
                                     <div class="text-[90px] mt-10" style="color: #028090">
@@ -99,7 +143,10 @@
                                         Click or drag a file to this area to upload your file
                                     </p>
 
-                                    <p class="text-sp mt-3 mb-3 text-opacity-100" style="color: #f07167">
+                                    <p
+                                        class="text-sp mt-3 mb-3 text-opacity-100"
+                                        style="color: #f07167"
+                                    >
                                         File size should be less than 100MB
                                     </p>
                                     <p class="text-sp mb-3 text-opacity-100" style="color: #f07167">
@@ -110,29 +157,50 @@
                         </n-upload>
                     </div>
                 </div>
-                <div class="font-600 text-3xl ml-20 mt-10">4. Parameters</div>
+                <div class="font-600 text-3xl ml-20 mt-10">3. Parameters</div>
                 <div class="flex flex-row justify-center">
-                    <div class="rounded w-200 h-115 mt-15 rounded-xl" style="box-shadow: 0 0 64px #cfd5db">
+                    <div
+                        class="rounded w-200 h-115 mt-15 rounded-xl"
+                        style="box-shadow: 0 0 64px #cfd5db"
+                    >
                         <div class="mt-10">
                             <el-form status-icon label-width="auto" label-position="right">
                                 <el-row justify="space-evenly">
                                     <el-col :span="16">
                                         <el-form-item label="Species of the input data">
-                                            <el-select v-model="paramform.species" placeholder="Please Select"
-                                                class="w-60" clearable>
-                                                <el-option v-for="option in speciesoptions" :key="option.value"
-                                                    :label="option.label" :value="option.value"></el-option>
+                                            <el-select
+                                                v-model="paramform.species"
+                                                placeholder="Please Select"
+                                                class="w-60"
+                                                clearable
+                                            >
+                                                <el-option
+                                                    v-for="option in speciesoptions"
+                                                    :key="option.value"
+                                                    :label="option.label"
+                                                    :value="option.value"
+                                                ></el-option>
                                             </el-select>
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
                                 <el-row justify="space-evenly">
                                     <el-col :span="16">
-                                        <el-form-item label="Input gene expression matrix separator">
-                                            <el-select v-model="paramform.sep" placeholder="Please Select" class="w-60"
-                                                clearable>
-                                                <el-option v-for="option in fileseparatoroptions" :key="option.value"
-                                                    :label="option.label" :value="option.value"></el-option>
+                                        <el-form-item
+                                            label="Input gene expression matrix separator"
+                                        >
+                                            <el-select
+                                                v-model="paramform.sep"
+                                                placeholder="Please Select"
+                                                class="w-60"
+                                                clearable
+                                            >
+                                                <el-option
+                                                    v-for="option in fileseparatoroptions"
+                                                    :key="option.value"
+                                                    :label="option.label"
+                                                    :value="option.value"
+                                                ></el-option>
                                             </el-select>
                                         </el-form-item>
                                     </el-col>
@@ -140,31 +208,45 @@
                                 <el-row justify="space-evenly">
                                     <el-col :span="16">
                                         <el-form-item label="Annotation file separator">
-                                            <el-select v-model="paramform.csep" placeholder="Please Select" class="w-60"
-                                                clearable>
-                                                <el-option v-for="option in fileseparatoroptions" :key="option.value"
-                                                    :label="option.label" :value="option.value"></el-option>
+                                            <el-select
+                                                v-model="paramform.csep"
+                                                placeholder="Please Select"
+                                                class="w-60"
+                                                clearable
+                                            >
+                                                <el-option
+                                                    v-for="option in fileseparatoroptions"
+                                                    :key="option.value"
+                                                    :label="option.label"
+                                                    :value="option.value"
+                                                ></el-option>
                                             </el-select>
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
                                 <el-row justify="space-evenly">
                                     <el-col :span="16">
-                                        <el-form-item label="Key of celltype column in the annotation file">
+                                        <el-form-item
+                                            label="Key of celltype column in the annotation file"
+                                        >
                                             <el-input v-model="paramform.ctkey" class="w-60" />
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
                                 <el-row justify="space-evenly">
                                     <el-col :span="16">
-                                        <el-form-item label="Key of cell id column in the annotation file">
+                                        <el-form-item
+                                            label="Key of cell id column in the annotation file"
+                                        >
                                             <el-input v-model="paramform.cikey" class="w-60" />
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
                                 <el-row justify="space-evenly">
                                     <el-col :span="16">
-                                        <el-form-item label="# of gene for rotation derivation (recommend: 10)">
+                                        <el-form-item
+                                            label="# of gene for rotation derivation (recommend: 10)"
+                                        >
                                             <el-input v-model="paramform.number" class="w-60" />
                                         </el-form-item>
                                     </el-col>
@@ -203,15 +285,25 @@
                     </n-form-item>
                 </div>-->
                 <div class="mt-20 flex flex-row justify-center">
-                    <el-button size="large" color="#34498E" :width="70"
-                        class="text-white hover:text-white focus:text-white active:text-white text-2xl" @click="submit">
+                    <el-button
+                        size="large"
+                        color="#34498E"
+                        :width="70"
+                        class="text-white hover:text-white focus:text-white active:text-white text-2xl"
+                        @click="submit"
+                    >
                         Submit
                     </el-button>
                 </div>
             </div>
         </el-scrollbar>
     </div>
-    <el-dialog v-model="rundemodialogVisible" title="Do you confirm to run demo?" width="30%" align-center>
+    <el-dialog
+        v-model="rundemodialogVisible"
+        title="Do you confirm to run demo?"
+        width="30%"
+        align-center
+    >
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="canceldemo">No</el-button>
@@ -230,9 +322,9 @@ import { encrypt } from '@/utils/crypto'
 const paramform = ref({
     species: '',
     sep: '',
-    ctkey: 'leiden_final',
+    ctkey: 'cell_type',
     csep: '',
-    cikey: 'cell',
+    cikey: 'cell_id',
     number: '10',
 })
 
@@ -240,9 +332,9 @@ const resetFilterForm = () => {
     paramform.value = {
         species: '',
         sep: '',
-        ctkey: 'leiden_final',
+        ctkey: 'cell_type',
         csep: '',
-        cikey: 'cell',
+        cikey: 'cell_id',
         number: '10',
     }
 }

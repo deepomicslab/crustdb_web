@@ -21,7 +21,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         <n-number-animation
                             ref="numberAnimationInstRef"
                             :from="0"
-                            :to="18"
+                            :to="22"
                             :duration="1000"
                             show-separator
                         />
@@ -36,7 +36,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         <n-number-animation
                             ref="numberAnimationInstRef"
                             :from="0"
-                            :to="131"
+                            :to="183"
                             :duration="1000"
                             show-separator
                         />
@@ -51,7 +51,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         <n-number-animation
                             ref="numberAnimationInstRef"
                             :from="0"
-                            :to="1378472"
+                            :to="1800739"
                             show-separator
                         />
                         <template #label>
@@ -65,7 +65,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                         <n-number-animation
                             ref="numberAnimationInstRef"
                             :from="0"
-                            :to="401"
+                            :to="477"
                             show-separator
                         />
                         <template #label>
