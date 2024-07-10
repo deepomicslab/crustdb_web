@@ -2,6 +2,110 @@
     <div class="flex flex-col mx-1/10 justify-start">
         <div class="w-300 mt-18 ml-10">
             <div class="flex flex-row w-350 border-b-2 border-gray-300">
+                <div class="text-4xl font-500 mb-8">CyGraph Conformation</div>
+                <div class="mt-1.5 ml-10">
+                    <el-button class="ml-5" @click="download">
+                        <template #icon>
+                            <n-icon>
+                                <di />
+                            </n-icon>
+                        </template>
+                        Download Conformation data
+                    </el-button>
+                </div>
+                <div class="mt-1.5 ml-10">
+                    <el-button class="ml-5" @click="selectRepeat">
+                        <template #icon>
+                            <n-icon>
+                                <selectIcon />
+                            </n-icon>
+                        </template>
+                        Choose Repeat #
+                    </el-button>
+                </div>
+            </div>
+
+            <!-- Phage Informatin table -->
+            <el-descriptions
+                class="w-330 text-xl mt-8"
+                :column="2"
+                size="large"
+                border
+                v-loading="loaddata"
+            >
+                <el-descriptions-item :width="165">
+                    <template #label>
+                        <div class="cell-item">Publication Link</div>
+                    </template>
+                    {{ detailsdata.publication_link }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165">
+                    <template #label>
+                        <div class="cell-item">Data UID</div>
+                    </template>
+                    {{ detailsdata.repeat_data_uid }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165">
+                    <template #label>
+                        <div class="cell-item">Seed</div>
+                    </template>
+                    {{ detailsdata.seed }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165">
+                    <template #label>
+                        <div class="cell-item">Sample Name</div>
+                    </template>
+                    {{ detailsdata.sample_name }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165">
+                    <template #label>
+                        <div class="cell-item">Cell Type</div>
+                    </template>
+                    {{ detailsdata.celltype }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165">
+                    <template #label>
+                        <div class="cell-item">Threshold for gene filter</div>
+                    </template>
+                    {{ detailsdata.gene_filter_threshold }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165">
+                    <template #label>
+                        <div class="cell-item">
+                            Proportion of genes used for Rotation Derivation
+                        </div>
+                    </template>
+                    {{ detailsdata.anchor_gene_proportion }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165">
+                    <template #label>
+                        <div class="cell-item">Task ID</div>
+                    </template>
+                    {{ detailsdata.task_id }}
+                </el-descriptions-item>
+                <el-descriptions-item :width="165">
+                    <template #label>
+                        <div class="cell-item">Number of total Transcription centers</div>
+                    </template>
+                    {{ detailsdata.inferred_trans_center_num }}
+                </el-descriptions-item>
+            </el-descriptions>
+        </div>
+
+        <div class="mt-5 ml-15">
+            <div class="flex flex-row w-200">
+                <h1 class="text-3xl mt-9 ml-7 font-500 text-[#3262a8]">Convergence Curve</h1>
+            </div>
+            <div class="flex flex-row">
+                <div class="w-300 h-150 mb-10 mt-5 p-5 ml-8" style="box-shadow: 0 0 64px #cfd5db">
+                    <div id="myEcharts" class="h-140" ref="echartlineDom"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-col mx-1/10 justify-start">
+        <div class="w-300 mt-18 ml-10">
+            <div class="flex flex-row w-350 border-b-2 border-gray-300">
                 <div class="text-4xl font-500 mb-8">Graph Information</div>
                 <div class="mt-1.5 ml-0">
                     <el-button class="ml-5" @click="selectGraphType">
@@ -136,110 +240,7 @@
             </div>
         </div>
     </div>
-    <div class="flex flex-col mx-1/10 justify-start">
-        <div class="w-300 mt-18 ml-10">
-            <div class="flex flex-row w-350 border-b-2 border-gray-300">
-                <div class="text-4xl font-500 mb-8">CyGraph Conformation</div>
-                <div class="mt-1.5 ml-10">
-                    <el-button class="ml-5" @click="download">
-                        <template #icon>
-                            <n-icon>
-                                <di />
-                            </n-icon>
-                        </template>
-                        Download Conformation data
-                    </el-button>
-                </div>
-                <div class="mt-1.5 ml-10">
-                    <el-button class="ml-5" @click="selectRepeat">
-                        <template #icon>
-                            <n-icon>
-                                <selectIcon />
-                            </n-icon>
-                        </template>
-                        Choose Repeat #
-                    </el-button>
-                </div>
-            </div>
 
-            <!-- Phage Informatin table -->
-            <el-descriptions
-                class="w-330 text-xl mt-8"
-                :column="2"
-                size="large"
-                border
-                v-loading="loaddata"
-            >
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Publication Link</div>
-                    </template>
-                    {{ detailsdata.publication_link }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Data UID</div>
-                    </template>
-                    {{ detailsdata.repeat_data_uid }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Seed</div>
-                    </template>
-                    {{ detailsdata.seed }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Sample Name</div>
-                    </template>
-                    {{ detailsdata.sample_name }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Cell Type</div>
-                    </template>
-                    {{ detailsdata.celltype }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Threshold for gene filter</div>
-                    </template>
-                    {{ detailsdata.gene_filter_threshold }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">
-                            Proportion of genes used for Rotation Derivation
-                        </div>
-                    </template>
-                    {{ detailsdata.anchor_gene_proportion }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Task ID</div>
-                    </template>
-                    {{ detailsdata.task_id }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Number of total Transcription centers</div>
-                    </template>
-                    {{ detailsdata.inferred_trans_center_num }}
-                </el-descriptions-item>
-            </el-descriptions>
-        </div>
-
-        <div class="mt-5 ml-15">
-            <div class="flex flex-row w-200">
-                <h1 class="text-3xl mt-9 ml-7 font-500 text-[#3262a8]">Convergence Curve</h1>
-            </div>
-            <div class="flex flex-row">
-                <div class="w-300 h-150 mb-10 mt-5 p-5 ml-8" style="box-shadow: 0 0 64px #cfd5db">
-                    <div id="myEcharts" class="h-140" ref="echartlineDom"></div>
-                </div>
-            </div>
-        </div>
-    </div>
     <el-dialog
         v-model="downloadphagedialogVisible"
         title="Select download data"
