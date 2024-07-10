@@ -422,6 +422,7 @@ const colormap = [
 ]
 
 const chartOption = () => {
+    mylineEcharts.clear()
     mylineEcharts.setOption({
         title: {
             text: `Convergence of Cytocraft Conformation\n${detailsdata.value.repeat_data_uid}`,
@@ -509,10 +510,6 @@ const preprocess_3d = () => {
         })
     })
 
-    // console.log('---------')
-    // console.log('seriesData', seriesData.length)
-    // console.log('this_nodesCoord_3d', this_nodesCoord_3d.length)
-
     option_3d.value = {
         title: {
             text: graphSelectionStr.value,
@@ -565,7 +562,6 @@ const preprocess_2d = () => {
         if (isProxy(mst_parentchild_relation.value)) {
             this_mst_parentchild_relation = toRaw(mst_parentchild_relation.value)
         }
-        // console.log('this_mst_parentchild_relation', this_mst_parentchild_relation)
         option_2d.value = {
             title: {
                 text: graphSelectionStr.value,
@@ -721,9 +717,11 @@ const preprocess_2d = () => {
 }
 
 const chart3dOption = () => {
+    my3dEcharts.clear()
     my3dEcharts.setOption(option_3d.value)
 }
 const chart2dOption = () => {
+    my2dEcharts.clear()
     my2dEcharts.setOption(option_2d.value)
 }
 
@@ -750,30 +748,29 @@ const selectRepeatRequest = async () => {
 }
 
 const graph_type_map = str => {
-    // console.log('str', str)
     const tmp_algo = str.split(' ')[1]
-    // console.log('tmp_algo', tmp_algo)
-    let tmp_para = str.split(' ')[2]
-    // console.log('tmp_para', tmp_para)
-    if (tmp_algo === 'KNN') {
-        tmp_para = `KNN-${tmp_para.slice(1, -1).split('=')[1]}.pkl`
-    } else if (tmp_algo === 'KNN-SNN') {
-        tmp_para = `KNN_SNN-${tmp_para.slice(1, -1).split('=')[1]}.pkl`
-    } else if (tmp_algo === 'RNN') {
-        tmp_para = `RNN-${tmp_para.slice(1, -1).split('=')[1]}.pkl`
-    } else if (tmp_algo === 'RNN-SNN') {
-        tmp_para = `RNN_SNN-${tmp_para.slice(1, -1).split(',')[0].split('=')[1]}_${
-            tmp_para.split(',')[1].split('=')[1]
-        }.pkl`
-    } else if (tmp_algo === 'MST') {
-        tmp_para = 'MST-MST.pkl'
+    let para
+
+    if (tmp_algo === 'MST') {
+        para = 'MST-MST.pkl'
+    } else {
+        const tmp_para1 = str.split(' ')[2].slice(3, -1)
+        if (tmp_algo === 'KNN') {
+            para = `KNN-${tmp_para1}.pkl`
+        } else if (tmp_algo === 'KNN-SNN') {
+            para = `KNN_SNN-${tmp_para1}.pkl`
+        } else if (tmp_algo === 'RNN') {
+            para = `RNN-${tmp_para1}.pkl`
+        } else if (tmp_algo === 'RNN-SNN') {
+            const tmp_para2 = str.split(' ')[3].slice(2, -1)
+            para = `RNN_SNN-${tmp_para1}_${tmp_para2}.pkl`
+        }
     }
-    // console.log('tmp_para', tmp_para)
-    return `${topology_id.value}-${tmp_para}`
+
+    return `${topology_id.value}-${para}`
 }
 
 const selectGraphTypeRequest = async () => {
-    // console.log('graph_type_list1', graph_type_list.value)
     if (selectGraphTypeCheckList.value.length === 0) {
         window.$message.warning('Please select one repeat', {
             closable: true,
@@ -782,7 +779,6 @@ const selectGraphTypeRequest = async () => {
     } else {
         // e.g., (Graph11)+topo_55-RNN_SNN-0.1_5.pkl ==> topo_55-RNN_SNN-0.1_5.pkl
         const this_selection = graph_type_map(selectGraphTypeCheckList.value[0])
-        // console.log(selectGraphTypeCheckList.value[0], this_selection)
         // const this_selection = '(Graph11) topo_55-RNN_SNN-0.1_5.pkl'
         graphSelectionStr.value = this_selection
         const topology_response = await axios.get(`/details/topology`, {
@@ -841,8 +837,6 @@ const updateGraphTypeList = () => {
         const tmp_topologyid = tmp[0]
         topology_id.value = tmp_topologyid
         const tmp_algo = tmp[1]
-        // console.log('tmp', tmp[2])
-        // console.log("tmp[2].split('.')[0]", tmp[2].split('.')[0])
         let tmp_para = tmp[2]
         tmp_para = tmp_para.substring(0, tmp_para.length - 4)
         if (tmp_algo === 'KNN') {
@@ -858,8 +852,6 @@ const updateGraphTypeList = () => {
         }
         graph_type_list.value.push(tmp_para)
     }
-    // console.log('topologyselectiondata', topologyselectiondata.value[0]) // topologyid_103-KNN-5.pkl
-    // console.log('graph_type_list', graph_type_list.value)
 }
 const selectGraphType = () => {
     if (graph_type_list.value.length === 0) {
@@ -940,7 +932,6 @@ onBeforeMount(async () => {
     // index 6 is mst
     const this_selection = topologyselectiondata.value[0]
     graphSelectionStr.value = this_selection
-    // console.log('topologyselectiondata.value', this_selection)
 
     const topology_response = await axios.get(`/details/topology`, {
         baseURL: '/api',
@@ -1015,17 +1006,6 @@ const phageList = computed(() => {
         })
     }
     return this_phageList
-    // console.log('===========================this_phageList', this_phageList)
-    // console.log(
-    //     '-----------> sorted',
-    //     this_phageList.sort(function (a, b) {
-    //         return a.node_name - b.node_name
-    //     })
-    // )
-    // console.log('======              this_phageList', this_phageList)
-    // return this_phageList.sort(function (a, b) {
-    //     return a.node_name - b.node_name
-    // })
 })
 
 const pagination = reactive({
