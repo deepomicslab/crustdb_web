@@ -89,7 +89,7 @@
                 :columns="columns"
                 :data="phageList"
                 :row-key="rowKey"
-                :scroll-x="2600"
+                :scroll-x="2800"
                 :max-height="1600"
                 :single-line="false"
                 @update:checked-row-keys="handleCheck"
@@ -482,6 +482,7 @@ const col_width = {
     conformations: 110,
     cell_num: 105,
     gene_num: 105,
+    inferred_trans_center_num: 180,
     actions: 130,
 }
 
@@ -770,6 +771,23 @@ const createColumns = (): DataTableColumns<RowData> => {
                 tooltip: true,
             },
             width: col_width.gene_num,
+        },
+        // inferred_trans_center_num
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Transcription Center Number' }),
+                    'Transcription Center Number'
+                )
+            },
+            key: 'inferred_trans_center_num',
+            align: 'center',
+            // sorter: 'default',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.inferred_trans_center_num,
         },
         // slice_name
         // gene_filter_threshold
