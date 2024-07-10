@@ -47,7 +47,7 @@
                 :columns="columns"
                 :data="phageList"
                 :row-key="rowKey"
-                :scroll-x="1900"
+                :scroll-x="2100"
                 :max-height="1600"
                 @update:checked-row-keys="handleCheck"
                 @update:filters="handleUpdateFilter"
@@ -367,6 +367,23 @@ const DiseaseStageColor = (style: any) => {
     return 'error'
 }
 
+const col_width = {
+    // total 2500
+    publication_doi: 170,
+    st_platform: 120,
+    species: 220,
+    disease_stage: 180,
+    developmental_stage: 150,
+    sex: 70,
+    cell_type: 130,
+    slice_id: 320,
+    conformations: 110,
+    cell_num: 105,
+    gene_num: 105,
+    inferred_trans_center_num: 180,
+    actions: 130,
+}
+
 const createColumns = (): DataTableColumns<RowData> => {
     return [
         {
@@ -382,7 +399,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'st_platform',
             align: 'center',
-            width: 100,
+            width: col_width.st_platform,
             ellipsis: {
                 tooltip: true,
             },
@@ -425,7 +442,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'species',
             align: 'center',
-            width: 170,
+            width: col_width.species,
             ellipsis: {
                 tooltip: true,
             },
@@ -467,7 +484,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'disease_stage',
             align: 'center',
-            width: 110,
+            width: col_width.disease_stage,
             ellipsis: {
                 tooltip: true,
             },
@@ -512,7 +529,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            width: 140,
+            width: col_width.developmental_stage,
             filterOptions: devDict,
             filter(value: any, row: any) {
                 return row.developmental_stage === value
@@ -525,7 +542,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'sex',
             align: 'center',
-            width: 70,
+            width: col_width.sex,
             filterOptions: sexDict,
             filter(value: any, row: any) {
                 return row.sex === value
@@ -538,7 +555,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             key: 'cell_type',
             align: 'center',
-            width: 100,
+            width: col_width.cell_type,
             filterOptions: celltypeDict,
             filter(value: any, row: any) {
                 return row.cell_type === value
@@ -571,7 +588,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            width: 260,
+            width: col_width.slice_id,
         },
         // cell_num
         {
@@ -587,7 +604,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            width: 80,
+            width: col_width.cell_num,
         },
         // gene_num
         {
@@ -603,7 +620,24 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            width: 80,
+            width: col_width.gene_num,
+        },
+        // inferred_trans_center_num
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Transcription Center Number' }),
+                    'Transcription Center Number'
+                )
+            },
+            key: 'inferred_trans_center_num',
+            align: 'center',
+            // sorter: 'default',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.inferred_trans_center_num,
         },
         // slice_name
         // gene_filter_threshold
@@ -614,7 +648,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             title: 'Action',
             key: 'actions',
             align: 'center',
-            width: 130,
+            width: col_width.actions,
             fixed: 'right',
             render(row: any) {
                 return h(

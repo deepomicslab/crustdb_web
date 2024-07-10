@@ -109,7 +109,7 @@
                     :columns="columns"
                     :max-height="700"
                     :row-key="rowKey"
-                    :scroll-x="1500"
+                    :scroll-x="2000"
                     @update:checked-row-keys="handleCheck"
                     @update:filters="handleUpdateFilter"
                     @update:sorter="handleSorterChange"
@@ -368,6 +368,7 @@ const col_width = {
     developmental_stage: 150,
     sex: 70,
     gene_num: 105,
+    inferred_trans_center_num: 180,
     actions: 130,
 }
 
@@ -658,6 +659,23 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             width: col_width.gene_num,
         },
+        // inferred_trans_center_num
+        inferred_trans_center_num: {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Transcription Center Number' }),
+                    'Transcription Center Number'
+                )
+            },
+            key: 'inferred_trans_center_num',
+            align: 'center',
+            // sorter: 'default',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.inferred_trans_center_num,
+        },
         // slice_name
         // gene_filter_threshold
         // anchor_gene_proportion
@@ -718,6 +736,7 @@ const createColumns = (): DataTableColumns<RowData> => {
         'conformation_num',
         'cell_num',
         'gene_num',
+        'inferred_trans_center_num',
     ]
 
     to_return_createColumns.push(col_template.slice_id)
