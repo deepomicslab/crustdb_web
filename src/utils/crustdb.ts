@@ -949,7 +949,7 @@ export const stPlatformDict = [
 
 export const devDict = [
     {
-        label: '',
+        label: 'N/A',
         value: '',
     },
     {

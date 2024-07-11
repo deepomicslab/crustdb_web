@@ -130,7 +130,17 @@ import { ArrowDown } from '@element-plus/icons-vue'
 import _ from 'lodash'
 import axios from 'axios'
 // import filterview from './index.vue'
-import { celltypeDict, sexDict, devDict } from '@/utils/crustdb'
+import {
+    speciesDict,
+    stPlatformDict,
+    diseaseStageDict,
+    celltypeDict,
+    sexDict,
+    devDict,
+    SpeciesColor,
+    STPlatformColor,
+    DiseaseStageColor,
+} from '@/utils/crustdb'
 import { useQueryStore } from '@/store/query'
 
 const queryStore = useQueryStore()
@@ -326,46 +336,6 @@ const renderTooltip = (trigger: any, content: any) => {
 const rowKey = (row: RowData) => {
     return row.id
 }
-// const complete = (comp: any) => {
-//     if (comp === 'Medium-quality') {
-//         return 'info'
-//     }
-//     if (comp === 'High-quality') {
-//         return 'success'
-//     }
-//     if (comp === 'Low-quality') {
-//         return 'warning'
-//     }
-//     if (comp === 'Complete') {
-//         return 'success'
-//     }
-//     return 'warning'
-// }
-const SpeciesColor = (style: any) => {
-    if (style === 'Axolotl') {
-        // wait to see how many colors needed
-        return 'error'
-    }
-    if (style === 'Human') {
-        return 'info'
-    }
-    return 'warning'
-}
-const STPlatformColor = (style: any) => {
-    if (style === 'Stereo-seq') {
-        return 'success'
-    }
-    if (style === 'CosMx') {
-        return 'info'
-    }
-    return 'warning' // MERFISH
-}
-const DiseaseStageColor = (style: any) => {
-    if (style === 'Normal') {
-        return 'info'
-    }
-    return 'error'
-}
 
 const col_width = {
     // total 2500
@@ -403,20 +373,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            filterOptions: [
-                {
-                    label: 'Stereo-seq',
-                    value: 'Stereo-seq',
-                },
-                {
-                    label: 'CosMx',
-                    value: 'CosMx',
-                },
-                {
-                    label: 'MERFISH',
-                    value: 'MERFISH',
-                },
-            ],
+            filterOptions: stPlatformDict,
             filter(value: any, row: any) {
                 return row.st_platform === value
             },
@@ -446,16 +403,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            filterOptions: [
-                {
-                    label: 'Axolotl',
-                    value: 'Axolotl',
-                },
-                {
-                    label: 'Not Axolotl',
-                    value: 'Not_Axolotl',
-                },
-            ],
+            filterOptions: speciesDict,
             filter(value: any, row: any) {
                 return row.species === value
             },
@@ -488,16 +436,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            filterOptions: [
-                {
-                    label: 'wait for other label', //
-                    value: 'wait for other label',
-                },
-                {
-                    label: 'Normal',
-                    value: 'Normal',
-                },
-            ],
+            filterOptions: diseaseStageDict,
             filter(value: any, row: any) {
                 return row.disease_stage === value
             },

@@ -167,6 +167,9 @@ import _ from 'lodash'
 import axios from 'axios'
 // import * as echarts from 'echarts'
 import {
+    speciesDict,
+    stPlatformDict,
+    diseaseStageDict,
     celltypeDict,
     sexDict,
     devDict,
@@ -487,25 +490,8 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            filterOptions: [
-                {
-                    label: 'Stereo-seq',
-                    value: 'Stereo-seq',
-                },
-                {
-                    label: 'CosMx',
-                    value: 'CosMx',
-                },
-                {
-                    label: 'MERFISH',
-                    value: 'MERFISH',
-                },
-            ],
-            // filter(value: any, row: any) {
-            //     return row.st_platform === value
-            // },
+            filterOptions: stPlatformDict,
             filter: true,
-            // filterOptionValues: [],
             render(row: any) {
                 return h('div', {}, [
                     h(
@@ -532,16 +518,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            filterOptions: [
-                {
-                    label: 'Homo sapiens (Human)',
-                    value: 'Homo sapiens (Human)',
-                },
-                {
-                    label: 'Ambystoma mexicanum (Axolotl)',
-                    value: 'Ambystoma mexicanum (Axolotl)',
-                },
-            ],
+            filterOptions: speciesDict,
             // filter(value: any, row: any) {
             //     return row.species === value
             // },
@@ -575,20 +552,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            filterOptions: [
-                {
-                    label: 'Normal', //
-                    value: 'Normal',
-                },
-                {
-                    label: 'Non-Small Cell Lung Cancer IIB',
-                    value: 'Non-Small Cell Lung Cancer IIB',
-                },
-                {
-                    label: 'Non-Small Cell Lung Cancer IIIA',
-                    value: 'Non-Small Cell Lung Cancer IIIA',
-                },
-            ],
+            filterOptions: diseaseStageDict,
             // filter(value: any, row: any) {
             //     return row.disease_stage === value
             // },

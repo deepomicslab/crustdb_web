@@ -132,8 +132,7 @@ import { Search, RefreshRight, InfoFilled } from '@element-plus/icons-vue'
 import _ from 'lodash'
 import axios from 'axios'
 import filterview from '../filter/index.vue'
-// import { datasetDict, datasetList } from '@/utils/phage'
-// import { celltypeDict, sexDict, devDict } from '@/utils/crustdb'
+import { SpeciesColor } from '@/utils/crustdb'
 
 const pagevalue = ref(1)
 const pageSize = ref(30)
@@ -286,15 +285,6 @@ const renderTooltip = (trigger: any, content: any) => {
 }
 const rowKey = (row: RowData) => {
     return row.id
-}
-const SpeciesColor = (style: any) => {
-    if (style === 'Ambystoma mexicanum (Axolotl)') {
-        return 'success'
-    }
-    if (style === 'Homo sapiens (Human)') {
-        return 'info'
-    }
-    return 'warning'
 }
 
 const filtersearch = async () => {

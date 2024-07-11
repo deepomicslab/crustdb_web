@@ -187,14 +187,21 @@ import {
     ChevronForward,
     CloudDownloadOutline as downicon,
 } from '@vicons/ionicons5'
-// import { Search, RefreshRight, ArrowDown, InfoFilled, Switch } from '@element-plus/icons-vue'
 import { Search, RefreshRight, ArrowDown, InfoFilled } from '@element-plus/icons-vue'
 import _ from 'lodash'
 import axios from 'axios'
 import filterview from '../filter/index.vue'
-// import { datasetDict, datasetList } from '@/utils/phage'
-// import { celltypeDict } from '@/utils/phage'
-import { celltypeDict, sexDict, devDict } from '@/utils/crustdb'
+import {
+    speciesDict,
+    stPlatformDict,
+    diseaseStageDict,
+    celltypeDict,
+    sexDict,
+    devDict,
+    SpeciesColor,
+    STPlatformColor,
+    DiseaseStageColor,
+} from '@/utils/crustdb'
 
 const pagevalue = ref(1)
 const pageSize = ref(30)
@@ -412,31 +419,6 @@ const renderTooltip = (trigger: any, content: any) => {
 const rowKey = (row: RowData) => {
     return row.id
 }
-// Color: info, success, warning, error
-const SpeciesColor = (style: any) => {
-    if (style === 'Ambystoma mexicanum (Axolotl)') {
-        return 'success'
-    }
-    if (style === 'Homo sapiens (Human)') {
-        return 'info'
-    }
-    return 'warning'
-}
-const STPlatformColor = (style: any) => {
-    if (style === 'Stereo-seq') {
-        return 'success'
-    }
-    if (style === 'CosMx') {
-        return 'info'
-    }
-    return 'warning' // MERFISH
-}
-const DiseaseStageColor = (style: any) => {
-    if (style === 'Normal') {
-        return 'info'
-    }
-    return 'error'
-}
 
 const filtersearch = async () => {
     loading.value = true
@@ -523,25 +505,8 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            filterOptions: [
-                {
-                    label: 'Stereo-seq',
-                    value: 'Stereo-seq',
-                },
-                {
-                    label: 'CosMx',
-                    value: 'CosMx',
-                },
-                {
-                    label: 'MERFISH',
-                    value: 'MERFISH',
-                },
-            ],
-            // filter(value: any, row: any) {
-            //     return row.st_platform === value
-            // },
+            filterOptions: stPlatformDict,
             filter: true,
-            // filterOptionValues: [],
             render(row: any) {
                 return h('div', {}, [
                     h(
@@ -568,19 +533,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            filterOptions: [
-                {
-                    label: 'Homo sapiens (Human)',
-                    value: 'Homo sapiens (Human)',
-                },
-                {
-                    label: 'Ambystoma mexicanum (Axolotl)',
-                    value: 'Ambystoma mexicanum (Axolotl)',
-                },
-            ],
-            // filter(value: any, row: any) {
-            //     return row.species === value
-            // },
+            filterOptions: speciesDict,
             filter: true,
             render(row: any) {
                 return h('div', {}, [
@@ -611,23 +564,7 @@ const createColumns = (): DataTableColumns<RowData> => {
             ellipsis: {
                 tooltip: true,
             },
-            filterOptions: [
-                {
-                    label: 'Normal', //
-                    value: 'Normal',
-                },
-                {
-                    label: 'Non-Small Cell Lung Cancer IIB',
-                    value: 'Non-Small Cell Lung Cancer IIB',
-                },
-                {
-                    label: 'Non-Small Cell Lung Cancer IIIA',
-                    value: 'Non-Small Cell Lung Cancer IIIA',
-                },
-            ],
-            // filter(value: any, row: any) {
-            //     return row.disease_stage === value
-            // },
+            filterOptions: diseaseStageDict,
             filter: true,
             render(row: any) {
                 return h('div', {}, [

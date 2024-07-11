@@ -140,6 +140,9 @@ import {
     diseaseStageDict,
     devDict,
     sexDict,
+    SpeciesColor,
+    STPlatformColor,
+    DiseaseStageColor,
 } from '@/utils/crustdb'
 
 const pagevalue = ref(1)
@@ -334,16 +337,6 @@ const resetsearch = async () => {
     loading.value = false
 }
 
-const SpeciesColor = (style: any) => {
-    if (style === 'Ambystoma mexicanum (Axolotl)') {
-        return 'success'
-    }
-    if (style === 'Homo sapiens (Human)') {
-        return 'info'
-    }
-    return 'warning'
-}
-
 const col_width = {
     slice_id: 170,
     publication_title: 100,
@@ -439,6 +432,20 @@ const createColumns = (): DataTableColumns<RowData> => {
             width: col_width.st_platform,
             filterOptions: stPlatformDict,
             filter: true,
+            render(row: any) {
+                return h('div', {}, [
+                    h(
+                        NTag,
+                        {
+                            type: STPlatformColor(row.st_platform),
+                            size: 'small',
+                        },
+                        {
+                            default: () => row.st_platform,
+                        }
+                    ),
+                ])
+            },
         },
         // disease_stage
         {
@@ -456,6 +463,20 @@ const createColumns = (): DataTableColumns<RowData> => {
             width: col_width.disease_stage,
             filterOptions: diseaseStageDict,
             filter: true,
+            render(row: any) {
+                return h('div', {}, [
+                    h(
+                        NTag,
+                        {
+                            type: DiseaseStageColor(row.disease_stage),
+                            size: 'small',
+                        },
+                        {
+                            default: () => row.disease_stage,
+                        }
+                    ),
+                ])
+            },
         },
         // developmental_stage
         {
