@@ -35,12 +35,6 @@
             >
                 <el-descriptions-item :width="165">
                     <template #label>
-                        <div class="cell-item">Publication Link</div>
-                    </template>
-                    {{ detailsdata.publication_link }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
                         <div class="cell-item">Data UID</div>
                     </template>
                     {{ detailsdata.repeat_data_uid }}
@@ -56,12 +50,6 @@
                         <div class="cell-item">Sample Name</div>
                     </template>
                     {{ detailsdata.sample_name }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Cell Type</div>
-                    </template>
-                    {{ detailsdata.celltype }}
                 </el-descriptions-item>
                 <el-descriptions-item :width="165">
                     <template #label>
