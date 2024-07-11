@@ -16,6 +16,12 @@
                 >
                     <el-descriptions-item :width="165">
                         <template #label>
+                            <div class="cell-item">Slice ID</div>
+                        </template>
+                        {{ detailsdata[0] && detailsdata[0].slice_id }}
+                    </el-descriptions-item>
+                    <el-descriptions-item :width="165">
+                        <template #label>
                             <div class="cell-item">ST Platform</div>
                         </template>
                         {{ detailsdata[0] && detailsdata[0].st_platform }}
@@ -89,7 +95,7 @@
                         :columns="columns"
                         :max-height="700"
                         :row-key="rowKey"
-                        :scroll-x="2800"
+                        :scroll-x="1400"
                         @update:checked-row-keys="handleCheck"
                         @update:filters="handleUpdateFilter"
                         @update:sorter="handleSorterChange"
@@ -146,17 +152,7 @@ import { ChevronBack, ChevronForward } from '@vicons/ionicons5'
 import _ from 'lodash'
 import axios from 'axios'
 import * as echarts from 'echarts'
-import {
-    speciesDict,
-    stPlatformDict,
-    diseaseStageDict,
-    celltypeDict,
-    sexDict,
-    devDict,
-    SpeciesColor,
-    STPlatformColor,
-    DiseaseStageColor,
-} from '@/utils/crustdb'
+import { celltypeDict } from '@/utils/crustdb'
 
 const pagevalue = ref(1)
 const pageSize = ref(30)
@@ -451,16 +447,8 @@ const rowKey = (row: RowData) => {
 }
 
 const col_width = {
-    // total 2500
-    publication_doi: 170,
-    st_platform: 120,
-    species: 220,
-    disease_stage: 180,
-    developmental_stage: 150,
-    sex: 70,
     cell_type: 130,
-    slice_id: 320,
-    conformations: 110,
+    conformations: 140,
     cell_num: 105,
     gene_num: 105,
     inferred_trans_center_num: 180,
@@ -469,150 +457,6 @@ const col_width = {
 
 const createColumns = (): DataTableColumns<RowData> => {
     return [
-        // {
-        //     type: 'selection',
-        // },
-        // publication_doi
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Publication DOI' }),
-                    'publication doi'
-                )
-            },
-            fixed: 'left',
-            // key: 'publication_doi',
-            key: 'doi',
-            align: 'center',
-            ellipsis: {
-                tooltip: true,
-            },
-            width: col_width.publication_doi,
-        },
-        // st_platform
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'ST Platform' }),
-                    'ST Platform'
-                )
-            },
-            key: 'st_platform',
-            align: 'center',
-            width: col_width.st_platform,
-            ellipsis: {
-                tooltip: true,
-            },
-            filterOptions: stPlatformDict,
-            filter: true,
-            render(row: any) {
-                return h('div', {}, [
-                    h(
-                        NTag,
-                        {
-                            type: STPlatformColor(row.st_platform),
-                            size: 'small',
-                        },
-                        {
-                            default: () => row.st_platform,
-                        }
-                    ),
-                ])
-            },
-        },
-        // species
-        {
-            title() {
-                return renderTooltip(h('div', null, { default: () => 'Species' }), 'species')
-            },
-            key: 'species',
-            align: 'center',
-            width: col_width.species,
-            ellipsis: {
-                tooltip: true,
-            },
-            filterOptions: speciesDict,
-            filter: true,
-            render(row: any) {
-                return h('div', {}, [
-                    h(
-                        NTag,
-                        {
-                            type: SpeciesColor(row.species),
-                            size: 'small',
-                        },
-                        {
-                            default: () => row.species,
-                        }
-                    ),
-                ])
-            },
-        },
-        // disease_stage
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Disease Stage' }),
-                    'disease stage'
-                )
-            },
-            key: 'disease_stage',
-            align: 'center',
-            width: col_width.disease_stage,
-            ellipsis: {
-                tooltip: true,
-            },
-            filterOptions: diseaseStageDict,
-            filter: true,
-            render(row: any) {
-                return h('div', {}, [
-                    h(
-                        NTag,
-                        {
-                            type: DiseaseStageColor(row.disease_stage),
-                            size: 'small',
-                        },
-                        {
-                            default: () => row.disease_stage,
-                        }
-                    ),
-                ])
-            },
-        },
-        // developmental_stage
-        {
-            title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Developmental Stage' }),
-                    'developmental stage'
-                )
-            },
-            key: 'developmental_stage',
-            align: 'center',
-            ellipsis: {
-                tooltip: true,
-            },
-            width: col_width.developmental_stage,
-            filterOptions: devDict,
-            // filter(value: any, row: any) {
-            //     return row.developmental_stage === value
-            // },
-            filter: true,
-        },
-        // sex
-        {
-            title() {
-                return renderTooltip(h('div', null, { default: () => 'Sex' }), 'sex')
-            },
-            key: 'sex',
-            align: 'center',
-            width: col_width.sex,
-            filterOptions: sexDict,
-            // filter(value: any, row: any) {
-            //     return row.sex === value
-            // },
-            filter: true,
-        },
         // cell_type
         {
             title() {
@@ -622,9 +466,6 @@ const createColumns = (): DataTableColumns<RowData> => {
             align: 'center',
             width: col_width.cell_type,
             filterOptions: celltypeDict,
-            // filter(value: any, row: any) {
-            //     return row.cell_type === value
-            // },
             filter: true,
             render(row: any) {
                 return h('div', [
@@ -644,23 +485,11 @@ const createColumns = (): DataTableColumns<RowData> => {
                 ])
             },
         },
-        // slice_id
-        {
-            title() {
-                return renderTooltip(h('div', null, { default: () => 'Slice ID' }), 'slice ID')
-            },
-            key: 'slice_id',
-            align: 'center',
-            ellipsis: {
-                tooltip: true,
-            },
-            width: col_width.slice_id,
-        },
         // conformations
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'Conformations' }),
+                    h('div', null, { default: () => 'Conformation Number' }),
                     'conformations'
                 )
             },
