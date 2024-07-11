@@ -4,6 +4,60 @@
         <div class="flex flex-col mx-1/10 justify-start">
             <div class="w-300 mt-18 ml-10">
                 <div class="flex flex-row w-350 border-b-2 border-gray-300">
+                    <div class="text-4xl font-500 mb-8">Slice Information</div>
+                </div>
+                <!-- here to change the size of canvas -->
+                <el-descriptions
+                    class="w-330 text-xl mt-8"
+                    :column="2"
+                    size="large"
+                    border
+                    v-loading="loaddata"
+                >
+                    <el-descriptions-item :width="165">
+                        <template #label>
+                            <div class="cell-item">ST Platform</div>
+                        </template>
+                        {{ detailsdata[0] && detailsdata[0].st_platform }}
+                    </el-descriptions-item>
+                    <el-descriptions-item :width="165">
+                        <template #label>
+                            <div class="cell-item">Species</div>
+                        </template>
+                        {{ detailsdata[0] && detailsdata[0].species }}
+                    </el-descriptions-item>
+                    <el-descriptions-item :width="165">
+                        <template #label>
+                            <div class="cell-item">Disease Stage</div>
+                        </template>
+                        {{ detailsdata[0] && detailsdata[0].disease_stage }}
+                    </el-descriptions-item>
+                    <el-descriptions-item :width="165">
+                        <template #label>
+                            <div class="cell-item">Developmental Stage</div>
+                        </template>
+                        {{ detailsdata[0] && detailsdata[0].developmental_stage }}
+                    </el-descriptions-item>
+                    <el-descriptions-item :width="165">
+                        <template #label>
+                            <div class="cell-item">Sex</div>
+                        </template>
+                        {{ detailsdata[0] && detailsdata[0].sex }}
+                    </el-descriptions-item>
+                    <el-descriptions-item :width="165">
+                        <template #label>
+                            <div class="cell-item">Publication Title</div>
+                        </template>
+                        {{ detailsdata[0] && detailsdata[0].publication_title }}
+                    </el-descriptions-item>
+                </el-descriptions>
+                <!-- <el-scrollbar style="box-shadow: 0 0 64px #cfd5db" class="h-200 w-300">
+                        <div id="myEcharts" ref="echartlineDom"></div>
+                    </el-scrollbar> -->
+            </div>
+
+            <div class="w-300 mt-18 ml-10">
+                <div class="flex flex-row w-350 border-b-2 border-gray-300">
                     <div class="text-4xl font-500 mb-8">Slice Visualization</div>
                 </div>
                 <div class="flex flex-row">
@@ -99,6 +153,7 @@ const pageSize = ref(30)
 const datasets = ref('crustdb_main')
 const crust_num = ref()
 const loading = ref(false)
+const loaddata = ref(false)
 const searchinput = ref('')
 
 // const phagedata = useRequest(() => phageService.getPhageList(pagevalue.value, pageSize.value)).data
@@ -114,6 +169,19 @@ const sorter_dict = ref('')
 
 const option = ref({})
 const uniqueAnnotations = ref([])
+
+const detailsdata = ref({
+    st_platform: '',
+    species: '',
+    disease_stage: '',
+    developmental_stage: '',
+    sex: '',
+    slice_id: '',
+    publication_title: '',
+    n_cell_types: 0,
+    n_conformations: 0,
+    n_cells: 0,
+})
 
 let mylineEcharts
 
@@ -217,6 +285,17 @@ onBeforeMount(async () => {
     phagedata.value = data
     crust_num.value = phagedata.value.count
     loading.value = false
+
+    loaddata.value = true
+    const response1 = await axios.get('/slice/', {
+        baseURL: '/api',
+        timeout: 100000,
+        params: {
+            slice_id: sliceid.value,
+        },
+    })
+    detailsdata.value = response1.data.results
+    loaddata.value = false
 
     const response2 = await axios.get('/slice/adata/', {
         baseURL: '/api',

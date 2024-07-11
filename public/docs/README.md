@@ -3,6 +3,9 @@
 ```
 content
 ```
+## records
+
+1. 2024/7/11
 
 ## header2
 
@@ -12,8 +15,6 @@ list
 -   esbenp.prettier-vscode
 -   stylelint.vscode-stylelint
 -   -   dbaeumer.vscode-eslint
-<!-- -   esbenp.prettier-vscode
--   stylelint.vscode-stylelint-   dbaeumer.vscode-eslint
 -   esbenp.prettier-vscode
 -   stylelint.vscode-stylelint-   dbaeumer.vscode-eslint
 -   esbenp.prettier-vscode
@@ -29,5 +30,7 @@ list
 -   esbenp.prettier-vscode
 -   stylelint.vscode-stylelint-   dbaeumer.vscode-eslint
 -   esbenp.prettier-vscode
--   stylelint.vscode-stylelint -->
+-   stylelint.vscode-stylelint-   dbaeumer.vscode-eslint
+-   esbenp.prettier-vscode
+-   stylelint.vscode-stylelint
 

@@ -261,7 +261,6 @@ const gofilter = () => {
     filterVisible.value = true
 }
 const detail = (row: any) => {
-    // router.push({ path: '/database/phage/detail', query: { phageid: row.id } })
     router.push({
         path: '/database/dataset/detail',
         query: { id: row.id },

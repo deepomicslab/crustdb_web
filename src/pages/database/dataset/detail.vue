@@ -86,7 +86,7 @@
                     :pagination="pagination"
                     :max-height="700"
                     :row-key="rowKey"
-                    :scroll-x="1300"
+                    :scroll-x="2300"
                 />
             </div>
         </div>
@@ -99,8 +99,8 @@
 import axios from 'axios'
 import { reactive, ref } from 'vue'
 // import { useCrustDBStore } from '@/store/crustdb'
-import { NButton, NTooltip } from 'naive-ui'
-// import { celltypeDict, sexDict, devDict } from '@/utils/crustdb'
+import { NButton, NTag, NTooltip } from 'naive-ui'
+import { SpeciesColor, STPlatformColor, DiseaseStageColor } from '@/utils/crustdb'
 
 // const crustdbStore = useCrustDBStore()
 const loaddata = ref(false)
@@ -166,11 +166,19 @@ const pagination = reactive({
 })
 
 const router = useRouter()
+
 const detail = (row: any) => {
-    // router.push({ path: '/database/phage/detail', query: { phageid: row.id } })
     router.push({
         path: '/database/slice/detail',
         query: { id: row.id },
+    })
+}
+
+const publication = (row: any) => {
+    console.log(row)
+    router.push({
+        path: '/database/dataset/detail',
+        query: { id: row.publication_id },
     })
 }
 
@@ -191,20 +199,21 @@ const rowKey = (row: RowData) => {
 }
 
 const col_width = {
-    slice_id: 100,
-    publication_doi: 50,
-    n_slices: 45,
-    n_cell_types: 40,
-    n_conformations: 45,
-    n_cells: 45,
-    actions: 35,
+    slice_id: 170,
+    species: 140,
+    st_platform: 100,
+    disease_stage: 100,
+    developmental_stage: 100,
+    sex: 70,
+    n_slices: 90,
+    n_cell_types: 90,
+    n_conformations: 90,
+    n_cells: 90,
+    actions: 140,
 }
 
 const createColumns = (): DataTableColumns<RowData> => {
     return [
-        // {
-        //     type: 'selection',
-        // },
         // id
         {
             title() {
@@ -217,20 +226,116 @@ const createColumns = (): DataTableColumns<RowData> => {
             },
             width: col_width.slice_id,
         },
-        // publication_doi
+        // species
         {
             title() {
-                return renderTooltip(
-                    h('div', null, { default: () => 'Publication DOI' }),
-                    'Publication DOI'
-                )
+                return renderTooltip(h('div', null, { default: () => 'Species' }), 'Species')
             },
-            key: 'publication_doi',
+            key: 'species',
             align: 'center',
             ellipsis: {
                 tooltip: true,
             },
-            width: col_width.publication_doi,
+            width: col_width.species,
+            render(row: any) {
+                return h('div', {}, [
+                    h(
+                        NTag,
+                        {
+                            type: SpeciesColor(row.species),
+                            size: 'small',
+                        },
+                        {
+                            default: () => row.species,
+                        }
+                    ),
+                ])
+            },
+        },
+        // st_platform
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'ST Platform' }),
+                    'st_platform'
+                )
+            },
+            key: 'st_platform',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.st_platform,
+            render(row: any) {
+                return h('div', {}, [
+                    h(
+                        NTag,
+                        {
+                            type: STPlatformColor(row.st_platform),
+                            size: 'small',
+                        },
+                        {
+                            default: () => row.st_platform,
+                        }
+                    ),
+                ])
+            },
+        },
+        // disease_stage
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Disease Stage' }),
+                    'disease_stage'
+                )
+            },
+            key: 'disease_stage',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.disease_stage,
+            render(row: any) {
+                return h('div', {}, [
+                    h(
+                        NTag,
+                        {
+                            type: DiseaseStageColor(row.disease_stage),
+                            size: 'small',
+                        },
+                        {
+                            default: () => row.disease_stage,
+                        }
+                    ),
+                ])
+            },
+        },
+        // developmental_stage
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Developmental Stage' }),
+                    'developmental_stage'
+                )
+            },
+            key: 'developmental_stage',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.developmental_stage,
+        },
+        // sex
+        {
+            title() {
+                return renderTooltip(h('div', null, { default: () => 'Sex' }), 'sex')
+            },
+            key: 'sex',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.sex,
         },
         // n_cell_types
         {
@@ -292,7 +397,7 @@ const createColumns = (): DataTableColumns<RowData> => {
                     'div',
                     {
                         style: {
-                            // display: 'flex',
+                            display: 'flex',
                             justifyContent: 'space-between',
                         },
                     },
@@ -306,6 +411,16 @@ const createColumns = (): DataTableColumns<RowData> => {
                                 onClick: () => detail(row),
                             },
                             { default: () => 'Slice Details' }
+                        ),
+                        h(
+                            NButton,
+                            {
+                                strong: true,
+                                size: 'small',
+                                type: 'info',
+                                onClick: () => publication(row),
+                            },
+                            { default: () => 'Publication Details' }
                         ),
                     ]
                 )

@@ -104,6 +104,7 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                 <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/stereo-seq.png" />
                 <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/cosmx.png" />
                 <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/merfish.png" />
+                <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/xenium.png" />
             </div>
             <div class="flex flex-row justify-start w-370 flex-wrap items-start ml-10 mt-6 mb-6">
                 <n-button
@@ -126,6 +127,13 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
                     @click="viewSTPlatform('MERFISH')"
                 >
                     MERFISH
+                </n-button>
+                <n-button
+                    class="mt-1 mr-10 w-80 text-[#34498e] text-xl h-11"
+                    tertiary
+                    @click="viewSTPlatform('Xenium')"
+                >
+                    Xenium
                 </n-button>
             </div>
         </div>
@@ -282,6 +290,8 @@ const viewSTPlatform = (node: string) => {
         dataset = 'crustdb_cosmx'
     } else if (node === 'MERFISH') {
         dataset = 'crustdb_merfish'
+    } else if (node === 'Xenium') {
+        dataset = 'crustdb_xenium'
     }
     router.push({
         path: `/database/crustdb_main`,

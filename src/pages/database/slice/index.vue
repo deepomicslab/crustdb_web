@@ -62,16 +62,16 @@
         </div>
 
         <!-- main table -->
-        <!-- @update:filters="handleUpdateFilter" -->
         <div v-loading="loading" class="h-420">
             <n-data-table
                 :columns="columns"
                 :data="datasetList"
                 :row-key="rowKey"
-                :scroll-x="2000"
+                :scroll-x="2400"
                 :max-height="1600"
-                :single-line="false"
+                :bordered="false"
                 @update:checked-row-keys="handleCheck"
+                @update:filters="handleUpdateFilter"
                 @update:sorter="handleSorterChange"
             />
         </div>
@@ -125,15 +125,22 @@
 import type { DataTableColumns, DataTableRowKey } from 'naive-ui'
 import { h } from 'vue'
 // import { NButton, NTag, NEllipsis, NTooltip } from 'naive-ui'
-import { NButton, NTooltip } from 'naive-ui'
+import { NButton, NTag, NTooltip } from 'naive-ui'
 import { FunnelOutline, ChevronBack, ChevronForward } from '@vicons/ionicons5'
 // import { Search, RefreshRight, ArrowDown, InfoFilled, Switch } from '@element-plus/icons-vue'
 import { Search, RefreshRight, InfoFilled } from '@element-plus/icons-vue'
 import _ from 'lodash'
 import axios from 'axios'
 import filterview from '../filter/index.vue'
-// import { datasetDict, datasetList } from '@/utils/phage'
-// import { celltypeDict, sexDict, devDict } from '@/utils/crustdb'
+import {
+    sliceidDict,
+    publicationTitleDict,
+    speciesDict,
+    stPlatformDict,
+    diseaseStageDict,
+    devDict,
+    sexDict,
+} from '@/utils/crustdb'
 
 const pagevalue = ref(1)
 const pageSize = ref(30)
@@ -149,7 +156,7 @@ const sliceurl = ref(`/slice/`)
 const route = useRoute()
 
 const sorter_dict = ref('')
-// const filter_dict = ref('')
+const filter_dict = ref('')
 
 onBeforeMount(async () => {
     if (route.query?.dataset) {
@@ -261,10 +268,16 @@ const gofilter = () => {
     filterVisible.value = true
 }
 const detail = (row: any) => {
-    // router.push({ path: '/database/phage/detail', query: { phageid: row.id } })
     router.push({
         path: '/database/slice/detail',
         query: { id: row.id },
+    })
+}
+const publication = (row: any) => {
+    console.log(row)
+    router.push({
+        path: '/database/dataset/detail',
+        query: { id: row.publication_id },
     })
 }
 
@@ -321,15 +334,28 @@ const resetsearch = async () => {
     loading.value = false
 }
 
+const SpeciesColor = (style: any) => {
+    if (style === 'Ambystoma mexicanum (Axolotl)') {
+        return 'success'
+    }
+    if (style === 'Homo sapiens (Human)') {
+        return 'info'
+    }
+    return 'warning'
+}
+
 const col_width = {
     slice_id: 170,
-    publication_doi: 100,
+    publication_title: 100,
     species: 140,
-    n_slices: 90,
+    st_platform: 100,
+    disease_stage: 100,
+    developmental_stage: 100,
+    sex: 70,
     n_cell_types: 90,
     n_conformations: 90,
     n_cells: 90,
-    actions: 90,
+    actions: 140,
 }
 
 const createColumns = (): DataTableColumns<RowData> => {
@@ -348,21 +374,26 @@ const createColumns = (): DataTableColumns<RowData> => {
                 tooltip: true,
             },
             width: col_width.slice_id,
+            filterOptions: sliceidDict,
+            filter: true,
         },
-        // publication_doi
+        // publication_title
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'Publication DOI' }),
-                    'Publication DOI'
+                    h('div', null, { default: () => 'Publication Title' }),
+                    'Publication Title'
                 )
             },
-            key: 'publication_doi',
+            key: 'publication_title',
             align: 'center',
             ellipsis: {
                 tooltip: true,
             },
-            width: col_width.publication_doi,
+            width: col_width.publication_title,
+            resizable: true,
+            filterOptions: publicationTitleDict,
+            filter: true,
         },
         // species
         {
@@ -375,6 +406,87 @@ const createColumns = (): DataTableColumns<RowData> => {
                 tooltip: true,
             },
             width: col_width.species,
+            render(row: any) {
+                return h('div', {}, [
+                    h(
+                        NTag,
+                        {
+                            type: SpeciesColor(row.species),
+                            size: 'small',
+                        },
+                        {
+                            default: () => row.species,
+                        }
+                    ),
+                ])
+            },
+            filterOptions: speciesDict,
+            filter: true,
+        },
+        // st_platform
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'ST Platform' }),
+                    'st_platform'
+                )
+            },
+            key: 'st_platform',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.st_platform,
+            filterOptions: stPlatformDict,
+            filter: true,
+        },
+        // disease_stage
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Disease Stage' }),
+                    'disease_stage'
+                )
+            },
+            key: 'disease_stage',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.disease_stage,
+            filterOptions: diseaseStageDict,
+            filter: true,
+        },
+        // developmental_stage
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Developmental Stage' }),
+                    'developmental_stage'
+                )
+            },
+            key: 'developmental_stage',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.developmental_stage,
+            filterOptions: devDict,
+            filter: true,
+        },
+        // sex
+        {
+            title() {
+                return renderTooltip(h('div', null, { default: () => 'Sex' }), 'sex')
+            },
+            key: 'sex',
+            align: 'center',
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.sex,
+            filterOptions: sexDict,
+            filter: true,
         },
         // n_cell_types
         {
@@ -436,7 +548,7 @@ const createColumns = (): DataTableColumns<RowData> => {
                     'div',
                     {
                         style: {
-                            // display: 'flex',
+                            display: 'flex',
                             justifyContent: 'space-between',
                         },
                     },
@@ -450,6 +562,16 @@ const createColumns = (): DataTableColumns<RowData> => {
                                 onClick: () => detail(row),
                             },
                             { default: () => 'Slice Details' }
+                        ),
+                        h(
+                            NButton,
+                            {
+                                strong: true,
+                                size: 'small',
+                                type: 'info',
+                                onClick: () => publication(row),
+                            },
+                            { default: () => 'Publication Details' }
                         ),
                     ]
                 )
@@ -482,6 +604,7 @@ const handleSorterChange = async sorter => {
             page: pagevalue.value,
             pagesize: pageSize.value,
             sorter: sorter_dict.value,
+            filter: filter_dict.value,
         },
     })
     const { data } = response
@@ -489,23 +612,23 @@ const handleSorterChange = async sorter => {
     loading.value = false
 }
 
-// const handleUpdateFilter = async filters => {
-//     filter_dict.value = filters
-//     loading.value = true
-//     const response = await axios.get(sliceurl.value, {
-//         baseURL: '/api',
-//         timeout: 100000,
-//         params: {
-//             page: pagevalue.value,
-//             pagesize: pageSize.value,
-//             sorter: sorter_dict.value,
-//             filter: filter_dict.value,
-//         },
-//     })
-//     const { data } = response
-//     phagedata.value = data
-//     loading.value = false
-// }
+const handleUpdateFilter = async filters => {
+    filter_dict.value = filters
+    loading.value = true
+    const response = await axios.get(sliceurl.value, {
+        baseURL: '/api',
+        timeout: 100000,
+        params: {
+            page: pagevalue.value,
+            pagesize: pageSize.value,
+            sorter: sorter_dict.value,
+            filter: filter_dict.value,
+        },
+    })
+    const { data } = response
+    phagedata.value = data
+    loading.value = false
+}
 
 const godatahelper = () => {
     router.push({
