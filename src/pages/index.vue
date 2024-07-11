@@ -237,17 +237,21 @@
                             <p><a href="/database/slice">Slice List</a></p>
                             <p><a href="/database/celltype">Cell Type List</a></p>
                             <p><a href="/database/crustdb_main">CyGraph Conformation List</a></p>
-                            <!-- <p><a href="/database/phage">Phage List</a></p>
-                            <p><a href="/database/host">Host List</a></p>
-                            <p><a href="/database/cluster">Cluster List</a></p>
-                            <p><a href="/database/protein">Annotated Protein List</a></p> -->
                             <p><a href="/database/filter">Conformation Filter</a></p>
                         </div>
 
                         <div class="flex flex-col">
                             <p class="text-xl mb-3">Analysis</p>
-                            <p><a href="/analysis/annopipline">Genome Annotation</a></p>
-                            <p><a href="/analysis/comparison">Genome Comparison</a></p>
+                            <p>
+                                <a href="analysis/conformation/craft/single_celltype">
+                                    Single Celltype Mode
+                                </a>
+                            </p>
+                            <p>
+                                <a href="analysis/conformation/craft/multi_celltype">
+                                    Multi-Celltype Mode
+                                </a>
+                            </p>
                         </div>
                         <div class="flex flex-col mb-3">
                             <p class="text-xl mb-10"><a href="/workspace">Workspace</a></p>
@@ -306,7 +310,7 @@ const goDocument = () => {
 
 const goAnalysis = () => {
     router.push({
-        path: '/analysis/annopipline',
+        path: '/analysis/conformation/craft/single_celltype',
     })
 }
 

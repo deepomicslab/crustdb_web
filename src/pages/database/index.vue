@@ -309,10 +309,9 @@ const viewSpecies = (node: string) => {
         dataset = 'crustdb_mice'
     } else if (node === 'axolotls') {
         dataset = 'crustdb_axolotls'
+    } else if (node === 'monkey') {
+        dataset = 'crustdb_monkey'
     }
-    // else if (node === 'monkey') {
-    //     dataset = 'crustdb_axolotls'
-    // }
     router.push({
         path: `/database/crustdb_main`,
         query: {

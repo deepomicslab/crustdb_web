@@ -17,7 +17,7 @@ export const STPlatformBarOptions = {
         },
     },
     xAxis: {
-        data: ['Stereo-seq', 'CosMx', 'MERFISH'],
+        data: ['CosMx', 'Stereo-seq', 'Xenium', 'MERFISH'],
         axisLabel: {
             rotate: 0,
             fontSize: 13,
@@ -28,7 +28,7 @@ export const STPlatformBarOptions = {
         {
             name: 'CyGraph',
             type: 'bar',
-            data: [93, 164, 0],
+            data: [195, 152, 57, 19],
         },
     ],
 }
@@ -51,7 +51,7 @@ export const TestSTPlatformBarOptions = {
         },
     },
     xAxis: {
-        data: ['Stereo-seq', 'CosMx', 'MERFISH'],
+        data: ['CosMx', 'Stereo-seq', 'Xenium', 'MERFISH'],
         axisLabel: {
             rotate: 0,
             fontSize: 13,
@@ -62,7 +62,7 @@ export const TestSTPlatformBarOptions = {
         {
             name: 'CyGraph',
             type: 'bar',
-            data: [93, 10, 40],
+            data: [195, 152, 57, 19],
         },
     ],
 }
@@ -87,8 +87,8 @@ export const SpeciesBarOptions = {
     xAxis: {
         data: [
             'Ambystoma mexicanum \n(Axolotl)',
+            'Mus musculus \n(Mice)',
             'Homo sapiens \n(Human)',
-            'Mus musculus \n(Mouse)',
         ],
         axisLabel: {
             interval: 0,
@@ -102,7 +102,7 @@ export const SpeciesBarOptions = {
         {
             name: 'CyGraph',
             type: 'bar',
-            data: [93, 164, 0],
+            data: [93, 78, 252],
         },
     ],
 }
@@ -140,8 +140,8 @@ export const SpeciesPieOptions = {
             type: 'pie',
             data: [
                 { value: 93, name: 'Ambystoma mexicanum \n(Axolotl)' },
-                { value: 164, name: 'Homo sapiens \n(Human)' },
-                { value: 0, name: 'Mus musculus \n(Mouse)' },
+                { value: 78, name: 'Mus musculus \n(Mice)' },
+                { value: 252, name: 'Homo sapiens \n(Human)' },
             ],
             label: {
                 fontSize: 15,
@@ -179,9 +179,10 @@ export const STPlatformPieOptions = {
             name: 'CyGraph',
             type: 'pie',
             data: [
-                { value: 93, name: 'Stereo-seq' },
-                { value: 164, name: 'CosMx' },
-                { value: 0, name: 'MERFISH' },
+                { value: 195, name: 'CosMx' },
+                { value: 152, name: 'Stereo-seq' },
+                { value: 57, name: 'Xenium' },
+                { value: 19, name: 'MERFISH' },
             ],
             label: {
                 fontSize: 15,
