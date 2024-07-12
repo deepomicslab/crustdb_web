@@ -342,6 +342,8 @@ const loaddata = ref(false)
 const loadtopologydata = ref(false)
 const graphSelectionStr = ref('')
 const isMST = ref(false)
+const max_node_size = 30
+const min_node_size = 10
 
 const route = useRoute()
 const phageid = computed(() => route.query?.crustdb_main_id as number)
@@ -490,7 +492,18 @@ const chartOption = () => {
 const preprocess_3d = () => {
     const this_nodesCoord_3d = []
     const x_list = Array.from(new Set(nodesCoord_3d.value.x))
-    if (colorby.value === 'componentsize' && isMST.value === false) {
+    if (colorby.value === 'pagerankscore' || isMST.value === true) {
+        x_list.forEach((element, idx) => {
+            this_nodesCoord_3d.push([
+                element, // x
+                nodesCoord_3d.value.y[idx], // y
+                nodesCoord_3d.value.z[idx], // z
+                parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // index 3
+                nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
+                parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // index 5
+            ])
+        })
+    } else if (colorby.value === 'componentsize' && isMST.value === false) {
         const applythresholding = size => {
             if (size >= component_threshold.value) {
                 return size
@@ -504,29 +517,34 @@ const preprocess_3d = () => {
                 nodesCoord_3d.value.z[idx], // z
                 applythresholding(parseInt(nodesCoord_3d.value.component_size[idx], 10)), // index 3
                 nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
-            ])
-        })
-    } else {
-        // (colorby.value === 'pagerankscore')
-        x_list.forEach((element, idx) => {
-            this_nodesCoord_3d.push([
-                element, // x
-                nodesCoord_3d.value.y[idx], // y
-                nodesCoord_3d.value.z[idx], // z
-                parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // index 3
-                nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
+                parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // index 5
             ])
         })
     }
     const arrayColumn = (arr, n) => arr.map(x => x[n])
-    const array_col_3 = arrayColumn(this_nodesCoord_3d, 3) // page_rank_score
+    const array_col_3 = arrayColumn(this_nodesCoord_3d, 3) // color_by
     const min_color_by_value = Math.min.apply(null, array_col_3)
     const max_color_by_value = Math.max.apply(null, array_col_3)
+    const array_col_5 = arrayColumn(this_nodesCoord_3d, 5) // node size <--- page rank score
+    const min_page_rank_score = Math.min.apply(null, array_col_5)
+    const max_page_rank_score = Math.max.apply(null, array_col_5)
+    const resize_node_size = x => {
+        return (
+            ((x - min_page_rank_score) / (max_page_rank_score - min_page_rank_score)) *
+                (max_node_size - min_node_size) +
+            min_node_size
+        )
+    }
     // max_component_threshold.value will be updated in preprocess_2d()
     const seriesData = [
         {
             type: 'scatter3D',
-            symbolSize: 12,
+            symbolSize(data) {
+                if (colorby.value === 'componentsize' && isMST.value === false) {
+                    return resize_node_size(data[5])
+                }
+                return 12
+            },
             encode: {
                 x: 'x',
                 y: 'y',
@@ -556,14 +574,14 @@ const preprocess_3d = () => {
             show: true,
             formatter(param) {
                 if (param.value) {
-                    if (colorby.value === 'pagerankscore') {
+                    if (colorby.value === 'pagerankscore' || isMST.value === true) {
                         return `Gene Name ${param.value[4]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}<br>- page_rank_score: ${param.value[3]}`
                     }
                     if (colorby.value === 'componentsize') {
                         if (param.value[3] >= component_threshold.value) {
-                            return `Gene Name ${param.name[4]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}<br>- component size: ${param.value[3]}`
+                            return `Gene Name ${param.name[4]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}<br>- page_rank_score: ${param.value[5]}<br>- component size: ${param.value[3]}`
                         }
-                        return `Gene Name ${param.name[4]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}<br>- component size smaller than the threshold`
+                        return `Gene Name ${param.name[4]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}<br>- page_rank_score: ${param.value[5]}<br>- component size smaller than the threshold`
                     }
                 }
                 return ''
@@ -698,6 +716,7 @@ const preprocess_2d = () => {
                     name: element, // node_name (i.e. gene name)
                     id: idx,
                     value: parseFloat(nodesCoord_3d.value.page_rank_score[idx]),
+                    symbolSize: 12,
                 })
             })
         } else if (colorby.value === 'componentsize') {
@@ -707,11 +726,31 @@ const preprocess_2d = () => {
                 }
                 return -1
             }
+            const page_rank_score_list = []
+            Array.from(new Set(nodesCoord_3d.value.page_rank_score)).forEach(element => {
+                page_rank_score_list.push(parseFloat(element))
+            })
+            const min_page_rank_score = Math.min.apply(null, page_rank_score_list)
+            const max_page_rank_score = Math.max.apply(null, page_rank_score_list)
+            const resize_node_size = x => {
+                return (
+                    ((x - min_page_rank_score) / (max_page_rank_score - min_page_rank_score)) *
+                        (max_node_size - min_node_size) +
+                    min_node_size
+                )
+            }
+            // const recover_page_rank_score = x => {
+            //     return (x - min_node_size) / (max_node_size - min_node_size) * (max_page_rank_score - min_page_rank_score) + min_page_rank_score
+            // }
             nodename_list.forEach((element, idx) => {
                 this_2d_nodes.push({
                     name: element, // node_name (i.e. gene name)
                     id: idx,
                     value: applythresholding(parseInt(nodesCoord_3d.value.component_size[idx], 10)),
+                    symbolSize: resize_node_size(
+                        parseFloat(nodesCoord_3d.value.page_rank_score[idx])
+                    ),
+                    prs: parseFloat(nodesCoord_3d.value.page_rank_score[idx]),
                 })
             })
         }
@@ -740,9 +779,9 @@ const preprocess_2d = () => {
                         }
                         if (colorby.value === 'componentsize') {
                             if (param.value >= component_threshold.value) {
-                                return `Gene Name ${param.name} <br>- component size: ${param.value}`
+                                return `Gene Name ${param.name} <br>- page rank score: ${param.data.prs} <br>- component size: ${param.value}`
                             }
-                            return `Gene Name ${param.name} <br>- component size smaller than the threshold`
+                            return `Gene Name ${param.name} <br>- page rank score: ${param.data.prs} <br>- component size smaller than the threshold`
                         }
                     }
                     return ''
