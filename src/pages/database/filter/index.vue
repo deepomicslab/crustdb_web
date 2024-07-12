@@ -9,7 +9,7 @@
             <div class="mt-25">
                 <el-form status-icon label-width="auto" label-position="right">
                     <el-row justify="space-evenly">
-                        <el-col :span="10">
+                        <el-col :span="11">
                             <el-form-item label="ST Platform">
                                 &nbsp;&nbsp;
                                 <el-select
@@ -19,7 +19,7 @@
                                     clearable
                                 >
                                     <el-option
-                                        v-for="option in STPlatformOptions"
+                                        v-for="option in stPlatformDict"
                                         :key="option.value"
                                         :label="option.label"
                                         :value="option.value"
@@ -27,7 +27,7 @@
                                 </el-select>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="9">
+                        <el-col :span="10">
                             <el-form-item label="Species">
                                 &nbsp;&nbsp;
                                 <el-select
@@ -38,7 +38,7 @@
                                     class="w-60"
                                 >
                                     <el-option
-                                        v-for="option in speciesOptions"
+                                        v-for="option in speciesDict"
                                         :key="option.value"
                                         :label="option.label"
                                         :value="option.value"
@@ -48,13 +48,17 @@
                         </el-col>
                     </el-row>
                     <el-row class="mt-4" justify="space-evenly">
-                        <el-col :span="10">
+                        <el-col :span="11">
                             <el-form-item label="Cell Type">
                                 &nbsp;&nbsp;
-                                <el-input v-model="filterform.celltype" class="w-60" />
+                                <el-input
+                                    v-model="filterform.celltype"
+                                    class="w-60"
+                                    placeholder="Input Cell Type"
+                                />
                             </el-form-item>
                         </el-col>
-                        <el-col :span="9">
+                        <el-col :span="10">
                             <el-form-item label="Developmental Stage">
                                 &nbsp;&nbsp;
                                 <el-select
@@ -65,7 +69,7 @@
                                     class="w-60"
                                 >
                                     <el-option
-                                        v-for="option in developmentalStageOptions"
+                                        v-for="option in devDict"
                                         :key="option.value"
                                         :label="option.label"
                                         :value="option.value"
@@ -75,7 +79,7 @@
                         </el-col>
                     </el-row>
                     <el-row class="mt-4" justify="space-evenly">
-                        <el-col :span="10">
+                        <el-col :span="11">
                             <el-form-item label="Disease Status">
                                 &nbsp;&nbsp;
                                 <el-select
@@ -85,7 +89,7 @@
                                     clearable
                                 >
                                     <el-option
-                                        v-for="option in diseaseOptions"
+                                        v-for="option in diseaseStageDict"
                                         :key="option.value"
                                         :label="option.label"
                                         :value="option.value"
@@ -93,12 +97,58 @@
                                 </el-select>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="9">
+                        <el-col :span="10">
+                            <el-form-item label="Conformation Number">
+                                &nbsp;&nbsp;
+                                <el-input
+                                    v-model.number="filterform.conformation_num_min"
+                                    class="w-25"
+                                    type="number"
+                                    min="0"
+                                />
+                                <div class="mx-3">
+                                    <el-icon>
+                                        <Minus />
+                                    </el-icon>
+                                </div>
+                                <el-input
+                                    v-model.number="filterform.conformation_num_max"
+                                    class="w-26"
+                                    type="number"
+                                    min="0"
+                                />
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row class="mt-4" justify="space-evenly">
+                        <el-col :span="11">
+                            <el-form-item label="Transcription Center Number">
+                                &nbsp;&nbsp;
+                                <el-input
+                                    v-model.number="filterform.inferred_trans_center_num_min"
+                                    class="w-25"
+                                    type="number"
+                                    min="0"
+                                />
+                                <div class="mx-3">
+                                    <el-icon>
+                                        <Minus />
+                                    </el-icon>
+                                </div>
+                                <el-input
+                                    v-model.number="filterform.inferred_trans_center_num_max"
+                                    class="w-26"
+                                    type="number"
+                                    min="0"
+                                />
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="10">
                             <el-form-item label="Gene Number">
                                 &nbsp;&nbsp;
                                 <el-input
                                     v-model.number="filterform.gene_num_min"
-                                    class="w-20"
+                                    class="w-25"
                                     type="number"
                                     min="0"
                                 />
@@ -109,7 +159,7 @@
                                 </div>
                                 <el-input
                                     v-model.number="filterform.gene_num_max"
-                                    class="w-20"
+                                    class="w-26"
                                     type="number"
                                     min="0"
                                 />
@@ -117,7 +167,7 @@
                         </el-col>
                     </el-row>
                     <el-row class="mt-4" justify="space-evenly">
-                        <el-col :span="10">
+                        <el-col :span="11">
                             <el-form-item label="Sex" class="ml-0">
                                 &nbsp;&nbsp;
                                 <el-radio-group v-model="filterform.sex" class="w-70">
@@ -127,12 +177,12 @@
                                 </el-radio-group>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="9">
+                        <el-col :span="10">
                             <el-form-item label="Cell Number">
                                 &nbsp;&nbsp;
                                 <el-input
                                     v-model.number="filterform.cell_num_min"
-                                    class="w-20"
+                                    class="w-25"
                                     type="number"
                                     min="0"
                                 />
@@ -143,7 +193,7 @@
                                 </div>
                                 <el-input
                                     v-model.number="filterform.cell_num_max"
-                                    class="w-20"
+                                    class="w-26"
                                     type="number"
                                     min="0"
                                 />
@@ -177,12 +227,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
 import { Minus } from '@element-plus/icons-vue'
-import {
-    STPlatformOptions,
-    diseaseOptions,
-    speciesOptions,
-    developmentalStageOptions,
-} from '@/utils/filteroption'
+import { stPlatformDict, diseaseStageDict, speciesDict, devDict } from '@/utils/crustdb'
 import { useQueryStore } from '@/store/query'
 
 const queryStore = useQueryStore()
@@ -199,6 +244,10 @@ const filterform = ref({
     gene_num_max: 25000,
     cell_num_min: 0,
     cell_num_max: 37000,
+    conformation_num_min: 0,
+    conformation_num_max: 5,
+    inferred_trans_center_num_min: 0,
+    inferred_trans_center_num_max: 9000,
 })
 const router = useRouter()
 const showError = ref(false)
@@ -240,6 +289,41 @@ const isAllNumericFieldValid = () => {
         alertTitle.value = `Cell Number: start value should be smaller than end value`
         return false
     }
+    if (checkNumericField(filterform.value.conformation_num_min, 'Conformation Number') === false) {
+        return false
+    }
+    if (checkNumericField(filterform.value.conformation_num_max, 'Conformation Number') === false) {
+        return false
+    }
+    if (filterform.value.conformation_num_max < filterform.value.conformation_num_min) {
+        showError.value = true
+        alertTitle.value = `Conformation Number: start value should be smaller than end value`
+        return false
+    }
+    if (
+        checkNumericField(
+            filterform.value.inferred_trans_center_num_min,
+            'Transcription Center Number'
+        ) === false
+    ) {
+        return false
+    }
+    if (
+        checkNumericField(
+            filterform.value.inferred_trans_center_num_max,
+            'Transcription Center Number'
+        ) === false
+    ) {
+        return false
+    }
+    if (
+        filterform.value.inferred_trans_center_num_max <
+        filterform.value.inferred_trans_center_num_min
+    ) {
+        showError.value = true
+        alertTitle.value = `Transcription Center Number: start value should be smaller than end value`
+        return false
+    }
     return true
 }
 const submitFilter = async () => {
@@ -267,6 +351,10 @@ const resetFilterForm = () => {
         gene_num_max: 25000,
         cell_num_min: 0,
         cell_num_max: 37000,
+        conformation_num_min: 0,
+        conformation_num_max: 5,
+        inferred_trans_center_num_min: 0,
+        inferred_trans_center_num_max: 9000,
     }
 }
 </script>

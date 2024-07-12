@@ -248,7 +248,6 @@ const gofilter = () => {
     router.push({ path: '/database/filter' })
 }
 const detail = (row: any) => {
-    // router.push({ path: '/database/phage/detail', query: { phageid: row.id } })
     router.push({
         path: '/database/crustdb_main/detail',
         query: { crustdb_main_id: row.id, details_uid: '' },

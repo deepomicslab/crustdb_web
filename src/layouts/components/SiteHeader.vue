@@ -147,11 +147,10 @@ const menuOptions: MenuOption[] = [
             //         },
             //     ],
             // },
-
-            // {
-            //     label: 'Record Filter',
-            //     key: '/database/filter',
-            // },
+            {
+                label: 'Conformation Filter',
+                key: '/database/filter',
+            },
         ],
     },
     {
