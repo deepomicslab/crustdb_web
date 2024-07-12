@@ -98,14 +98,44 @@
             <div class="flex flex-row w-350 border-b-2 border-gray-300">
                 <div class="text-4xl font-500 mb-8">Graph Information</div>
                 <div class="mt-1.5 ml-0">
-                    <el-button class="ml-5" @click="selectGraphType">
-                        <template #icon>
-                            <n-icon>
-                                <selectIcon />
-                            </n-icon>
-                        </template>
-                        Choose Graph Type
-                    </el-button>
+                    <n-space horizontal>
+                        <el-button class="ml-5" @click="selectGraphType">
+                            <template #icon>
+                                <n-icon>
+                                    <selectIcon />
+                                </n-icon>
+                            </template>
+                            Choose Graph Type
+                        </el-button>
+                        <div class="mt-2" v-if="isMST == false">Color by</div>
+                        <n-space align="center" v-if="isMST == false">
+                            <n-radio-group v-model:value="colorby">
+                                <n-radio-button value="componentsize">
+                                    Component Size
+                                </n-radio-button>
+                                <n-radio-button value="pagerankscore">
+                                    Page Rank Score
+                                </n-radio-button>
+                            </n-radio-group>
+                        </n-space>
+                        <div class="mt-2" v-if="colorby == 'componentsize' && isMST == false">
+                            Set component size threshold (max: {{ max_component_threshold }})
+                        </div>
+                        <n-space vertical v-if="colorby == 'componentsize' && isMST == false">
+                            <n-slider
+                                v-model:value="component_threshold"
+                                :min="0"
+                                :max="max_component_threshold"
+                                :step="1"
+                            />
+                            <n-input-number
+                                v-model:value="component_threshold"
+                                :min="0"
+                                :max="max_component_threshold"
+                                size="small"
+                            />
+                        </n-space>
+                    </n-space>
                 </div>
             </div>
         </div>
@@ -304,9 +334,14 @@ import 'echarts-gl'
 import { NTooltip } from 'naive-ui'
 import _ from 'lodash'
 
+const colorby = ref('componentsize')
+const component_threshold = ref(0)
+const max_component_threshold = ref(15)
+
 const loaddata = ref(false)
 const loadtopologydata = ref(false)
 const graphSelectionStr = ref('')
+const isMST = ref(false)
 
 const route = useRoute()
 const phageid = computed(() => route.query?.crustdb_main_id as number)
@@ -370,6 +405,14 @@ const checkedRowKeysRef = ref<DataTableRowKey[]>([])
 
 const option_3d = ref({})
 const option_2d = ref({})
+
+const checkIsMST = () => {
+    if (graphSelectionStr.value.includes('MST')) {
+        isMST.value = true
+    } else {
+        isMST.value = false
+    }
+}
 
 const downloadrequest = async () => {
     if (checkList.value.length === 0) {
@@ -447,20 +490,39 @@ const chartOption = () => {
 const preprocess_3d = () => {
     const this_nodesCoord_3d = []
     const x_list = Array.from(new Set(nodesCoord_3d.value.x))
-    x_list.forEach((element, idx) => {
-        this_nodesCoord_3d.push([
-            element, // x
-            nodesCoord_3d.value.y[idx], // y
-            nodesCoord_3d.value.z[idx], // z
-            parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // page_rank_score
-            nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
-        ])
-    })
+    if (colorby.value === 'componentsize' && isMST.value === false) {
+        const applythresholding = size => {
+            if (size >= component_threshold.value) {
+                return size
+            }
+            return -1
+        }
+        x_list.forEach((element, idx) => {
+            this_nodesCoord_3d.push([
+                element, // x
+                nodesCoord_3d.value.y[idx], // y
+                nodesCoord_3d.value.z[idx], // z
+                applythresholding(parseInt(nodesCoord_3d.value.component_size[idx], 10)), // index 3
+                nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
+            ])
+        })
+    } else {
+        // (colorby.value === 'pagerankscore')
+        x_list.forEach((element, idx) => {
+            this_nodesCoord_3d.push([
+                element, // x
+                nodesCoord_3d.value.y[idx], // y
+                nodesCoord_3d.value.z[idx], // z
+                parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // index 3
+                nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
+            ])
+        })
+    }
     const arrayColumn = (arr, n) => arr.map(x => x[n])
     const array_col_3 = arrayColumn(this_nodesCoord_3d, 3) // page_rank_score
-    const min_page_rank_score = Math.min.apply(null, array_col_3)
-    const max_page_rank_score = Math.max.apply(null, array_col_3)
-
+    const min_color_by_value = Math.min.apply(null, array_col_3)
+    const max_color_by_value = Math.max.apply(null, array_col_3)
+    // max_component_threshold.value will be updated in preprocess_2d()
     const seriesData = [
         {
             type: 'scatter3D',
@@ -493,13 +555,24 @@ const preprocess_3d = () => {
         tooltip: {
             show: true,
             formatter(param) {
-                return `Gene Name ${param.value[4]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}<br>- page_rank_score: ${param.value[3]}`
+                if (param.value) {
+                    if (colorby.value === 'pagerankscore') {
+                        return `Gene Name ${param.value[4]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}<br>- page_rank_score: ${param.value[3]}`
+                    }
+                    if (colorby.value === 'componentsize') {
+                        if (param.value[3] >= component_threshold.value) {
+                            return `Gene Name ${param.name[4]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}<br>- component size: ${param.value[3]}`
+                        }
+                        return `Gene Name ${param.name[4]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}<br>- component size smaller than the threshold`
+                    }
+                }
+                return ''
             },
         },
         visualMap: {
             dimension: 3, // page_rank_score
-            min: min_page_rank_score,
-            max: max_page_rank_score,
+            min: min_color_by_value,
+            max: max_color_by_value,
             inRange: {
                 color: colormap,
             },
@@ -511,14 +584,14 @@ const preprocess_3d = () => {
         zAxis3D: {},
         series: seriesData,
         dataset: {
-            dimensions: ['x', 'y', 'z', 'node_name', 'page_rank_score'],
+            dimensions: ['x', 'y', 'z', 'node_name', 'color_by'],
             source: this_nodesCoord_3d,
         },
     }
 }
 const preprocess_2d = () => {
     // mst 用 tree graph
-    if (graphSelectionStr.value.includes('MST')) {
+    if (isMST.value) {
         const this_nodesCoord_3d = []
         const x_list = Array.from(new Set(nodesCoord_3d.value.x))
         x_list.forEach((element, idx) => {
@@ -531,9 +604,9 @@ const preprocess_2d = () => {
             ])
         })
         const arrayColumn = (arr, n) => arr.map(x => x[n])
-        const array_col_3 = arrayColumn(this_nodesCoord_3d, 3) // page_rank_score    const min_page_rank_score = Math.min.apply(null, array_col_3)
-        const min_page_rank_score = Math.min.apply(null, array_col_3)
-        const max_page_rank_score = Math.max.apply(null, array_col_3)
+        const array_col_3 = arrayColumn(this_nodesCoord_3d, 3) // page_rank_score    const min_color_by_value = Math.min.apply(null, array_col_3)
+        const min_color_by_value = Math.min.apply(null, array_col_3)
+        const max_color_by_value = Math.max.apply(null, array_col_3)
         let this_mst_parentchild_relation = mst_parentchild_relation.value
         if (isProxy(mst_parentchild_relation.value)) {
             this_mst_parentchild_relation = toRaw(mst_parentchild_relation.value)
@@ -562,8 +635,8 @@ const preprocess_2d = () => {
             },
             visualMap: {
                 type: 'continuous',
-                min: min_page_rank_score,
-                max: max_page_rank_score,
+                min: min_color_by_value,
+                max: max_color_by_value,
                 inRange: {
                     color: colormap,
                 },
@@ -619,17 +692,39 @@ const preprocess_2d = () => {
         })
         const this_2d_nodes = []
         const nodename_list = Array.from(new Set(nodesCoord_3d.value.node_name))
-        nodename_list.forEach((element, idx) => {
-            this_2d_nodes.push({
-                name: element, // node_name (i.e. gene name)
-                id: idx,
-                value: parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // page_rank_score
+        if (colorby.value === 'pagerankscore') {
+            nodename_list.forEach((element, idx) => {
+                this_2d_nodes.push({
+                    name: element, // node_name (i.e. gene name)
+                    id: idx,
+                    value: parseFloat(nodesCoord_3d.value.page_rank_score[idx]),
+                })
             })
-        })
+        } else if (colorby.value === 'componentsize') {
+            const applythresholding = size => {
+                if (size >= component_threshold.value) {
+                    return size
+                }
+                return -1
+            }
+            nodename_list.forEach((element, idx) => {
+                this_2d_nodes.push({
+                    name: element, // node_name (i.e. gene name)
+                    id: idx,
+                    value: applythresholding(parseInt(nodesCoord_3d.value.component_size[idx], 10)),
+                })
+            })
+        }
         const arrayColumnValue = arr => arr.map(x => x.value)
-        const array_col_2 = arrayColumnValue(this_2d_nodes) // page_rank_score    const min_page_rank_score = Math.min.apply(null, array_col_3)
-        const min_page_rank_score = Math.min.apply(null, array_col_2)
-        const max_page_rank_score = Math.max.apply(null, array_col_2)
+        const array_col_2 = arrayColumnValue(this_2d_nodes) // page_rank_score    const min_color_by_value = Math.min.apply(null, array_col_3)
+        const min_color_by_value = Math.min.apply(null, array_col_2)
+        const max_color_by_value = Math.max.apply(null, array_col_2)
+        if (colorby.value === 'componentsize') {
+            max_component_threshold.value = Math.min(
+                max_component_threshold.value,
+                Math.floor(max_color_by_value)
+            )
+        }
         option_2d.value = {
             title: {
                 text: graphSelectionStr.value,
@@ -640,7 +735,15 @@ const preprocess_2d = () => {
                 triggerOn: 'mousemove',
                 formatter(param) {
                     if (param.value) {
-                        return `Gene Name ${param.name} <br>- page_rank_score: ${param.value}`
+                        if (colorby.value === 'pagerankscore') {
+                            return `Gene Name ${param.name} <br>- page rank score: ${param.value}`
+                        }
+                        if (colorby.value === 'componentsize') {
+                            if (param.value >= component_threshold.value) {
+                                return `Gene Name ${param.name} <br>- component size: ${param.value}`
+                            }
+                            return `Gene Name ${param.name} <br>- component size smaller than the threshold`
+                        }
                     }
                     return ''
                 },
@@ -657,8 +760,8 @@ const preprocess_2d = () => {
             },
             visualMap: {
                 type: 'continuous',
-                min: min_page_rank_score,
-                max: max_page_rank_score,
+                min: min_color_by_value,
+                max: max_color_by_value,
                 inRange: {
                     color: colormap,
                 },
@@ -728,6 +831,8 @@ const graph_type_map = str => {
 
     if (tmp_algo === 'MST') {
         para = 'MST-MST.pkl'
+    } else if (tmp_algo === '1NN') {
+        para = '1NN-1NN.pkl'
     } else {
         const tmp_para1 = str.split(' ')[2].slice(3, -1)
         if (tmp_algo === 'KNN') {
@@ -756,6 +861,7 @@ const selectGraphTypeRequest = async () => {
         const this_selection = graph_type_map(selectGraphTypeCheckList.value[0])
         // const this_selection = '(Graph11) topo_55-RNN_SNN-0.1_5.pkl'
         graphSelectionStr.value = this_selection
+        checkIsMST()
         const topology_response = await axios.get(`/details/topology`, {
             baseURL: '/api',
             timeout: 10000,
@@ -820,6 +926,8 @@ const updateGraphTypeList = () => {
             tmp_para = `RNN-SNN (r=${tmp_para.split('_')[0]}, k=${tmp_para.split('_')[1]})`
         } else if (tmp_algo === 'MST') {
             tmp_para = 'MST'
+        } else if (tmp_algo === '1NN') {
+            tmp_para = '1NN'
         }
         graph_type_list.value.push(tmp_para)
     }
@@ -898,6 +1006,7 @@ onBeforeMount(async () => {
     // index 6 is mst
     const this_selection = topologyselectiondata.value[0]
     graphSelectionStr.value = this_selection
+    checkIsMST()
 
     const topology_response = await axios.get(`/details/topology`, {
         baseURL: '/api',
@@ -945,6 +1054,18 @@ watch(nodesCoord_3d, () => {
     chart3dOption()
     chart2dOption()
 })
+watch(colorby, () => {
+    preprocess_2d()
+    preprocess_3d()
+    chart2dOption()
+    chart3dOption()
+})
+watch(component_threshold, () => {
+    preprocess_2d()
+    preprocess_3d()
+    chart2dOption()
+    chart3dOption()
+})
 
 const phageList = computed(() => {
     const this_phageList = []
@@ -966,6 +1087,7 @@ const phageList = computed(() => {
                     1e4,
                 page_rank_score:
                     Math.round(parseFloat(nodeattr_data.value.page_rank_score[idx]) * 1e4) / 1e4,
+                component_size: Math.round(parseInt(nodeattr_data.value.component_size[idx], 10)),
             })
         })
     }
