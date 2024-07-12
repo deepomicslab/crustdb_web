@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col mx-1/10 justify-start">
+    <div class="flex flex-col mx-1/20 justify-start">
         <div class="w-300 mt-18 ml-10">
             <div class="flex flex-row w-350 border-b-2 border-gray-300">
                 <div class="text-4xl font-500 mb-8">CyGraph Conformation</div>
@@ -25,74 +25,76 @@
                 </div>
             </div>
 
-            <!-- Phage Informatin table -->
-            <el-descriptions
-                class="w-330 text-xl mt-8"
-                :column="2"
-                size="large"
-                border
-                v-loading="loaddata"
-            >
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Data UID</div>
-                    </template>
-                    {{ detailsdata.repeat_data_uid }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Seed</div>
-                    </template>
-                    {{ detailsdata.seed }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Sample Name</div>
-                    </template>
-                    {{ detailsdata.sample_name }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Threshold for gene filter</div>
-                    </template>
-                    {{ detailsdata.gene_filter_threshold }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">
-                            Proportion of genes used for Rotation Derivation
-                        </div>
-                    </template>
-                    {{ detailsdata.anchor_gene_proportion }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Task ID</div>
-                    </template>
-                    {{ detailsdata.task_id }}
-                </el-descriptions-item>
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Number of total Transcription centers</div>
-                    </template>
-                    {{ detailsdata.inferred_trans_center_num }}
-                </el-descriptions-item>
-            </el-descriptions>
+            <div class="flex flex-row justify-between mt-6 ml-8 w-350">
+                <n-table :bordered="false">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <el-descriptions
+                                    class="w-130 h-120 text-xl mt-8"
+                                    :column="1"
+                                    size="large"
+                                    border
+                                    v-loading="loaddata"
+                                >
+                                    <el-descriptions-item :width="165">
+                                        <template #label>
+                                            <div class="cell-item">Data UID</div>
+                                        </template>
+                                        {{ detailsdata.repeat_data_uid }}
+                                    </el-descriptions-item>
+                                    <el-descriptions-item :width="165">
+                                        <template #label>
+                                            <div class="cell-item">Seed</div>
+                                        </template>
+                                        {{ detailsdata.seed }}
+                                    </el-descriptions-item>
+                                    <el-descriptions-item :width="165">
+                                        <template #label>
+                                            <div class="cell-item">Sample Name</div>
+                                        </template>
+                                        {{ detailsdata.sample_name }}
+                                    </el-descriptions-item>
+                                    <el-descriptions-item :width="165">
+                                        <template #label>
+                                            <div class="cell-item">Threshold for gene filter</div>
+                                        </template>
+                                        {{ detailsdata.gene_filter_threshold }}
+                                    </el-descriptions-item>
+                                    <el-descriptions-item :width="165">
+                                        <template #label>
+                                            <div class="cell-item">
+                                                Proportion of genes used for Rotation Derivation
+                                            </div>
+                                        </template>
+                                        {{ detailsdata.anchor_gene_proportion }}
+                                    </el-descriptions-item>
+                                    <el-descriptions-item :width="165">
+                                        <template #label>
+                                            <div class="cell-item">Task ID</div>
+                                        </template>
+                                        {{ detailsdata.task_id }}
+                                    </el-descriptions-item>
+                                    <el-descriptions-item :width="165">
+                                        <template #label>
+                                            <div class="cell-item">
+                                                Number of total Transcription centers
+                                            </div>
+                                        </template>
+                                        {{ detailsdata.inferred_trans_center_num }}
+                                    </el-descriptions-item>
+                                </el-descriptions>
+                            </td>
+                            <td>
+                                <div class="w-180 h-120 text-xl mt-0" ref="echartlineDom"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </n-table>
+            </div>
         </div>
 
-        <div class="mt-5 ml-15">
-            <div class="flex flex-row w-200">
-                <h1 class="text-3xl mt-9 ml-7 font-500 text-[#3262a8]">Convergence Curve</h1>
-            </div>
-            <div class="flex flex-row">
-                <div class="w-300 h-150 mb-10 mt-5 p-5 ml-8" style="box-shadow: 0 0 64px #cfd5db">
-                    <div id="myEcharts" class="h-140" ref="echartlineDom"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="flex flex-col mx-1/10 justify-start">
-        <div class="w-300 mt-18 ml-10">
+        <div class="w-350 mt-18 ml-10">
             <div class="flex flex-row w-350 border-b-2 border-gray-300">
                 <div class="text-4xl font-500 mb-8">Graph Information</div>
                 <div class="mt-1.5 ml-0">
@@ -107,13 +109,47 @@
                 </div>
             </div>
         </div>
+        <div class="w-350 mt-5 ml-10">
+            <n-table :bordered="false">
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="flex flex-row">
+                                <h1 class="text-3xl mt-5 ml-5 font-500 text-[#3262a8]">3D Vis</h1>
+                            </div>
+                            <div class="flex flex-row">
+                                <div
+                                    class="h-150 w-160 mb-10 mt-5 p-5 ml-8"
+                                    style="box-shadow: 0 0 64px #cfd5db"
+                                >
+                                    <div id="my3dEcharts" class="h-140" ref="echart3dDom"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex flex-row">
+                                <h1 class="text-3xl mt-5 ml-5 font-500 text-[#3262a8]">2D Vis</h1>
+                            </div>
+                            <div class="flex flex-row">
+                                <div
+                                    class="h-150 w-160 mb-10 mt-5 p-5 ml-8"
+                                    style="box-shadow: 0 0 64px #cfd5db"
+                                >
+                                    <div id="my2dEcharts" class="h-140" ref="echart2dDom"></div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </n-table>
+        </div>
 
-        <div class="mt-5 ml-15">
-            <div class="flex flex-row w-200">
-                <h1 class="text-3xl mt-5 ml-7 font-500 text-[#3262a8]">3D Vis</h1>
+        <div class="w-350 mt-5 ml-15">
+            <div class="flex flex-row">
+                <h1 class="text-3xl mt-5 ml-5 font-500 text-[#3262a8]">Graph Information</h1>
             </div>
             <el-descriptions
-                class="w-330 text-xl mt-8"
+                class="w-350 text-xl mt-8"
                 :column="2"
                 size="large"
                 border
@@ -168,61 +204,20 @@
                     {{ graph_info.betweenness_centrality }}
                 </el-descriptions-item>
             </el-descriptions>
-            <div class="flex flex-row">
-                <div class="w-300 h-150 mb-10 mt-5 p-5 ml-8" style="box-shadow: 0 0 64px #cfd5db">
-                    <div id="my3dEcharts" class="h-140" ref="echart3dDom"></div>
-                </div>
-            </div>
-            <!-- <div class="flex flex-row"> -->
-            <!-- <mst /> -->
-            <!-- <annotation /> -->
-            <!-- </div> -->
-        </div>
-    </div>
-    <div class="flex flex-col mx-1/10 justify-start">
-        <div class="w-300 mt-18 ml-10">
-            <div class="flex flex-row w-350 border-b-2 border-gray-300">
-                <div class="text-4xl font-500 mb-8">Graph Nodes</div>
-            </div>
         </div>
 
-        <div class="mt-5 ml-15">
-            <div class="flex flex-row w-200">
-                <h1 class="text-3xl mt-5 ml-7 font-500 text-[#3262a8]">2D Vis</h1>
-            </div>
-            <!-- <el-descriptions
-                class="w-330 text-xl mt-8"
-                :column="2"
-                size="large"
-                border
-                v-loading="loadtopologydata"
-            >
-                <el-descriptions-item :width="165">
-                    <template #label>
-                        <div class="cell-item">Graph Type Selection</div>
-                    </template>
-                    {{ graphSelectionStr }}
-                </el-descriptions-item>
-            </el-descriptions> -->
+        <div class="w-350 mt-5 ml-15">
             <div class="flex flex-row">
-                <div class="w-300 h-150 mb-10 mt-5 p-5 ml-8" style="box-shadow: 0 0 64px #cfd5db">
-                    <div id="my2dEcharts" class="h-140" ref="echart2dDom"></div>
-                </div>
+                <h1 class="text-3xl mt-5 ml-5 font-500 text-[#3262a8]">Graph Node Information</h1>
             </div>
-            <!-- <div class="flex flex-row">
-                <div class="w-300 h-150 mb-10 mt-5 p-5 ml-8" style="box-shadow: 0 0 64px #cfd5db">
-                    <el-scrollbar class="h-200" v-loading="loadtopologydata">
-                        <div id="my2dEcharts" class="h-140" ref="echart2dDom"></div>
-                    </el-scrollbar>
-                </div>
-            </div> -->
-            <div v-loading="loadtopologydata" class="h-420">
+            <div v-loading="loadtopologydata" class="mt-8">
                 <n-data-table
                     :data="phageList"
                     :columns="columns"
+                    :pagination="pagination"
                     :max-height="700"
                     :row-key="rowKey"
-                    :scroll-x="1100"
+                    :scroll-x="700"
                     @update:sorter="handleSorterChange"
                 />
             </div>
@@ -1008,9 +1003,9 @@ const handleSorterChange = async sorter => {
 
 const col_width = {
     node_name: 70,
-    degrees: 60,
+    degrees: 50,
     degree_centrality: 60,
-    betweenness: 60,
+    betweenness: 55,
     closeness_centrality: 60,
     page_rank_score: 60,
 }
