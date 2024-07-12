@@ -308,14 +308,7 @@ import * as echarts from 'echarts'
 import 'echarts-gl'
 import { NTooltip } from 'naive-ui'
 import _ from 'lodash'
-// import { usePhageStore } from '@/store/phage'
-// import { useCrustDBStore } from '@/store/crustdb'
 
-// import mst from '../../visualize/components/mst.vue'
-// import annotation from '../../visualize/components/annotation.vue'
-
-// const phageStore = usePhageStore()
-// const crustdbStore = useCrustDBStore()
 const loaddata = ref(false)
 const loadtopologydata = ref(false)
 const graphSelectionStr = ref('')
@@ -457,7 +450,6 @@ const chartOption = () => {
 }
 
 const preprocess_3d = () => {
-    // ====================================== 3D =====================================
     const this_nodesCoord_3d = []
     const x_list = Array.from(new Set(nodesCoord_3d.value.x))
     x_list.forEach((element, idx) => {
@@ -585,7 +577,6 @@ const preprocess_2d = () => {
             series: [
                 {
                     type: 'tree',
-                    //   data: [mydata],
                     data: [this_mst_parentchild_relation],
                     symbol: 'circle',
                     fontSize: 10,
@@ -774,7 +765,6 @@ const selectGraphTypeRequest = async () => {
             baseURL: '/api',
             timeout: 10000,
             params: {
-                // graph_selection_str: this_selection.split(' ')[1],
                 graph_selection_str: this_selection,
             },
         })
@@ -782,10 +772,8 @@ const selectGraphTypeRequest = async () => {
         selectGraphTypeDialogVisible.value = false
 
         const [topo_data, topo_data3, topo_data4] = topology_response.data
-        // crustdbStore.nodesCoord = topo_data
         nodesCoord_3d.value = topo_data
 
-        // crustdbStore.edgeList = topo_data3
         edgeList_3d.value = topo_data3
 
         graph_info.value = topo_data4
@@ -796,7 +784,6 @@ const selectGraphTypeRequest = async () => {
             baseURL: '/api',
             timeout: 10000,
             params: {
-                // graph_selection_str: this_selection.split(' ')[1],
                 graph_selection_str: this_selection,
             },
         })
@@ -858,10 +845,7 @@ const download = () => {
 }
 
 onBeforeMount(async () => {
-    // From table crustdb_main
     loaddata.value = true
-    // phageStore.phagedataloaded = false
-    // phageStore.phageid = phageid.value
     const response = await axios.get(`/crustdb_main/detail`, {
         baseURL: '/api',
         timeout: 10000,
@@ -872,7 +856,6 @@ onBeforeMount(async () => {
     const { data } = response
     phagedata.value = data
 
-    // From table details
     let response2 = null
     if (repeatuid.value === '') {
         response2 = await axios.get(`/details`, {
@@ -893,7 +876,6 @@ onBeforeMount(async () => {
     }
 
     detailsdata.value = response2.data // show the 1st repeat, by default
-    // crustdbStore.detailsDistanceList = detailsdata.value.distance_list
     loaddata.value = false
 
     // ============== topology data ==============
@@ -917,7 +899,7 @@ onBeforeMount(async () => {
         })
     }
     topologyselectiondata.value = topology_list_response.data // 返回该 repeat 对应的 graph list
-    // 默认展示第一个 graph =================================================================================================
+    // 默认展示第一个 graph (index 0) =================================================================================================
     // index 6 is mst
     const this_selection = topologyselectiondata.value[0]
     graphSelectionStr.value = this_selection
@@ -931,10 +913,8 @@ onBeforeMount(async () => {
     })
 
     const [topo_data, topo_data3, topo_data4, topo_data5] = topology_response.data
-    // crustdbStore.nodesCoord = topo_data
     nodesCoord_3d.value = topo_data
 
-    // crustdbStore.edgeList = topo_data3
     edgeList_3d.value = topo_data3
     graph_info.value = topo_data4
     mst_parentchild_relation.value = topo_data5
