@@ -574,14 +574,19 @@ const preprocess_3d = () => {
             show: true,
             formatter(param) {
                 if (param.value) {
+                    const str = `Gene Name ${param.value[4]} <br>- x: ${
+                        Math.round(param.value[0] * 1e4) / 1e4
+                    }<br>- y: ${Math.round(param.value[1] * 1e4) / 1e4}<br>- z: ${
+                        Math.round(param.value[2] * 1e4) / 1e4
+                    }<br>- page rank score: ${param.value[5]}`
                     if (colorby.value === 'pagerankscore' || isMST.value === true) {
-                        return `Gene Name ${param.value[4]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}<br>- page_rank_score: ${param.value[3]}`
+                        return `${str}}`
                     }
                     if (colorby.value === 'componentsize') {
                         if (param.value[3] >= component_threshold.value) {
-                            return `Gene Name ${param.name[4]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}<br>- page_rank_score: ${param.value[5]}<br>- component size: ${param.value[3]}`
+                            return `${str} <br>- component size: ${param.value[3]}`
                         }
-                        return `Gene Name ${param.name[4]} <br>- x: ${param.value[0]}<br>- y: ${param.value[1]}<br>- z: ${param.value[2]}<br>- page_rank_score: ${param.value[5]}<br>- component size smaller than the threshold`
+                        return `${str} <br>- component size smaller than the threshold`
                     }
                 }
                 return ''
@@ -774,14 +779,15 @@ const preprocess_2d = () => {
                 triggerOn: 'mousemove',
                 formatter(param) {
                     if (param.value) {
+                        const str = `Gene Name ${param.name} <br>- page rank score:`
                         if (colorby.value === 'pagerankscore') {
-                            return `Gene Name ${param.name} <br>- page rank score: ${param.value}`
+                            return `${str} ${param.value}`
                         }
                         if (colorby.value === 'componentsize') {
                             if (param.value >= component_threshold.value) {
-                                return `Gene Name ${param.name} <br>- page rank score: ${param.data.prs} <br>- component size: ${param.value}`
+                                return `${str} ${param.data.prs} <br>- component size: ${param.value}`
                             }
-                            return `Gene Name ${param.name} <br>- page rank score: ${param.data.prs} <br>- component size smaller than the threshold`
+                            return `${str} ${param.data.prs} <br>- component size smaller than the threshold`
                         }
                     }
                     return ''
@@ -1111,22 +1117,34 @@ const phageList = computed(() => {
     if (nodeattr_data.value) {
         const x_list = Array.from(new Set(nodeattr_data.value.x))
         x_list.forEach((element, idx) => {
+            // this_phageList.push({
+            //     x: element, // x
+            //     // y: nodesCoord_3d.value.y[idx], // y
+            //     // z: nodesCoord_3d.value.z[idx], // z
+            //     node_name: nodeattr_data.value.node_name[idx], // node_name (i.e. gene name)
+            //     degrees: parseInt(nodeattr_data.value.degrees[idx], 10),
+            //     degree_centrality:
+            //         Math.round(parseFloat(nodeattr_data.value.degree_centrality[idx]) * 1e4) / 1e4,
+            //     betweenness:
+            //         Math.round(parseFloat(nodeattr_data.value.betweenness[idx]) * 1e4) / 1e4,
+            //     closeness_centrality:
+            //         Math.round(parseFloat(nodeattr_data.value.closeness_centrality[idx]) * 1e4) /
+            //         1e4,
+            //     page_rank_score:
+            //         Math.round(parseFloat(nodeattr_data.value.page_rank_score[idx]) * 1e4) / 1e4,
+            //     component_size: Math.round(parseInt(nodeattr_data.value.component_size[idx], 10)),
+            // })
             this_phageList.push({
                 x: element, // x
                 // y: nodesCoord_3d.value.y[idx], // y
                 // z: nodesCoord_3d.value.z[idx], // z
                 node_name: nodeattr_data.value.node_name[idx], // node_name (i.e. gene name)
-                degrees: parseInt(nodeattr_data.value.degrees[idx], 10),
-                degree_centrality:
-                    Math.round(parseFloat(nodeattr_data.value.degree_centrality[idx]) * 1e4) / 1e4,
-                betweenness:
-                    Math.round(parseFloat(nodeattr_data.value.betweenness[idx]) * 1e4) / 1e4,
-                closeness_centrality:
-                    Math.round(parseFloat(nodeattr_data.value.closeness_centrality[idx]) * 1e4) /
-                    1e4,
-                page_rank_score:
-                    Math.round(parseFloat(nodeattr_data.value.page_rank_score[idx]) * 1e4) / 1e4,
-                component_size: Math.round(parseInt(nodeattr_data.value.component_size[idx], 10)),
+                degrees: nodeattr_data.value.degrees[idx],
+                degree_centrality: nodeattr_data.value.degree_centrality[idx],
+                betweenness: nodeattr_data.value.betweenness[idx],
+                closeness_centrality: nodeattr_data.value.closeness_centrality[idx],
+                page_rank_score: nodeattr_data.value.page_rank_score[idx],
+                component_size: nodeattr_data.value.component_size[idx],
             })
         })
     }
@@ -1172,11 +1190,11 @@ const col_width = {
 }
 
 type RowData = {
-    degrees: number
-    degree_centrality: number
-    betweenness: number
-    closeness_centrality: number
-    page_rank_score: number
+    degrees: string
+    degree_centrality: string
+    betweenness: string
+    closeness_centrality: string
+    page_rank_score: string
 }
 const renderTooltip = (trigger: any, content: any) => {
     return h(NTooltip, null, {
