@@ -96,10 +96,10 @@
 
         <div class="w-350 mt-18 ml-10">
             <div class="flex flex-row w-350 border-b-2 border-gray-300">
-                <div class="text-4xl font-500 mb-8">Graph Information</div>
+                <div class="text-4xl font-500 mb-6">Graph Information</div>
                 <div class="mt-1.5 ml-0">
                     <n-space horizontal>
-                        <el-button class="ml-5" @click="selectGraphType">
+                        <el-button class="ml-4" @click="selectGraphType">
                             <template #icon>
                                 <n-icon>
                                     <selectIcon />
@@ -119,7 +119,7 @@
                             </n-radio-group>
                         </n-space>
                         <div class="mt-2" v-if="colorby == 'componentsize' && isMST == false">
-                            Set component size threshold (max: {{ max_component_threshold }})
+                            Set component size threshold (max {{ max_component_threshold }})
                         </div>
                         <n-space vertical v-if="colorby == 'componentsize' && isMST == false">
                             <n-slider
@@ -411,6 +411,7 @@ const option_2d = ref({})
 const checkIsMST = () => {
     if (graphSelectionStr.value.includes('MST')) {
         isMST.value = true
+        colorby.value = 'pagerankscore'
     } else {
         isMST.value = false
     }
@@ -436,11 +437,11 @@ const colormap = [
     '#4575b4',
     '#74add1',
     '#abd9e9',
-    // '#fee090',
     '#fdae61',
     '#f46d43',
     '#d73027',
     '#a50026',
+    '#6E1326',
 ]
 
 const chartOption = () => {
@@ -489,38 +490,57 @@ const chartOption = () => {
     })
 }
 
-const preprocess_3d = () => {
+const applythresholding2 = size => {
+    return size >= component_threshold.value
+}
+
+const preprocess_3d_colorby_componentsize = () => {
+    const seriesData = []
+
     const this_nodesCoord_3d = []
+    // const this_nodesCoord_3d_tmp = toRaw(nodesCoord_3d.value)
+    const this_nodesCoord_3d_tmp = []
     const x_list = Array.from(new Set(nodesCoord_3d.value.x))
-    if (colorby.value === 'pagerankscore' || isMST.value === true) {
-        x_list.forEach((element, idx) => {
-            this_nodesCoord_3d.push([
-                element, // x
-                nodesCoord_3d.value.y[idx], // y
-                nodesCoord_3d.value.z[idx], // z
-                parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // index 3, used to filter out component
-                nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
-                nodesCoord_3d.value.page_rank_score[idx], // index 5
-            ])
-        })
-    } else if (colorby.value === 'componentsize' && isMST.value === false) {
-        const applythresholding = size => {
-            if (size >= component_threshold.value) {
-                return size
-            }
-            return -1
+    const node_name_list = []
+
+    x_list.forEach((element, idx) => {
+        const tmp_instance = [
+            element, // x
+            nodesCoord_3d.value.y[idx], // y
+            nodesCoord_3d.value.z[idx], // z
+            parseInt(nodesCoord_3d.value.component_size[idx], 10), // index 3, used to filter out component
+            nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
+            nodesCoord_3d.value.page_rank_score[idx], // index 5
+            nodesCoord_3d.value.component_id[idx], // index 6
+        ]
+        if (applythresholding2(parseInt(nodesCoord_3d.value.component_size[idx], 10))) {
+            this_nodesCoord_3d.push(tmp_instance)
+            node_name_list.push(nodesCoord_3d.value.node_name[idx])
         }
-        x_list.forEach((element, idx) => {
-            this_nodesCoord_3d.push([
-                element, // x
-                nodesCoord_3d.value.y[idx], // y
-                nodesCoord_3d.value.z[idx], // z
-                applythresholding(parseInt(nodesCoord_3d.value.component_size[idx], 10)), // index 3, used to filter out component
-                nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
-                nodesCoord_3d.value.page_rank_score[idx], // index 5
-            ])
-        })
-    }
+        this_nodesCoord_3d_tmp.push(tmp_instance)
+    })
+    const edge_index_list = Array.from(new Set(edgeList_3d.value))
+    edge_index_list.forEach(element => {
+        if (
+            this_nodesCoord_3d_tmp[element[0]] &&
+            node_name_list.includes(this_nodesCoord_3d_tmp[element[0]][4]) &&
+            this_nodesCoord_3d_tmp[element[1]] &&
+            node_name_list.includes(this_nodesCoord_3d_tmp[element[1]][4])
+        ) {
+            const this_line_data = [
+                this_nodesCoord_3d_tmp[element[0]],
+                this_nodesCoord_3d_tmp[element[1]],
+            ]
+            seriesData.push({
+                data: this_line_data,
+                type: 'line3D',
+                lineStyle: {
+                    width: 4,
+                },
+            })
+        }
+    })
+    this_nodesCoord_3d_tmp.length = 0
     const arrayColumn = (arr, n) => arr.map(x => x[n])
     const array_col_3 = arrayColumn(this_nodesCoord_3d, 3) // color_by
     const min_color_by_value = Math.min.apply(null, array_col_3)
@@ -536,15 +556,83 @@ const preprocess_3d = () => {
         )
     }
     // max_component_threshold.value will be updated in preprocess_2d()
+    seriesData.push({
+        type: 'scatter3D',
+        symbolSize(data) {
+            return resize_node_size(data[5])
+        },
+        encode: {
+            x: 'x',
+            y: 'y',
+            z: 'z',
+            tooltip: [0, 1, 2, 3, 4],
+        },
+    })
+
+    option_3d.value = {
+        title: {
+            text: graphSelectionStr.value,
+        },
+        tooltip: {
+            show: true,
+            formatter(param) {
+                if (param.value) {
+                    const str = `Gene Name ${param.value[4]} <br>- x: ${
+                        Math.round(param.value[0] * 1e4) / 1e4
+                    }<br>- y: ${Math.round(param.value[1] * 1e4) / 1e4}<br>- z: ${
+                        Math.round(param.value[2] * 1e4) / 1e4
+                    }<br>- page rank score: ${param.value[5]}<br>- component id ${param.value[6]}`
+                    if (param.value[3] >= component_threshold.value) {
+                        return `${str} <br>- component size: ${param.value[3]}`
+                    }
+                    return `${str} <br>- component size smaller than the threshold`
+                }
+                return ''
+            },
+        },
+        visualMap: {
+            dimension: 3, // page_rank_score
+            min: min_color_by_value,
+            max: max_color_by_value,
+            inRange: {
+                color: colormap,
+            },
+            precision: 0,
+        },
+        grid3D: {},
+        xAxis3D: {},
+        yAxis3D: {},
+        zAxis3D: {},
+        series: seriesData,
+        dataset: {
+            dimensions: ['x', 'y', 'z', 'node_name', 'color_by'],
+            source: this_nodesCoord_3d,
+        },
+    }
+}
+
+const preprocess_3d_colorby_pagerankscore = () => {
+    const this_nodesCoord_3d = []
+    const x_list = Array.from(new Set(nodesCoord_3d.value.x))
+    x_list.forEach((element, idx) => {
+        this_nodesCoord_3d.push([
+            element, // x
+            nodesCoord_3d.value.y[idx], // y
+            nodesCoord_3d.value.z[idx], // z
+            parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // index 3, used to filter out component
+            nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
+            nodesCoord_3d.value.page_rank_score[idx], // index 5
+        ])
+    })
+    const arrayColumn = (arr, n) => arr.map(x => x[n])
+    const array_col_3 = arrayColumn(this_nodesCoord_3d, 3) // color_by
+    const min_color_by_value = Math.min.apply(null, array_col_3)
+    const max_color_by_value = Math.max.apply(null, array_col_3)
+    // max_component_threshold.value will be updated in preprocess_2d()
     const seriesData = [
         {
             type: 'scatter3D',
-            symbolSize(data) {
-                if (colorby.value === 'componentsize' && isMST.value === false) {
-                    return resize_node_size(data[5])
-                }
-                return 12
-            },
+            symbolSize: 12,
             encode: {
                 x: 'x',
                 y: 'y',
@@ -579,15 +667,7 @@ const preprocess_3d = () => {
                     }<br>- y: ${Math.round(param.value[1] * 1e4) / 1e4}<br>- z: ${
                         Math.round(param.value[2] * 1e4) / 1e4
                     }<br>- page rank score: ${param.value[5]}`
-                    if (colorby.value === 'pagerankscore' || isMST.value === true) {
-                        return `${str}}`
-                    }
-                    if (colorby.value === 'componentsize') {
-                        if (param.value[3] >= component_threshold.value) {
-                            return `${str} <br>- component size: ${param.value[3]}`
-                        }
-                        return `${str} <br>- component size smaller than the threshold`
-                    }
+                    return `${str}`
                 }
                 return ''
             },
@@ -599,12 +679,7 @@ const preprocess_3d = () => {
             inRange: {
                 color: colormap,
             },
-            precision() {
-                if (colorby.value === 'pagerankscore' || isMST.value === true) {
-                    return 4
-                }
-                return 0
-            },
+            precision: 4,
         },
         grid3D: {},
         xAxis3D: {},
@@ -617,235 +692,321 @@ const preprocess_3d = () => {
         },
     }
 }
+
+// 默认的 type 不是 MST，选择 MST 之后，checkMST() 会将 colorby 设置成 pagerankscore，colorby dialog 被隐藏；
+// 直至选择其他 graph type 之后，colorby dialog 出现，允许做其他 colorby 选择
+const preprocess_3d = () => {
+    // if (colorby.value === 'componentsize' && isMST.value === false) {
+    if (colorby.value === 'componentsize') {
+        preprocess_3d_colorby_componentsize()
+    }
+    // } else if (colorby.value === 'pagerankscore' || isMST.value === true) {
+    else if (colorby.value === 'pagerankscore') {
+        preprocess_3d_colorby_pagerankscore()
+    }
+}
+
+const preprocess_2d_mst = () => {
+    const this_nodesCoord_3d = []
+    const x_list = Array.from(new Set(nodesCoord_3d.value.x))
+    x_list.forEach((element, idx) => {
+        this_nodesCoord_3d.push([
+            element, // x
+            nodesCoord_3d.value.y[idx], // y
+            nodesCoord_3d.value.z[idx], // z
+            parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // page_rank_score
+            nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
+        ])
+    })
+    const arrayColumn = (arr, n) => arr.map(x => x[n])
+    const array_col_3 = arrayColumn(this_nodesCoord_3d, 3) // page_rank_score    const min_color_by_value = Math.min.apply(null, array_col_3)
+    const min_color_by_value = Math.min.apply(null, array_col_3)
+    const max_color_by_value = Math.max.apply(null, array_col_3)
+    let this_mst_parentchild_relation = mst_parentchild_relation.value
+    if (isProxy(mst_parentchild_relation.value)) {
+        this_mst_parentchild_relation = toRaw(mst_parentchild_relation.value)
+    }
+    option_2d.value = {
+        title: {
+            text: graphSelectionStr.value,
+        },
+        tooltip: {
+            show: true,
+            trigger: 'item',
+            triggerOn: 'mousemove',
+            formatter(param) {
+                return param.name
+            },
+        },
+        toolbox: {
+            itemSize: 20,
+            iconStyle: {
+                borderColor: '#34498e',
+            },
+            feature: {
+                dataView: { readOnly: true },
+                saveAsImage: {},
+            },
+        },
+        visualMap: {
+            type: 'continuous',
+            min: min_color_by_value,
+            max: max_color_by_value,
+            inRange: {
+                color: colormap,
+            },
+            precision: 4,
+        },
+        series: [
+            {
+                type: 'tree',
+                data: [this_mst_parentchild_relation],
+                symbol: 'circle',
+                fontSize: 10,
+                labelLayout: {
+                    hideOverlap: true,
+                },
+                symbolSize: 9,
+                label: {
+                    position: 'left',
+                    verticalAlign: 'middle',
+                    align: 'right',
+                    fontSize: 9,
+                },
+                leaves: {
+                    label: {
+                        position: 'right',
+                        verticalAlign: 'middle',
+                        align: 'left',
+                    },
+                },
+                emphasis: {
+                    focus: 'descendant',
+                },
+                expandAndCollapse: false,
+                animationDuration: 550,
+                animationDurationUpdate: 750,
+                roam: true, // 图可以在页面整体放缩
+            },
+        ],
+        lineStyle: {
+            color: '#2f4554',
+            width: 4,
+        },
+    }
+}
+
+const preprocess_2d_colorby_componentsize = () => {
+    const page_rank_score_list = []
+    Array.from(new Set(nodesCoord_3d.value.page_rank_score)).forEach(element => {
+        page_rank_score_list.push(parseFloat(element))
+    })
+    const min_page_rank_score = Math.min.apply(null, page_rank_score_list)
+    const max_page_rank_score = Math.max.apply(null, page_rank_score_list)
+    const resize_node_size = x => {
+        return (
+            ((x - min_page_rank_score) / (max_page_rank_score - min_page_rank_score)) *
+                (max_node_size - min_node_size) +
+            min_node_size
+        )
+    }
+    const this_2d_nodes = []
+    const nodename_list = Array.from(new Set(nodesCoord_3d.value.node_name))
+    const idx_map = new Map()
+    nodename_list.forEach((element, idx) => {
+        const tmp_instance = {
+            name: element, // node_name (i.e. gene name)
+            id: idx,
+            value: nodesCoord_3d.value.component_size[idx],
+            symbolSize: resize_node_size(parseFloat(nodesCoord_3d.value.page_rank_score[idx])),
+            page_rank_score: nodesCoord_3d.value.page_rank_score[idx],
+            component_id: nodesCoord_3d.value.component_id[idx],
+        }
+        if (applythresholding2(parseInt(nodesCoord_3d.value.component_size[idx], 10))) {
+            this_2d_nodes.push(tmp_instance)
+            idx_map.set(idx, this_2d_nodes.length - 1)
+        }
+    })
+
+    const this_2d_edges = []
+    const edge_index_list = toRaw(edgeList_3d.value)
+    edge_index_list.forEach(element => {
+        if (idx_map.get(element[0]) !== undefined && idx_map.get(element[1]) !== undefined) {
+            this_2d_edges.push({
+                source: idx_map.get(element[0]),
+                target: idx_map.get(element[1]),
+            })
+        }
+    })
+
+    const arrayColumnValue = arr => arr.map(x => x.value)
+    const array_col_2 = arrayColumnValue(this_2d_nodes)
+    const min_color_by_value = Math.min.apply(null, array_col_2)
+    const max_color_by_value = Math.max.apply(null, array_col_2)
+    max_component_threshold.value = Math.min(
+        max_component_threshold.value,
+        Math.floor(max_color_by_value)
+    )
+
+    option_2d.value = {
+        title: {
+            text: graphSelectionStr.value,
+        },
+        tooltip: {
+            show: true,
+            trigger: 'item',
+            triggerOn: 'mousemove',
+            formatter(param) {
+                if (param.value) {
+                    const str = `Gene Name ${param.name} <br>- page rank score: ${param.data.page_rank_score} <br>- component id: ${param.data.component_id} <br>- component size`
+                    if (param.value >= component_threshold.value) {
+                        return `${str}: ${param.value}`
+                    }
+                    return `${str} <br>- component size smaller than the threshold`
+                }
+                return ''
+            },
+        },
+        toolbox: {
+            itemSize: 20,
+            iconStyle: {
+                borderColor: '#34498e',
+            },
+            feature: {
+                dataView: { readOnly: true },
+                saveAsImage: {},
+            },
+        },
+        visualMap: {
+            type: 'continuous',
+            min: min_color_by_value,
+            max: max_color_by_value,
+            inRange: {
+                color: colormap,
+            },
+            precision: 0,
+        },
+        series: [
+            {
+                type: 'graph',
+                layout: 'force',
+                label: {
+                    position: 'right',
+                    formatter: '{b}',
+                },
+                draggable: true,
+                force: {
+                    edgeLength: 10,
+                    repulsion: 50,
+                    gravity: 0.3,
+                },
+                data: this_2d_nodes,
+                edges: this_2d_edges,
+                lineStyle: {
+                    color: '#5470C6',
+                    width: 2,
+                },
+                roam: true, // 图可以在页面整体放缩
+            },
+        ],
+    }
+}
+
+const preprocess_2d_colorby_pagerankscore = () => {
+    const this_2d_edges = []
+    const edge_index_list = Array.from(new Set(edgeList_3d.value))
+    edge_index_list.forEach(element => {
+        this_2d_edges.push({
+            source: element[0],
+            target: element[1],
+        })
+    })
+    const this_2d_nodes = []
+    const nodename_list = Array.from(new Set(nodesCoord_3d.value.node_name))
+    nodename_list.forEach((element, idx) => {
+        this_2d_nodes.push({
+            name: element, // node_name (i.e. gene name)
+            id: idx,
+            value: parseFloat(nodesCoord_3d.value.page_rank_score[idx]),
+            symbolSize: 12,
+        })
+    })
+    const arrayColumnValue = arr => arr.map(x => x.value)
+    const array_col_2 = arrayColumnValue(this_2d_nodes) // page_rank_score    const min_color_by_value = Math.min.apply(null, array_col_3)
+    const min_color_by_value = Math.min.apply(null, array_col_2)
+    const max_color_by_value = Math.max.apply(null, array_col_2)
+
+    option_2d.value = {
+        title: {
+            text: graphSelectionStr.value,
+        },
+        tooltip: {
+            show: true,
+            trigger: 'item',
+            triggerOn: 'mousemove',
+            formatter(param) {
+                if (param.value) {
+                    const str = `Gene Name ${param.name} <br>- page rank score:`
+                    return `${str} ${param.value}`
+                }
+                return ''
+            },
+        },
+        toolbox: {
+            itemSize: 20,
+            iconStyle: {
+                borderColor: '#34498e',
+            },
+            feature: {
+                dataView: { readOnly: true },
+                saveAsImage: {},
+            },
+        },
+        visualMap: {
+            type: 'continuous',
+            min: min_color_by_value,
+            max: max_color_by_value,
+            inRange: {
+                color: colormap,
+            },
+            precision: 4,
+        },
+        series: [
+            {
+                type: 'graph',
+                layout: 'force',
+                label: {
+                    position: 'right',
+                    formatter: '{b}',
+                },
+                draggable: true,
+                force: {
+                    edgeLength: 10,
+                    repulsion: 50,
+                    gravity: 0.3,
+                },
+                data: this_2d_nodes,
+                edges: this_2d_edges,
+                lineStyle: {
+                    // color: '#2f4554',
+                    width: 2,
+                },
+                roam: true, // 图可以在页面整体放缩
+            },
+        ],
+    }
+}
+
 const preprocess_2d = () => {
     // mst 用 tree graph
     if (isMST.value) {
-        const this_nodesCoord_3d = []
-        const x_list = Array.from(new Set(nodesCoord_3d.value.x))
-        x_list.forEach((element, idx) => {
-            this_nodesCoord_3d.push([
-                element, // x
-                nodesCoord_3d.value.y[idx], // y
-                nodesCoord_3d.value.z[idx], // z
-                parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // page_rank_score
-                nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
-            ])
-        })
-        const arrayColumn = (arr, n) => arr.map(x => x[n])
-        const array_col_3 = arrayColumn(this_nodesCoord_3d, 3) // page_rank_score    const min_color_by_value = Math.min.apply(null, array_col_3)
-        const min_color_by_value = Math.min.apply(null, array_col_3)
-        const max_color_by_value = Math.max.apply(null, array_col_3)
-        let this_mst_parentchild_relation = mst_parentchild_relation.value
-        if (isProxy(mst_parentchild_relation.value)) {
-            this_mst_parentchild_relation = toRaw(mst_parentchild_relation.value)
-        }
-        option_2d.value = {
-            title: {
-                text: graphSelectionStr.value,
-            },
-            tooltip: {
-                show: true,
-                trigger: 'item',
-                triggerOn: 'mousemove',
-                formatter(param) {
-                    return param.name
-                },
-            },
-            toolbox: {
-                itemSize: 20,
-                iconStyle: {
-                    borderColor: '#34498e',
-                },
-                feature: {
-                    dataView: { readOnly: true },
-                    saveAsImage: {},
-                },
-            },
-            visualMap: {
-                type: 'continuous',
-                min: min_color_by_value,
-                max: max_color_by_value,
-                inRange: {
-                    color: colormap,
-                },
-                precision() {
-                    if (colorby.value === 'pagerankscore' || isMST.value === true) {
-                        return 4
-                    }
-                    return 0
-                },
-            },
-            series: [
-                {
-                    type: 'tree',
-                    data: [this_mst_parentchild_relation],
-                    symbol: 'circle',
-                    fontSize: 10,
-                    labelLayout: {
-                        hideOverlap: true,
-                    },
-                    symbolSize: 9,
-                    label: {
-                        position: 'left',
-                        verticalAlign: 'middle',
-                        align: 'right',
-                        fontSize: 9,
-                    },
-                    leaves: {
-                        label: {
-                            position: 'right',
-                            verticalAlign: 'middle',
-                            align: 'left',
-                        },
-                    },
-                    emphasis: {
-                        focus: 'descendant',
-                    },
-                    expandAndCollapse: false,
-                    animationDuration: 550,
-                    animationDurationUpdate: 750,
-                    roam: true, // 图可以在页面整体放缩
-                },
-            ],
-            lineStyle: {
-                color: '#2f4554',
-                width: 4,
-            },
-        }
+        preprocess_2d_mst()
     }
     // 其他的用 force directed graph
-    else {
-        const this_2d_edges = []
-        const edge_index_list = Array.from(new Set(edgeList_3d.value))
-        edge_index_list.forEach(element => {
-            this_2d_edges.push({
-                source: element[0],
-                target: element[1],
-            })
-        })
-        const this_2d_nodes = []
-        const nodename_list = Array.from(new Set(nodesCoord_3d.value.node_name))
-        if (colorby.value === 'pagerankscore') {
-            nodename_list.forEach((element, idx) => {
-                this_2d_nodes.push({
-                    name: element, // node_name (i.e. gene name)
-                    id: idx,
-                    value: parseFloat(nodesCoord_3d.value.page_rank_score[idx]),
-                    symbolSize: 12,
-                })
-            })
-        } else if (colorby.value === 'componentsize') {
-            const applythresholding = size => {
-                if (size >= component_threshold.value) {
-                    return size
-                }
-                return -1
-            }
-            const page_rank_score_list = []
-            Array.from(new Set(nodesCoord_3d.value.page_rank_score)).forEach(element => {
-                page_rank_score_list.push(parseFloat(element))
-            })
-            const min_page_rank_score = Math.min.apply(null, page_rank_score_list)
-            const max_page_rank_score = Math.max.apply(null, page_rank_score_list)
-            const resize_node_size = x => {
-                return (
-                    ((x - min_page_rank_score) / (max_page_rank_score - min_page_rank_score)) *
-                        (max_node_size - min_node_size) +
-                    min_node_size
-                )
-            }
-            // const recover_page_rank_score = x => {
-            //     return (x - min_node_size) / (max_node_size - min_node_size) * (max_page_rank_score - min_page_rank_score) + min_page_rank_score
-            // }
-            nodename_list.forEach((element, idx) => {
-                this_2d_nodes.push({
-                    name: element, // node_name (i.e. gene name)
-                    id: idx,
-                    value: applythresholding(parseInt(nodesCoord_3d.value.component_size[idx], 10)),
-                    symbolSize: resize_node_size(
-                        parseFloat(nodesCoord_3d.value.page_rank_score[idx])
-                    ),
-                    prs: parseFloat(nodesCoord_3d.value.page_rank_score[idx]),
-                })
-            })
-        }
-        const arrayColumnValue = arr => arr.map(x => x.value)
-        const array_col_2 = arrayColumnValue(this_2d_nodes) // page_rank_score    const min_color_by_value = Math.min.apply(null, array_col_3)
-        const min_color_by_value = Math.min.apply(null, array_col_2)
-        const max_color_by_value = Math.max.apply(null, array_col_2)
-        if (colorby.value === 'componentsize') {
-            max_component_threshold.value = Math.min(
-                max_component_threshold.value,
-                Math.floor(max_color_by_value)
-            )
-        }
-        option_2d.value = {
-            title: {
-                text: graphSelectionStr.value,
-            },
-            tooltip: {
-                show: true,
-                trigger: 'item',
-                triggerOn: 'mousemove',
-                formatter(param) {
-                    if (param.value) {
-                        const str = `Gene Name ${param.name} <br>- page rank score:`
-                        if (colorby.value === 'pagerankscore') {
-                            return `${str} ${param.value}`
-                        }
-                        if (colorby.value === 'componentsize') {
-                            if (param.value >= component_threshold.value) {
-                                return `${str} ${param.data.prs} <br>- component size: ${param.value}`
-                            }
-                            return `${str} ${param.data.prs} <br>- component size smaller than the threshold`
-                        }
-                    }
-                    return ''
-                },
-            },
-            toolbox: {
-                itemSize: 20,
-                iconStyle: {
-                    borderColor: '#34498e',
-                },
-                feature: {
-                    dataView: { readOnly: true },
-                    saveAsImage: {},
-                },
-            },
-            visualMap: {
-                type: 'continuous',
-                min: min_color_by_value,
-                max: max_color_by_value,
-                inRange: {
-                    color: colormap,
-                },
-                precision: 4,
-            },
-            series: [
-                {
-                    type: 'graph',
-                    layout: 'force',
-                    label: {
-                        position: 'right',
-                        formatter: '{b}',
-                    },
-                    draggable: true,
-                    force: {
-                        edgeLength: 10,
-                        repulsion: 50,
-                        gravity: 0.3,
-                    },
-                    data: this_2d_nodes,
-                    edges: this_2d_edges,
-                    lineStyle: {
-                        // color: '#2f4554',
-                        width: 2,
-                    },
-                    roam: true, // 图可以在页面整体放缩
-                },
-            ],
-        }
+    else if (colorby.value === 'componentsize') {
+        preprocess_2d_colorby_componentsize()
+    } else {
+        preprocess_2d_colorby_pagerankscore()
     }
 }
 
@@ -901,7 +1062,6 @@ const graph_type_map = str => {
             para = `RNN_SNN-${tmp_para1}_${tmp_para2}.pkl`
         }
     }
-
     return `${topology_id.value}-${para}`
 }
 
