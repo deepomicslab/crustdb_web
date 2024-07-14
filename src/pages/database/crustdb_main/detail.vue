@@ -107,7 +107,7 @@
                             </template>
                             Choose Graph Type
                         </el-button>
-                        <div class="mt-2" v-if="isMST == false">Color by</div>
+                        <div class="mt-2" v-if="isMST == false">Colored by</div>
                         <n-space align="center" v-if="isMST == false">
                             <n-radio-group v-model:value="colorby">
                                 <n-radio-button value="componentsize">
@@ -498,9 +498,9 @@ const preprocess_3d = () => {
                 element, // x
                 nodesCoord_3d.value.y[idx], // y
                 nodesCoord_3d.value.z[idx], // z
-                parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // index 3
+                parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // index 3, used to filter out component
                 nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
-                parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // index 5
+                nodesCoord_3d.value.page_rank_score[idx], // index 5
             ])
         })
     } else if (colorby.value === 'componentsize' && isMST.value === false) {
@@ -515,9 +515,9 @@ const preprocess_3d = () => {
                 element, // x
                 nodesCoord_3d.value.y[idx], // y
                 nodesCoord_3d.value.z[idx], // z
-                applythresholding(parseInt(nodesCoord_3d.value.component_size[idx], 10)), // index 3
+                applythresholding(parseInt(nodesCoord_3d.value.component_size[idx], 10)), // index 3, used to filter out component
                 nodesCoord_3d.value.node_name[idx], // node_name (i.e. gene name)
-                parseFloat(nodesCoord_3d.value.page_rank_score[idx]), // index 5
+                nodesCoord_3d.value.page_rank_score[idx], // index 5
             ])
         })
     }
@@ -599,7 +599,12 @@ const preprocess_3d = () => {
             inRange: {
                 color: colormap,
             },
-            precision: 4,
+            precision() {
+                if (colorby.value === 'pagerankscore' || isMST.value === true) {
+                    return 4
+                }
+                return 0
+            },
         },
         grid3D: {},
         xAxis3D: {},
@@ -663,7 +668,12 @@ const preprocess_2d = () => {
                 inRange: {
                     color: colormap,
                 },
-                precision: 4,
+                precision() {
+                    if (colorby.value === 'pagerankscore' || isMST.value === true) {
+                        return 4
+                    }
+                    return 0
+                },
             },
             series: [
                 {
@@ -1145,6 +1155,7 @@ const phageList = computed(() => {
                 closeness_centrality: nodeattr_data.value.closeness_centrality[idx],
                 page_rank_score: nodeattr_data.value.page_rank_score[idx],
                 component_size: nodeattr_data.value.component_size[idx],
+                component_id: nodeattr_data.value.component_id[idx],
             })
         })
     }
@@ -1187,6 +1198,7 @@ const col_width = {
     betweenness: 55,
     closeness_centrality: 60,
     page_rank_score: 60,
+    component_id: 60,
 }
 
 type RowData = {
@@ -1195,6 +1207,7 @@ type RowData = {
     betweenness: string
     closeness_centrality: string
     page_rank_score: string
+    component_id: string
 }
 const renderTooltip = (trigger: any, content: any) => {
     return h(NTooltip, null, {
@@ -1221,7 +1234,7 @@ const createColumns = (): DataTableColumns<RowData> => {
         },
         {
             title() {
-                return renderTooltip(h('div', null, { default: () => 'degrees' }), 'degrees')
+                return renderTooltip(h('div', null, { default: () => 'Degrees' }), 'degrees')
             },
             key: 'degrees',
             align: 'center',
@@ -1290,6 +1303,21 @@ const createColumns = (): DataTableColumns<RowData> => {
                 tooltip: true,
             },
             width: col_width.page_rank_score,
+        },
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Component ID' }),
+                    'component ID, the lower, the larger size it is of'
+                )
+            },
+            key: 'component_id',
+            align: 'center',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width.component_id,
         },
     ]
 }
