@@ -157,33 +157,21 @@ const rundemodialogVisible = ref(false)
 
 const speciesoptions = [
     {
-        label: 'Mice',
-        value: 'Mice',
-    },
-    {
         label: 'Mouse',
         value: 'Mouse',
-        disabled: true,
     },
     {
         label: 'Human',
         value: 'Human',
-        disabled: true,
-    },
-    {
-        label: 'Axolotls',
-        value: 'Axolotls',
-        disabled: true,
     },
     {
         label: 'Axolotl',
         value: 'Axolotl',
-        disabled: true,
+        // disabled: true,
     },
     {
         label: 'Monkey',
         value: 'Monkey',
-        disabled: true,
     },
 ]
 const fileseparatoroptions = [
