@@ -59,7 +59,7 @@
                     2. Input Gene Coordinates
                     <n-button
                         text
-                        href="https://cygraph.deepomics.org/demo_input/craft_single_celltype/Mice_endo/SS200000108BR_A3A4_scgem.Endothelial_cell.csv"
+                        href="https://cygraph.deepomics.org/demo_input/topology_construction/human/input.csv"
                         tag="a"
                         target="_blank"
                         type="primary"
@@ -202,11 +202,11 @@ const remove = () => {
 const router = useRouter()
 
 const godemo = () => {
-    // -99 is the demo_user. Se details in crustdb_api/01_database_add_data.py
+    // -97 is the demo_user. Se details in crustdb_api/01_database_add_data.py
     router.push({
-        path: '/task/result/conformation/single_celltype_mode', query: {
+        path: '/task/result/conformation/topology', query: {
             taskid: encrypt(
-                '-99', 'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2')
+                '-97', 'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2')
         }
     })
 }

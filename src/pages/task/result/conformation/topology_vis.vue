@@ -824,6 +824,7 @@ const selectGraphTypeRequest = async () => {
         selectGraphTypeDialogVisible.value = false
 
         const [topo_data, topo_data3, topo_data4, topo_data5] = topology_response.data
+
         nodesCoord_3d.value = topo_data
 
         edgeList_3d.value = topo_data3
