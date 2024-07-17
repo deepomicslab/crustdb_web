@@ -57,9 +57,9 @@
                         </span>
                     </template>
                 </el-tab-pane> -->
-                Craft Log
+                Analysis Log
                 <el-scrollbar :class="logStyle" v-loading="consoleloading">
-                    <n-code :code="taskmoduledetail.craftlog" word-wrap show-line-numbers />
+                    <n-code :code="taskmoduledetail.analysislog" word-wrap show-line-numbers />
                 </el-scrollbar>
                 <br />
                 Sbatch Log
@@ -74,9 +74,9 @@
             </el-tabs>
         </div>
         <div class="w-full" v-if="!props.enableTab">
-            Craft Log
+            Analysis Log
             <el-scrollbar :class="logStyle" v-loading="consoleloading">
-                <n-code :code="taskmoduledetail.craftlog" word-wrap show-line-numbers />
+                <n-code :code="taskmoduledetail.analysislog" word-wrap show-line-numbers />
             </el-scrollbar>
             <br />
             Sbatch Log
@@ -141,7 +141,7 @@ const taskmoduledetail = ref({
     status: '',
     sbatchlog: '',
     sbatcherror: '',
-    craftlog: '',
+    analysislog: '',
 })
 const loading = ref(false)
 const consoleloading = ref(false)
@@ -186,7 +186,7 @@ const fetchData = async () => {
     })
     taskmoduledetail.value.sbatchlog = response3.data.sbatch_log
     taskmoduledetail.value.sbatcherror = response3.data.sbatch_error
-    taskmoduledetail.value.craftlog = response3.data.task_log
+    taskmoduledetail.value.analysislog = response3.data.task_log
     consoleloading.value = false
 }
 
@@ -210,7 +210,7 @@ const handletabClick = async (tab: any) => {
     })
     taskmoduledetail.value.sbatchlog = response3.data.sbatch_log
     taskmoduledetail.value.sbatcherror = response3.data.sbatch_error
-    taskmoduledetail.value.craftlog = response3.data.task_log
+    taskmoduledetail.value.analysislog = response3.data.task_log
     consoleloading.value = false
 }
 </script>
