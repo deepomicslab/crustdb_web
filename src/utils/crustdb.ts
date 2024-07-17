@@ -1060,3 +1060,19 @@ export const DiseaseStageColor = (style: any) => {
     }
     return 'error'
 }
+
+export const StatusColor = (status: any) => {
+    if (status === 'Running') {
+        return 'info'
+    }
+    if (status === 'Success') {
+        return 'success'
+    }
+    if (status === 'Failed' || status === 'Canceled') {
+        return 'error'
+    }
+    if (status === 'Created') {
+        return 'warning'
+    }
+    return 'warning'
+}

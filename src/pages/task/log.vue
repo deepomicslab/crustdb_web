@@ -186,7 +186,7 @@ const fetchData = async () => {
     })
     taskmoduledetail.value.sbatchlog = response3.data.sbatch_log
     taskmoduledetail.value.sbatcherror = response3.data.sbatch_error
-    taskmoduledetail.value.craftlog = response3.data.craft_log
+    taskmoduledetail.value.craftlog = response3.data.task_log
     consoleloading.value = false
 }
 
@@ -210,7 +210,7 @@ const handletabClick = async (tab: any) => {
     })
     taskmoduledetail.value.sbatchlog = response3.data.sbatch_log
     taskmoduledetail.value.sbatcherror = response3.data.sbatch_error
-    taskmoduledetail.value.craftlog = response3.data.craft_log
+    taskmoduledetail.value.craftlog = response3.data.task_log
     consoleloading.value = false
 }
 </script>

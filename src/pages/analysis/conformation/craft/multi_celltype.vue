@@ -452,7 +452,7 @@ const featureFileRemove = () => {
 const router = useRouter()
 
 const godemo = () => {
-    // -99 is the demo_user. Se details in crustdb_api/01_database_add_data.py
+    // -98 is the demo_user. See details in crustdb_api/01_database_add_data.py
     router.push({
         path: '/task/result/conformation/multi_celltype_mode', query: {
             taskid: encrypt(
@@ -511,28 +511,10 @@ const checkParaForm = () => {
 }
 
 const submit = async () => {
-    console.log('paramform', paramform.value)
+    // console.log('paramform', paramform.value)
 
     const submitdata = new FormData()
 
-    // if (thisspeciesoption.value === '') {
-    //     window.$message.error('Please specify species', {
-    //         closable: true,
-    //         duration: 5000,
-    //     })
-    //     return
-    // }
-    // if (thisfileseparatoroption.value === '') {
-    //     window.$message.error('Please specify file separator', {
-    //         closable: true,
-    //         duration: 5000,
-    //     })
-    //     return
-    // }
-    // submitdata.append('species', thisspeciesoption.value)
-    // submitdata.append('species', 'Mice')
-    // submitdata.append('fileseparator', thisfileseparatoroption.value)
-    // submitdata.append('fileseparator', 'comma')
     submitdata.append('analysistype', 'Multi-Celltype Mode')
     submitdata.append('userid', userid.value)
     submitdata.append('inputtype', 'upload')
@@ -618,8 +600,12 @@ const submitdemo = async () => {
         submitdata.append('analysistype', 'Multi-Celltype Mode')
         submitdata.append('userid', userid.value)
         submitdata.append('inputtype', 'rundemo')
-        submitdata.append('fileseparator', 'comma')
         submitdata.append('species', 'Mice') // customised at this time
+        submitdata.append('sep', 'comma')
+        submitdata.append('ctkey', 'leiden_final')
+        submitdata.append('csep', 'comma')
+        submitdata.append('cikey', 'cell')
+        submitdata.append('number', '10')
         const response = await axios.post(`/analyze/craft_multi_celltype/`, submitdata, {
             baseURL: '/api',
             timeout: 10000,

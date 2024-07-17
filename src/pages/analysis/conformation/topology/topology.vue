@@ -3,7 +3,7 @@
         <el-scrollbar class="w-full" ref="scrollbarRef">
             <div class="flex flex-col h-400">
                 <div class="font-600 ml-20 mt-16 flex flex-row border-b-2 w-9/10 pb-5">
-                    <div class="text-4xl text-[#253959]">Single Celltype Mode</div>
+                    <div class="text-4xl text-[#253959]">Topology</div>
                     <el-button
                         round
                         size="large"
@@ -39,7 +39,7 @@
                     <el-icon class="text-lg mt-1 mr-2 text-[#34498E]">
                         <InfoFilled />
                     </el-icon>
-                    It takes a few hours to
+                    It takes a few minutes to
                     <p class="text-[#EE7E7D] mx-2" @click="godemo">RUN DEMO.</p>
                     Click
                     <p class="text-[#EE7E7D] mx-2">VIEW DEMO RESULT</p>
@@ -56,7 +56,7 @@
                     </n-form-item>
                 </div>
                 <div class="font-600 text-3xl ml-20 mt-10">
-                    2. Input Gene Expression Matrix
+                    2. Input Gene Coordinates
                     <n-button
                         text
                         href="https://cygraph.deepomics.org/demo_input/craft_single_celltype/Mice_endo/SS200000108BR_A3A4_scgem.Endothelial_cell.csv"
@@ -65,7 +65,7 @@
                         type="primary"
                         class="text-lg"
                     >
-                        See Input Example of Single Celltype Mode (Species Mice)
+                        See Input Example of Topology Construction (Species Human)
                     </n-button>
                 </div>
 
@@ -78,7 +78,7 @@
                             v-model:file-list="fileList"
                             directory-dnd
                             :default-upload="false"
-                            accept=".csv, .tsv, .txt"
+                            accept=".csv"
                             @update:file-list="handleFileListChange"
                             @remove="remove"
                             show-remove-button
@@ -99,21 +99,12 @@
                                         File size should be less than 100MB
                                     </p>
                                     <p class="text-sp mb-3 text-opacity-100" style="color: #f07167">
-                                        Supported formats: .csv / .tsv / .txt
+                                        Supported formats: .csv
                                     </p>
                                 </div>
                             </n-upload-dragger>
                         </n-upload>
                     </div>
-                </div>
-                <div class="font-600 text-3xl ml-20 mt-10">
-                    3. Specify File Separator
-                    <n-form-item class="w-75">
-                        <n-select
-                            v-model:value="thisfileseparatoroption"
-                            :options="fileseparatoroptions"
-                        />
-                    </n-form-item>
                 </div>
                 <div class="mt-20 flex flex-row justify-center">
                     <el-button
@@ -167,34 +158,18 @@ const speciesoptions = [
     {
         label: 'Axolotl',
         value: 'Axolotl',
-        // disabled: true,
     },
     {
         label: 'Monkey',
         value: 'Monkey',
     },
 ]
-const fileseparatoroptions = [
-    {
-        label: "tab '\\t'",
-        value: 'tab',
-    },
-    {
-        label: "space ' '",
-        value: 'space',
-    },
-    {
-        label: "comma ','",
-        value: 'comma',
-    },
-]
 const thisspeciesoption = ref('')
-const thisfileseparatoroption = ref('')
 
 /* eslint-disable */
 const handleFileListChange = (data: UploadFileInfo[]) => {
-    if (data[0].name.match(/(.csv)$/g) === null && data[0].name.match(/(.tsv)$/g) && data[0].name.match(/(.txt)$/g)) {
-        window.$message.error('Uploaded file must be in .csv / .tsv / .txt format.', {
+    if (data[0].name.match(/(.csv)$/g) === null) {
+        window.$message.error('Uploaded file must be in .csv format.', {
             closable: true,
             duration: 5000,
         })
@@ -227,7 +202,7 @@ const remove = () => {
 const router = useRouter()
 
 const godemo = () => {
-    // -99 is the demo_user. See details in crustdb_api/01_database_add_data.py
+    // -99 is the demo_user. Se details in crustdb_api/01_database_add_data.py
     router.push({
         path: '/task/result/conformation/single_celltype_mode', query: {
             taskid: encrypt(
@@ -248,28 +223,19 @@ const submit = async () => {
         precheck.value = false
         return
     }
-    if (thisfileseparatoroption.value === '') {
-        window.$message.error('Please specify file separator', {
-            closable: true,
-            duration: 5000,
-        })
-        precheck.value = false
-        return
-    }
     submitdata.append('species', thisspeciesoption.value)
-    submitdata.append('fileseparator', thisfileseparatoroption.value)
-    submitdata.append('analysistype', 'Single Celltype Mode')
+    submitdata.append('analysistype', 'Topology Construction')
     submitdata.append('userid', userid.value)
     submitdata.append('inputtype', 'upload')
 
     if (typeof submitfile.value === 'undefined') {
-        window.$message.error('Please upload gene expression matrix', {
+        window.$message.error('Please upload gene coordinates', {
             closable: true,
             duration: 5000,
         })
         precheck.value = false
     } else {
-        submitdata.append('CSV', submitfile.value as File)
+        submitdata.append('gene_coord', submitfile.value as File)
         precheck.value = true
     }
 
@@ -279,7 +245,7 @@ const submit = async () => {
         //     console.log(pair[0] + ', ' + pair[1]);
         // }
         try {
-            const response = await axios.post(`/analyze/craft_single_celltype/`, submitdata, {
+            const response = await axios.post(`/analyze/craft_topology/`, submitdata, {
                 baseURL: '/api',
                 timeout: 100000,
                 headers: { 'Content-Type': 'multipart/form-data' },
@@ -321,12 +287,11 @@ const submitdemo = async () => {
     const precheck = ref(true)
 
     if (precheck.value) {
-        submitdata.append('analysistype', 'Single Celltype Mode')
+        submitdata.append('analysistype', 'Topology Construction')
         submitdata.append('userid', userid.value)
         submitdata.append('inputtype', 'rundemo')
-        submitdata.append('fileseparator', 'tab')
-        submitdata.append('species', 'Mice') // customised at this time
-        const response = await axios.post(`/analyze/craft_single_celltype/`, submitdata, {
+        submitdata.append('species', 'Human') // customised at this time
+        const response = await axios.post(`/analyze/craft_topology/`, submitdata, {
             baseURL: '/api',
             timeout: 10000,
         })

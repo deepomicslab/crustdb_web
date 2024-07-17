@@ -252,6 +252,11 @@
                                     Multi-Celltype Mode
                                 </a>
                             </p>
+                            <p>
+                                <a href="analysis/conformation/topology/topology">
+                                    Topology Construction
+                                </a>
+                            </p>
                         </div>
                         <div class="flex flex-col mb-3">
                             <p class="text-xl mb-10"><a href="/workspace">Workspace</a></p>

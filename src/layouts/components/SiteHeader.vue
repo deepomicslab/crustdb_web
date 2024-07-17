@@ -176,6 +176,16 @@ const menuOptions: MenuOption[] = [
                             },
                         ],
                     },
+                    {
+                        label: 'Topology',
+                        key: '/analysis/conformation/topology',
+                        children: [
+                            {
+                                label: 'Topology Construction',
+                                key: '/analysis/conformation/topology/topology',
+                            },
+                        ],
+                    },
                 ],
             },
 
