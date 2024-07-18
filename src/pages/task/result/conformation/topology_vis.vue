@@ -202,14 +202,14 @@ import { NTooltip } from 'naive-ui'
 // import { decrypt } from '@/utils/crypto'
 
 const colorby = ref('componentsize')
-const component_threshold = ref(0)
+const component_threshold = ref(5)
 const max_component_threshold = ref(15)
 
 const loadtopologydata = ref(false)
 const graphSelectionStr = ref('')
 const isMST = ref(false)
-const max_node_size = 30
-const min_node_size = 10
+const max_node_size = 20
+const min_node_size = 7
 
 // const route = useRoute()
 let my3dEcharts: echarts.ECharts

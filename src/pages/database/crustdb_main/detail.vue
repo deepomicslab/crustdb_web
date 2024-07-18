@@ -108,9 +108,9 @@
                             Choose Graph Type
                         </el-button>
                         <div class="mt-2" v-if="isMST == false">Colored by</div>
-                        <n-space align="center" v-if="isMST == false">
+                        <n-space align="center">
                             <n-radio-group v-model:value="colorby">
-                                <n-radio-button value="componentsize">
+                                <n-radio-button value="componentsize" v-if="isMST == false">
                                     Component Size
                                 </n-radio-button>
                                 <n-radio-button value="pagerankscore">
@@ -334,16 +334,18 @@ import 'echarts-gl'
 import { NTooltip } from 'naive-ui'
 import _ from 'lodash'
 
+const topoid = ref('')
+
 const colorby = ref('componentsize')
-const component_threshold = ref(0)
+const component_threshold = ref(5)
 const max_component_threshold = ref(15)
 
 const loaddata = ref(false)
 const loadtopologydata = ref(false)
 const graphSelectionStr = ref('')
 const isMST = ref(false)
-const max_node_size = 30
-const min_node_size = 10
+const max_node_size = 20
+const min_node_size = 7
 
 const route = useRoute()
 const phageid = computed(() => route.query?.crustdb_main_id as number)
@@ -384,7 +386,7 @@ const edgeList_3d = ref()
 const graph_info = ref()
 const mst_parentchild_relation = ref()
 const nodeattr_data = ref()
-const topology_id = ref(0)
+// const topology_id = ref(0)
 
 const echartlineDom = ref<HTMLElement | null>(null)
 const echart3dDom = ref<HTMLElement | null>(null)
@@ -571,7 +573,7 @@ const preprocess_3d_colorby_componentsize = () => {
 
     option_3d.value = {
         title: {
-            text: graphSelectionStr.value,
+            text: `${detailsdata.value.repeat_data_uid} ${graphSelectionStr.value}`,
         },
         tooltip: {
             show: true,
@@ -588,6 +590,16 @@ const preprocess_3d_colorby_componentsize = () => {
                     return `${str} <br>- component size smaller than the threshold`
                 }
                 return ''
+            },
+        },
+        toolbox: {
+            itemSize: 20,
+            iconStyle: {
+                borderColor: '#34498e',
+            },
+            feature: {
+                dataView: { readOnly: true },
+                saveAsImage: {},
             },
         },
         visualMap: {
@@ -656,7 +668,7 @@ const preprocess_3d_colorby_pagerankscore = () => {
 
     option_3d.value = {
         title: {
-            text: graphSelectionStr.value,
+            text: `${detailsdata.value.repeat_data_uid} ${graphSelectionStr.value}`,
         },
         tooltip: {
             show: true,
@@ -728,7 +740,7 @@ const preprocess_2d_mst = () => {
     }
     option_2d.value = {
         title: {
-            text: graphSelectionStr.value,
+            text: `${detailsdata.value.repeat_data_uid} ${graphSelectionStr.value}`,
         },
         tooltip: {
             show: true,
@@ -850,7 +862,7 @@ const preprocess_2d_colorby_componentsize = () => {
 
     option_2d.value = {
         title: {
-            text: graphSelectionStr.value,
+            text: `${detailsdata.value.repeat_data_uid} ${graphSelectionStr.value}`,
         },
         tooltip: {
             show: true,
@@ -938,7 +950,7 @@ const preprocess_2d_colorby_pagerankscore = () => {
 
     option_2d.value = {
         title: {
-            text: graphSelectionStr.value,
+            text: `${detailsdata.value.repeat_data_uid} ${graphSelectionStr.value}`,
         },
         tooltip: {
             show: true,
@@ -1027,7 +1039,6 @@ const selectRepeatRequest = async () => {
         })
     } else {
         const data_uid = selectRepeatCheckList.value[0].split(' ')[2]
-        // console.log(data_uid) // Stage44.CP_1XOH
         selectRepeatCheckList.value.length = 0 // clear the checkList
         const response2 = await axios.get(`/details`, {
             baseURL: '/api',
@@ -1036,33 +1047,92 @@ const selectRepeatRequest = async () => {
                 details_uid: data_uid, // details.repeat_data_uid
             },
         })
-        detailsdata.value = response2.data
+
+        detailsdata.value = response2.data // show the 1st repeat, by default
+        const [details_data1, details_data2] = response2.data
+        detailsdata.value = details_data1
+        topoid.value = details_data2
         selectRepeatDialogVisible.value = false
+
+        // ============== topology data ==============
+        loadtopologydata.value = true
+
+        const topology_list_response = await axios.get(`/details/topology_graphlist`, {
+            baseURL: '/api',
+            timeout: 10000,
+            params: {
+                topoid: topoid.value,
+            },
+        })
+        topologyselectiondata.value = topology_list_response.data // 返回该 repeat 对应的 graph list
+        // 默认展示第一个 graph (index 0) =================================================================================================
+        // index 6 is mst
+        const this_selection = topologyselectiondata.value[0]
+        graphSelectionStr.value = this_selection
+        checkIsMST()
+
+        const topology_response = await axios.get(`/details/topology`, {
+            baseURL: '/api',
+            timeout: 10000,
+            params: {
+                graph_selection_str: graphSelectionStr.value,
+                topoid: topoid.value,
+            },
+        })
+
+        const [topo_data, topo_data3, topo_data4, topo_data5] = topology_response.data
+        nodesCoord_3d.value = topo_data
+
+        edgeList_3d.value = topo_data3
+        graph_info.value = topo_data4
+        mst_parentchild_relation.value = topo_data5
+
+        preprocess_3d()
+        preprocess_2d()
+
+        const topology_nodeattr_response = await axios.get(`/details/topology_nodeattr`, {
+            baseURL: '/api',
+            timeout: 10000,
+            params: {
+                graph_selection_str: this_selection,
+                topoid: topoid.value,
+            },
+        })
+        const [topo_data6] = topology_nodeattr_response.data
+        nodeattr_data.value = topo_data6
+
+        loadtopologydata.value = false
     }
 }
 
-const graph_type_map = str => {
-    const tmp_algo = str.split(' ')[1]
-    let para
+// const graph_type_map = str => {
+//     const tmp_algo = str.split(' ')[1]
+//     let para
 
-    if (tmp_algo === 'MST') {
-        para = 'MST-MST.pkl'
-    } else if (tmp_algo === '1NN') {
-        para = '1NN-1NN.pkl'
-    } else {
-        const tmp_para1 = str.split(' ')[2].slice(3, -1)
-        if (tmp_algo === 'KNN') {
-            para = `KNN-${tmp_para1}.pkl`
-        } else if (tmp_algo === 'KNN-SNN') {
-            para = `KNN_SNN-${tmp_para1}.pkl`
-        } else if (tmp_algo === 'RNN') {
-            para = `RNN-${tmp_para1}.pkl`
-        } else if (tmp_algo === 'RNN-SNN') {
-            const tmp_para2 = str.split(' ')[3].slice(2, -1)
-            para = `RNN_SNN-${tmp_para1}_${tmp_para2}.pkl`
-        }
+//     if (tmp_algo === 'MST') {
+//         para = 'MST-MST.pkl'
+//     } else if (tmp_algo === '1NN') {
+//         para = '1NN-1NN.pkl'
+//     } else {
+//         const tmp_para1 = str.split(' ')[2].slice(3, -1)
+//         if (tmp_algo === 'KNN') {
+//             para = `KNN-${tmp_para1}.pkl`
+//         } else if (tmp_algo === 'KNN-SNN') {
+//             para = `KNN_SNN-${tmp_para1}.pkl`
+//         } else if (tmp_algo === 'RNN') {
+//             para = `RNN-${tmp_para1}.pkl`
+//         } else if (tmp_algo === 'RNN-SNN') {
+//             const tmp_para2 = str.split(' ')[3].slice(2, -1)
+//             para = `RNN_SNN-${tmp_para1}_${tmp_para2}.pkl`
+//         }
+//     }
+//     return `${topology_id.value}-${para}`
+// }
+const graph_type_map = str => {
+    if (str.includes('MST') || str.includes('1NN')) {
+        return str.split(' ')[1]
     }
-    return `${topology_id.value}-${para}`
+    return `${str.split(')')[1]})`
 }
 
 const selectGraphTypeRequest = async () => {
@@ -1072,27 +1142,30 @@ const selectGraphTypeRequest = async () => {
             duration: 5000,
         })
     } else {
-        // e.g., (Graph11)+topo_55-RNN_SNN-0.1_5.pkl ==> topo_55-RNN_SNN-0.1_5.pkl
+        // const this_selection = selectGraphTypeCheckList.value[0].split(') ')[1].trim()
+        console.log('=======================================', selectGraphTypeCheckList.value)
         const this_selection = graph_type_map(selectGraphTypeCheckList.value[0])
-        // const this_selection = '(Graph11) topo_55-RNN_SNN-0.1_5.pkl'
+        console.log('=======================================', this_selection)
         graphSelectionStr.value = this_selection
         checkIsMST()
         const topology_response = await axios.get(`/details/topology`, {
             baseURL: '/api',
             timeout: 10000,
             params: {
-                graph_selection_str: this_selection,
+                graph_selection_str: graphSelectionStr.value,
+                topoid: topoid.value,
             },
         })
         selectGraphTypeCheckList.value.length = 0
         selectGraphTypeDialogVisible.value = false
 
-        const [topo_data, topo_data3, topo_data4] = topology_response.data
+        const [topo_data, topo_data3, topo_data4, topo_data5] = topology_response.data
         nodesCoord_3d.value = topo_data
 
         edgeList_3d.value = topo_data3
-
         graph_info.value = topo_data4
+        mst_parentchild_relation.value = topo_data5
+
         preprocess_3d()
         preprocess_2d()
 
@@ -1101,6 +1174,7 @@ const selectGraphTypeRequest = async () => {
             timeout: 10000,
             params: {
                 graph_selection_str: this_selection,
+                topoid: topoid.value,
             },
         })
         const [topo_data6] = topology_nodeattr_response.data
@@ -1125,26 +1199,27 @@ const updateGraphTypeList = () => {
     graph_type_list.value.length = 0
     // graph_type_list.value = topologyselectiondata.value
     for (let i = 0; i < topologyselectiondata.value.length; i += 1) {
-        const tmp = topologyselectiondata.value[i].split('-')
-        const tmp_topologyid = tmp[0]
-        topology_id.value = tmp_topologyid
-        const tmp_algo = tmp[1]
-        let tmp_para = tmp[2]
-        tmp_para = tmp_para.substring(0, tmp_para.length - 4)
-        if (tmp_algo === 'KNN') {
-            tmp_para = `KNN (k=${tmp_para.split('_')[0]})`
-        } else if (tmp_algo === 'KNN_SNN') {
-            tmp_para = `KNN-SNN (k=${tmp_para.split('_')[0]})`
-        } else if (tmp_algo === 'RNN') {
-            tmp_para = `RNN (r=${tmp_para.split('_')[0]})`
-        } else if (tmp_algo === 'RNN_SNN') {
-            tmp_para = `RNN-SNN (r=${tmp_para.split('_')[0]}, k=${tmp_para.split('_')[1]})`
-        } else if (tmp_algo === 'MST') {
-            tmp_para = 'MST'
-        } else if (tmp_algo === '1NN') {
-            tmp_para = '1NN'
-        }
-        graph_type_list.value.push(tmp_para)
+        // const tmp = topologyselectiondata.value[i].split('-')
+        // const tmp_topologyid = tmp[0]
+        // topology_id.value = tmp_topologyid
+        // const tmp_algo = tmp[1]
+        // let tmp_para = tmp[2]
+        // tmp_para = tmp_para.substring(0, tmp_para.length - 4)
+        // if (tmp_algo === 'KNN') {
+        //     tmp_para = `KNN (k=${tmp_para.split('_')[0]})`
+        // } else if (tmp_algo === 'KNN_SNN') {
+        //     tmp_para = `KNN-SNN (k=${tmp_para.split('_')[0]})`
+        // } else if (tmp_algo === 'RNN') {
+        //     tmp_para = `RNN (r=${tmp_para.split('_')[0]})`
+        // } else if (tmp_algo === 'RNN_SNN') {
+        //     tmp_para = `RNN-SNN (r=${tmp_para.split('_')[0]}, k=${tmp_para.split('_')[1]})`
+        // } else if (tmp_algo === 'MST') {
+        //     tmp_para = 'MST'
+        // } else if (tmp_algo === '1NN') {
+        //     tmp_para = '1NN'
+        // }
+        // graph_type_list.value.push(tmp_para)
+        graph_type_list.value.push(topologyselectiondata.value[i])
     }
 }
 const selectGraphType = () => {
@@ -1194,28 +1269,38 @@ onBeforeMount(async () => {
     }
 
     detailsdata.value = response2.data // show the 1st repeat, by default
+    const [details_data1, details_data2] = response2.data
+    detailsdata.value = details_data1
+    topoid.value = details_data2
     loaddata.value = false
 
     // ============== topology data ==============
     loadtopologydata.value = true
-    let topology_list_response = null
-    if (repeatuid.value === '') {
-        topology_list_response = await axios.get(`/details/topology_graphlist`, {
-            baseURL: '/api',
-            timeout: 10000,
-            params: {
-                crustdb_main_id: phagedata.value.uniq_data_uid, // 默认展示第一个 repeat
-            },
-        })
-    } else {
-        topology_list_response = await axios.get(`/details/topology_graphlist`, {
-            baseURL: '/api',
-            timeout: 10000,
-            params: {
-                details_uid: repeatuid.value, // details.repeat_data_uid 用户选择一个 repeat
-            },
-        })
-    }
+    // let topology_list_response = null
+    // if (repeatuid.value === '') {
+    //     topology_list_response = await axios.get(`/details/topology_graphlist`, {
+    //         baseURL: '/api',
+    //         timeout: 10000,
+    //         params: {
+    //             crustdb_main_id: phagedata.value.uniq_data_uid, // 默认展示第一个 repeat
+    //         },
+    //     })
+    // } else {
+    //     topology_list_response = await axios.get(`/details/topology_graphlist`, {
+    //         baseURL: '/api',
+    //         timeout: 10000,
+    //         params: {
+    //             details_uid: repeatuid.value, // details.repeat_data_uid 用户选择一个 repeat
+    //         },
+    //     })
+    // }
+    const topology_list_response = await axios.get(`/details/topology_graphlist`, {
+        baseURL: '/api',
+        timeout: 10000,
+        params: {
+            topoid: topoid.value,
+        },
+    })
     topologyselectiondata.value = topology_list_response.data // 返回该 repeat 对应的 graph list
     // 默认展示第一个 graph (index 0) =================================================================================================
     // index 6 is mst
@@ -1227,7 +1312,8 @@ onBeforeMount(async () => {
         baseURL: '/api',
         timeout: 10000,
         params: {
-            graph_selection_str: this_selection, // details.repeat_data_uid
+            graph_selection_str: graphSelectionStr.value,
+            topoid: topoid.value,
         },
     })
 
@@ -1245,7 +1331,8 @@ onBeforeMount(async () => {
         baseURL: '/api',
         timeout: 10000,
         params: {
-            graph_selection_str: this_selection, // details.repeat_data_uid
+            graph_selection_str: this_selection,
+            topoid: topoid.value,
         },
     })
     const [topo_data6] = topology_nodeattr_response.data
