@@ -170,6 +170,16 @@
                             </div>
                         </td>
                     </tr>
+                    <tr>
+                        <td colspan="2">
+                            <goVis
+                                v-if="isMST == false && detailsdata"
+                                :graphSelectionStr="graphSelectionStr"
+                                :topoid="topoid"
+                                :repeat_data_uid="detailsdata.repeat_data_uid"
+                            />
+                        </td>
+                    </tr>
                 </tbody>
             </n-table>
         </div>
@@ -333,6 +343,7 @@ import * as echarts from 'echarts'
 import 'echarts-gl'
 import { NTooltip } from 'naive-ui'
 import _ from 'lodash'
+import goVis from './go.vue'
 
 const topoid = ref('')
 
