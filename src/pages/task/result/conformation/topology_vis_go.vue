@@ -13,7 +13,7 @@
 // @ts-nocheck
 /* eslint-disable camelcase */
 //
-import axios from 'axios'
+// import axios from 'axios'
 import { ref, toRefs, toRaw } from 'vue'
 import * as echarts from 'echarts'
 import 'echarts-gl'
@@ -27,17 +27,10 @@ const option_2d = ref({})
 
 const props = defineProps<{
     graphSelectionStr: string
-    taskid: string
+    go_info
 }>()
 
-const { graphSelectionStr, taskid } = toRefs(props)
-
-const go_info = ref({
-    Gene_set: [],
-    Term: [],
-    p_inv: [],
-    Hits_ratio: [],
-})
+const { graphSelectionStr, go_info } = toRefs(props)
 
 const preprocess_2d = () => {
     const this_go_info = toRaw(go_info.value)
@@ -153,19 +146,7 @@ onMounted(async () => {
     my2dEcharts = echarts.init(echart2dDom.value as HTMLElement)
 })
 
-watch(graphSelectionStr, async () => {
-    // const topology_go_response = await axios.get(`/details/topology_go`, {
-    const topology_go_response = await axios.get(`/tasks/vis/topology_go`, {
-        baseURL: '/api',
-        timeout: 10000,
-        params: {
-            graph_selection_str: graphSelectionStr.value,
-            taskid: taskid.value,
-        },
-    })
-    const go_data1 = topology_go_response.data
-    go_info.value = go_data1
-
+watch(go_info, () => {
     preprocess_2d()
     chart2dOption()
 })

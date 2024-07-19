@@ -89,10 +89,18 @@
                             Set component size threshold (max {{ max_component_threshold }})
                         </div>
                         <n-space vertical v-if="colorby == 'componentsize' && isMST == false">
-                            <n-slider v-model:value="component_threshold" :min="0" :max="max_component_threshold"
-                                :step="1" />
-                            <n-input-number v-model:value="component_threshold" :min="0" :max="max_component_threshold"
-                                size="small" />
+                            <n-slider
+                                v-model:value="component_threshold"
+                                :min="0"
+                                :max="max_component_threshold"
+                                :step="1"
+                            />
+                            <n-input-number
+                                v-model:value="component_threshold"
+                                :min="0"
+                                :max="max_component_threshold"
+                                size="small"
+                            />
                         </n-space>
                     </n-space>
                 </div>
@@ -103,37 +111,65 @@
                 <tbody>
                     <tr>
                         <td>
-                            <topologyVis3D :graphSelectionStr="graphSelectionStr" :nodesCoord_3d="nodesCoord_3d"
-                                :edgeList_3d="edgeList_3d" :colorby="colorby"
-                                :component_threshold="component_threshold" />
+                            <topologyVis3D
+                                :graphSelectionStr="graphSelectionStr"
+                                :nodesCoord_3d="nodesCoord_3d"
+                                :edgeList_3d="edgeList_3d"
+                                :colorby="colorby"
+                                :component_threshold="component_threshold"
+                            />
                         </td>
                         <td>
-                            <topologyVis2D :graphSelectionStr="graphSelectionStr" :nodesCoord_3d="nodesCoord_3d"
-                                :edgeList_3d="edgeList_3d" :mst_parentchild_relation="mst_parentchild_relation"
-                                :isMST="isMST" :colorby="colorby" :component_threshold="component_threshold" />
+                            <topologyVis2D
+                                :graphSelectionStr="graphSelectionStr"
+                                :nodesCoord_3d="nodesCoord_3d"
+                                :edgeList_3d="edgeList_3d"
+                                :mst_parentchild_relation="mst_parentchild_relation"
+                                :isMST="isMST"
+                                :colorby="colorby"
+                                :component_threshold="component_threshold"
+                            />
                         </td>
                     </tr>
-                    <tr>
+                    <tr v-if="isMST == false">
                         <td colspan="2">
-                            <topologyVisGO v-if="isMST = false" :graphSelectionStr="graphSelectionStr"
-                                :taskid="taskid" />
+                            <topologyVisGO
+                                :graphSelectionStr="graphSelectionStr"
+                                :go_info="go_info"
+                            />
                         </td>
                     </tr>
                 </tbody>
             </n-table>
         </div>
-        <topologyGraphTable :graphSelectionStr="graphSelectionStr" :taskid="taskid" :graph_info="graph_info" />
-        <!-- <topologyGoTable :graphSelectionStr="graphSelectionStr" :taskid="taskid" /> -->
+        <topologyGraphTable
+            :graphSelectionStr="graphSelectionStr"
+            :taskid="taskid"
+            :graph_info="graph_info"
+        />
+        <topologyGoTable
+            v-if="isMST == false"
+            :go_info="go_info"
+            :go_original_info="go_original_info"
+        />
     </div>
 
-    <el-dialog v-model="selectGraphTypeDialogVisible" title="Select Graph Type" width="30%" align-center>
+    <el-dialog
+        v-model="selectGraphTypeDialogVisible"
+        title="Select Graph Type"
+        width="30%"
+        align-center
+    >
         <div>
             <el-checkbox-group v-model="selectGraphTypeCheckList" :max="1">
                 <!-- :cols does not work, only n-gi 限制所有选项在一列 -->
                 <n-grid :y-gap="8" :cols="10">
                     <n-gi>
-                        <el-checkbox v-for="(v, idx) in graph_type_list" :key="v"
-                            :label="'(Graph' + (idx + 1) + ') ' + v" />
+                        <el-checkbox
+                            v-for="(v, idx) in graph_type_list"
+                            :key="v"
+                            :label="'(Graph' + (idx + 1) + ') ' + v"
+                        />
                     </n-gi>
                 </n-grid>
             </el-checkbox-group>
@@ -160,7 +196,7 @@ import topologyVis3D from './topology_vis_3d.vue'
 import topologyVis2D from './topology_vis_2d.vue'
 import topologyVisGO from './topology_vis_go.vue'
 import topologyGraphTable from './topology_graph_table.vue'
-// import topologyGoTable from './topology_go_table.vue'
+import topologyGoTable from './topology_go_table.vue'
 
 const craftsuccess = ref(true)
 const logStyle = ref('h-150 bg-dark p-4 text-light')
@@ -178,7 +214,6 @@ const colorby = ref('componentsize')
 const component_threshold = ref(5)
 const max_component_threshold = ref(15)
 
-const loadtopologydata = ref(false)
 const graphSelectionStr = ref('')
 const isMST = ref(false)
 
@@ -195,14 +230,6 @@ const selectGraphTypeDialogVisible = ref(false)
 const graph_type_list = ref([] as any[])
 
 const selectGraphTypeCheckList = ref([] as any[])
-
-// const props = defineProps({
-//     taskid: {
-//         type: String,
-//         required: true,
-//     },
-// })
-// const { taskid } = toRefs(props)
 
 const checkIsMST = () => {
     if (graphSelectionStr.value.includes('MST')) {
@@ -226,6 +253,24 @@ const taskdata = ref({
 })
 
 const detailsdata = ref()
+const go_info = ref({
+    Gene_set: [],
+    Term: [],
+    p_inv: [],
+    Hits_ratio: [],
+})
+const go_original_info = ref({
+    Gene_set: [],
+    Term: [],
+    Overlap: [],
+    P_value: [],
+    Adjusted_P_value: [],
+    Old_P_value: [],
+    Old_Adjusted_P_value: [],
+    Odds_Ratio: [],
+    Combined_Score: [],
+    Genes: [],
+})
 
 const selectGraphTypeRequest = async () => {
     if (selectGraphTypeCheckList.value.length === 0) {
@@ -270,6 +315,17 @@ const selectGraphTypeRequest = async () => {
         })
         const [topo_data6] = topology_nodeattr_response.data
         nodeattr_data.value = topo_data6
+
+        const topology_go_response = await axios.get(`/tasks/vis/topology_go`, {
+            baseURL: '/api',
+            timeout: 10000,
+            params: {
+                graph_selection_str: graphSelectionStr.value,
+                taskid: taskid.value,
+            },
+        })
+        const go_data1 = topology_go_response.data
+        go_info.value = go_data1
     }
 }
 
@@ -303,7 +359,6 @@ onBeforeMount(async () => {
     }
 
     // ============== topology data ==============
-    loadtopologydata.value = true
     let topology_list_response = null
     topology_list_response = await axios.get(`/tasks/vis/topology_graphlist/`, {
         baseURL: '/api',
@@ -347,22 +402,17 @@ onBeforeMount(async () => {
     const [topo_data6] = topology_nodeattr_response.data
     nodeattr_data.value = topo_data6
 
-    loadtopologydata.value = false
+    // ------------------------------------- GO ------------------------------------------------
+    const topology_go_response = await axios.get(`/tasks/vis/topology_go`, {
+        baseURL: '/api',
+        timeout: 10000,
+        params: {
+            graph_selection_str: graphSelectionStr.value,
+            taskid: taskid.value,
+        },
+    })
+    const [go_data1, go_data2] = topology_go_response.data
+    go_info.value = go_data1
+    go_original_info.value = go_data2
 })
-
-// onBeforeMount(async () => {
-//     const response2 = await axios.get(`/tasks/detail/`, {
-//         baseURL: '/api',
-//         timeout: 10000,
-//         params: {
-//             taskid: taskid.value,
-//         },
-//     })
-//     taskdata.value = response2.data
-//     if (taskdata.value.results.status === 'Success') {
-//         craftsuccess.value = true
-//     } else if (taskdata.value.results.status === 'Failed') {
-//         craftsuccess.value = false
-//     }
-// })
 </script>
