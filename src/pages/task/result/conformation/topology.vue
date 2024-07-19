@@ -59,14 +59,108 @@
             </el-scrollbar>
         </div>
     </div>
-    <topologyVis :taskid="taskid" v-if="craftsuccess" />
+    <!-- <topologyVis :taskid="taskid" v-if="craftsuccess" /> -->
+    <div class="flex flex-col mx-1/20 justify-start">
+        <div class="w-350 mt-18 ml-10">
+            <div class="flex flex-row w-350 border-b-2 border-gray-300">
+                <div class="text-4xl font-500 mb-6">Graph Information</div>
+                <div class="mt-1.5 ml-0">
+                    <n-space horizontal>
+                        <el-button class="ml-4" @click="selectGraphType">
+                            <template #icon>
+                                <n-icon>
+                                    <selectIcon />
+                                </n-icon>
+                            </template>
+                            Choose Graph Type
+                        </el-button>
+                        <div class="mt-2" v-if="isMST == false">Colored by</div>
+                        <n-space align="center" v-if="isMST == false">
+                            <n-radio-group v-model:value="colorby">
+                                <n-radio-button value="componentsize">
+                                    Component Size
+                                </n-radio-button>
+                                <n-radio-button value="pagerankscore">
+                                    Page Rank Score
+                                </n-radio-button>
+                            </n-radio-group>
+                        </n-space>
+                        <div class="mt-2" v-if="colorby == 'componentsize' && isMST == false">
+                            Set component size threshold (max {{ max_component_threshold }})
+                        </div>
+                        <n-space vertical v-if="colorby == 'componentsize' && isMST == false">
+                            <n-slider v-model:value="component_threshold" :min="0" :max="max_component_threshold"
+                                :step="1" />
+                            <n-input-number v-model:value="component_threshold" :min="0" :max="max_component_threshold"
+                                size="small" />
+                        </n-space>
+                    </n-space>
+                </div>
+            </div>
+        </div>
+        <div class="w-350 mt-5 ml-10">
+            <n-table :bordered="false">
+                <tbody>
+                    <tr>
+                        <td>
+                            <topologyVis3D :graphSelectionStr="graphSelectionStr" :nodesCoord_3d="nodesCoord_3d"
+                                :edgeList_3d="edgeList_3d" :colorby="colorby"
+                                :component_threshold="component_threshold" />
+                        </td>
+                        <td>
+                            <topologyVis2D :graphSelectionStr="graphSelectionStr" :nodesCoord_3d="nodesCoord_3d"
+                                :edgeList_3d="edgeList_3d" :mst_parentchild_relation="mst_parentchild_relation"
+                                :isMST="isMST" :colorby="colorby" :component_threshold="component_threshold" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <topologyVisGO v-if="isMST = false" :graphSelectionStr="graphSelectionStr"
+                                :taskid="taskid" />
+                        </td>
+                    </tr>
+                </tbody>
+            </n-table>
+        </div>
+        <topologyGraphTable :graphSelectionStr="graphSelectionStr" :taskid="taskid" :graph_info="graph_info" />
+        <!-- <topologyGoTable :graphSelectionStr="graphSelectionStr" :taskid="taskid" /> -->
+    </div>
+
+    <el-dialog v-model="selectGraphTypeDialogVisible" title="Select Graph Type" width="30%" align-center>
+        <div>
+            <el-checkbox-group v-model="selectGraphTypeCheckList" :max="1">
+                <!-- :cols does not work, only n-gi 限制所有选项在一列 -->
+                <n-grid :y-gap="8" :cols="10">
+                    <n-gi>
+                        <el-checkbox v-for="(v, idx) in graph_type_list" :key="v"
+                            :label="'(Graph' + (idx + 1) + ') ' + v" />
+                    </n-gi>
+                </n-grid>
+            </el-checkbox-group>
+        </div>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="selectGraphTypeDialogVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="selectGraphTypeRequest">Select</el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
+// @ts-nocheck
+/* eslint-disable camelcase */
 import axios from 'axios'
+import { AddCircleOutline as selectIcon } from '@vicons/ionicons5'
+import { ref } from 'vue'
 import { decrypt } from '@/utils/crypto'
 import { StatusColor } from '@/utils/crustdb'
-import topologyVis from './topology_vis.vue'
+// import topologyVis from './topology_vis.vue'
+import topologyVis3D from './topology_vis_3d.vue'
+import topologyVis2D from './topology_vis_2d.vue'
+import topologyVisGO from './topology_vis_go.vue'
+import topologyGraphTable from './topology_graph_table.vue'
+// import topologyGoTable from './topology_go_table.vue'
 
 const craftsuccess = ref(true)
 const logStyle = ref('h-150 bg-dark p-4 text-light')
@@ -80,6 +174,44 @@ const taskid = computed(() => {
     )
 })
 
+const colorby = ref('componentsize')
+const component_threshold = ref(5)
+const max_component_threshold = ref(15)
+
+const loadtopologydata = ref(false)
+const graphSelectionStr = ref('')
+const isMST = ref(false)
+
+const topologyselectiondata = ref([])
+
+const nodesCoord_3d = ref()
+const edgeList_3d = ref()
+const graph_info = ref()
+const mst_parentchild_relation = ref()
+const nodeattr_data = ref()
+
+const selectGraphTypeDialogVisible = ref(false)
+
+const graph_type_list = ref([] as any[])
+
+const selectGraphTypeCheckList = ref([] as any[])
+
+// const props = defineProps({
+//     taskid: {
+//         type: String,
+//         required: true,
+//     },
+// })
+// const { taskid } = toRefs(props)
+
+const checkIsMST = () => {
+    if (graphSelectionStr.value.includes('MST')) {
+        isMST.value = true
+        colorby.value = 'pagerankscore'
+    } else {
+        isMST.value = false
+    }
+}
 const taskdata = ref({
     results: {
         id: 0,
@@ -94,6 +226,66 @@ const taskdata = ref({
 })
 
 const detailsdata = ref()
+
+const selectGraphTypeRequest = async () => {
+    if (selectGraphTypeCheckList.value.length === 0) {
+        window.$message.warning('Please select one graph to display', {
+            closable: true,
+            duration: 5000,
+        })
+    } else {
+        const this_selection = selectGraphTypeCheckList.value[0]
+        graphSelectionStr.value = this_selection
+        checkIsMST()
+
+        const topology_response = await axios.get(`/tasks/vis/topology/`, {
+            baseURL: '/api',
+            timeout: 10000,
+            params: {
+                taskid: taskid.value,
+                graph_selection_str: this_selection,
+            },
+        })
+        selectGraphTypeCheckList.value.length = 0
+        selectGraphTypeDialogVisible.value = false
+
+        const [topo_data, topo_data3, topo_data4, topo_data5] = topology_response.data
+
+        nodesCoord_3d.value = topo_data
+
+        edgeList_3d.value = topo_data3
+        graph_info.value = topo_data4
+        mst_parentchild_relation.value = topo_data5
+
+        preprocess_3d()
+        preprocess_2d()
+
+        const topology_nodeattr_response = await axios.get(`/tasks/vis/topology_nodeattr/`, {
+            baseURL: '/api',
+            timeout: 10000,
+            params: {
+                taskid: taskid.value,
+                graph_selection_str: this_selection,
+            },
+        })
+        const [topo_data6] = topology_nodeattr_response.data
+        nodeattr_data.value = topo_data6
+    }
+}
+
+const updateGraphTypeList = () => {
+    graph_type_list.value.length = 0
+    for (let i = 0; i < topologyselectiondata.value.length; i += 1) {
+        graph_type_list.value.push(topologyselectiondata.value[i])
+    }
+}
+const selectGraphType = () => {
+    if (graph_type_list.value.length === 0) {
+        // --------------------------------------------------------------------------------------------------------------------------------------- 可能会有问题，记录一下
+        updateGraphTypeList()
+    }
+    selectGraphTypeDialogVisible.value = true
+}
 
 onBeforeMount(async () => {
     const response2 = await axios.get(`/tasks/detail/`, {
@@ -110,37 +302,67 @@ onBeforeMount(async () => {
         craftsuccess.value = false
     }
 
-    // if (taskdata.value.results.status === 'Success') {
-    //     loaddata.value = true
-    //     const response3 = await axios.get(`/tasks/detail/result/`, {
-    //         baseURL: '/api',
-    //         timeout: 10000,
-    //         params: {
-    //             taskid: taskid.value,
-    //             celltype: '',
-    //         },
-    //     })
-    //     const [data1, data2] = response3.data
+    // ============== topology data ==============
+    loadtopologydata.value = true
+    let topology_list_response = null
+    topology_list_response = await axios.get(`/tasks/vis/topology_graphlist/`, {
+        baseURL: '/api',
+        timeout: 10000,
+        params: {
+            taskid: taskid.value,
+        },
+    })
+    topologyselectiondata.value = topology_list_response.data // 返回该 repeat 对应的 graph list
 
-    //     taskresultdatakeys.value = data1
-    //     taskresultdata.value = data2
-    //     detailsdata.value = taskresultdata.value[taskresultdatakeys.value[0]]
-    //     loaddata.value = false
-    // } else if (taskdata.value.results.status === 'Failed') {
-    //     consoleloading.value = true
-    //     const response3 = await axios.get(`/tasks/detail/result_log/`, {
-    //         baseURL: '/api',
-    //         timeout: 100000,
-    //         params: {
-    //             taskid: taskid.value,
-    //         },
-    //     })
-    //     const [data1, data2] = response3.data
+    // 默认展示第一个 graph (index 0) =================================================================================================
+    // index 6 is mst
+    const this_selection = topologyselectiondata.value[0]
+    graphSelectionStr.value = this_selection
+    checkIsMST()
 
-    //     taskresultdatakeys.value = data1
-    //     taskresultdata.value = data2
-    //     detailsdata.value = taskresultdata.value[taskresultdatakeys.value[0]]
-    //     consoleloading.value = false
-    // }
+    const topology_response = await axios.get(`/tasks/vis/topology/`, {
+        baseURL: '/api',
+        timeout: 10000,
+        params: {
+            taskid: taskid.value,
+            graph_selection_str: this_selection,
+        },
+    })
+
+    const [topo_data, topo_data3, topo_data4, topo_data5] = topology_response.data
+    nodesCoord_3d.value = topo_data
+
+    edgeList_3d.value = topo_data3
+    graph_info.value = topo_data4
+    mst_parentchild_relation.value = topo_data5
+
+    const topology_nodeattr_response = await axios.get(`/tasks/vis/topology_nodeattr/`, {
+        baseURL: '/api',
+        timeout: 10000,
+        params: {
+            taskid: taskid.value,
+            graph_selection_str: this_selection,
+        },
+    })
+    const [topo_data6] = topology_nodeattr_response.data
+    nodeattr_data.value = topo_data6
+
+    loadtopologydata.value = false
 })
+
+// onBeforeMount(async () => {
+//     const response2 = await axios.get(`/tasks/detail/`, {
+//         baseURL: '/api',
+//         timeout: 10000,
+//         params: {
+//             taskid: taskid.value,
+//         },
+//     })
+//     taskdata.value = response2.data
+//     if (taskdata.value.results.status === 'Success') {
+//         craftsuccess.value = true
+//     } else if (taskdata.value.results.status === 'Failed') {
+//         craftsuccess.value = false
+//     }
+// })
 </script>
