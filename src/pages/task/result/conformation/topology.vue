@@ -149,6 +149,7 @@
         />
         <topologyGoTable
             v-if="isMST == false"
+            :graphSelectionStr="graphSelectionStr"
             :go_info="go_info"
             :go_original_info="go_original_info"
         />

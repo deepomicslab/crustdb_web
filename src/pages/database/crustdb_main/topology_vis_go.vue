@@ -12,8 +12,6 @@
 <script setup lang="ts">
 // @ts-nocheck
 /* eslint-disable camelcase */
-//
-import axios from 'axios'
 import { ref, toRefs, toRaw } from 'vue'
 import * as echarts from 'echarts'
 import 'echarts-gl'
@@ -26,19 +24,11 @@ const echart2dDom = ref<HTMLElement | null>(null)
 const option_2d = ref({})
 
 const props = defineProps<{
-    graphSelectionStr: string
-    topoid: number
     repeat_data_uid: String
+    go_info
 }>()
 
-const { graphSelectionStr, topoid, repeat_data_uid } = toRefs(props)
-
-const go_info = ref({
-    Gene_set: [],
-    Term: [],
-    p_inv: [],
-    Hits_ratio: [],
-})
+const { repeat_data_uid, go_info } = toRefs(props)
 
 const preprocess_2d = () => {
     const this_go_info = toRaw(go_info.value)
@@ -67,10 +57,6 @@ const preprocess_2d = () => {
         title: {
             text: repeat_data_uid.value,
             left: 'center',
-        },
-        legend: {
-            data: ['Punch Card'],
-            left: 'left',
         },
         tooltip: {
             show: true,
@@ -158,18 +144,7 @@ onMounted(async () => {
     my2dEcharts = echarts.init(echart2dDom.value as HTMLElement)
 })
 
-watch(graphSelectionStr, async () => {
-    const topology_go_response = await axios.get(`/details/topology_go`, {
-        baseURL: '/api',
-        timeout: 10000,
-        params: {
-            graph_selection_str: graphSelectionStr.value,
-            topoid: topoid.value,
-        },
-    })
-    const go_data1 = topology_go_response.data
-    go_info.value = go_data1
-
+watch(go_info, async () => {
     preprocess_2d()
     chart2dOption()
 })
