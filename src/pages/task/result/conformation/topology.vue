@@ -219,11 +219,43 @@ const isMST = ref(false)
 
 const topologyselectiondata = ref([])
 
-const nodesCoord_3d = ref()
+const nodesCoord_3d = ref({
+    node_name: [],
+    X: [],
+    y: [],
+    z: [],
+    degrees: [],
+    betweenness: [],
+    closeness_centrality: [],
+    degree_centrality: [],
+    page_rank_score: [],
+    component_id: [],
+    component_size: [],
+})
 const edgeList_3d = ref()
-const graph_info = ref()
+const graph_info = ref({
+    assortativity: '',
+    average_branching_factor: 0,
+    betweenness_centrality: '',
+    closeness_centrality: 0,
+    degree_centrality: 0,
+    modularity: 0,
+    span: 0,
+})
 const mst_parentchild_relation = ref()
-const nodeattr_data = ref()
+const nodeattr_data = ref({
+    node_name: [],
+    X: [],
+    y: [],
+    z: [],
+    degrees: [],
+    betweenness: [],
+    closeness_centrality: [],
+    degree_centrality: [],
+    page_rank_score: [],
+    component_id: [],
+    component_size: [],
+})
 
 const selectGraphTypeDialogVisible = ref(false)
 
@@ -297,13 +329,13 @@ const selectGraphTypeRequest = async () => {
         const [topo_data, topo_data3, topo_data4, topo_data5] = topology_response.data
 
         nodesCoord_3d.value = topo_data
-
         edgeList_3d.value = topo_data3
         graph_info.value = topo_data4
         mst_parentchild_relation.value = topo_data5
-
-        preprocess_3d()
-        preprocess_2d()
+        max_component_threshold.value = Math.max.apply(
+            null,
+            toRaw(nodesCoord_3d.value.component_size)
+        )
 
         const topology_nodeattr_response = await axios.get(`/tasks/vis/topology_nodeattr/`, {
             baseURL: '/api',
@@ -386,10 +418,11 @@ onBeforeMount(async () => {
 
     const [topo_data, topo_data3, topo_data4, topo_data5] = topology_response.data
     nodesCoord_3d.value = topo_data
-
     edgeList_3d.value = topo_data3
     graph_info.value = topo_data4
     mst_parentchild_relation.value = topo_data5
+
+    max_component_threshold.value = Math.max.apply(null, toRaw(nodesCoord_3d.value.component_size))
 
     const topology_nodeattr_response = await axios.get(`/tasks/vis/topology_nodeattr/`, {
         baseURL: '/api',

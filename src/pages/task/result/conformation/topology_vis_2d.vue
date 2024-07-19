@@ -16,8 +16,6 @@ import { ref, isProxy, toRaw, toRefs } from 'vue'
 import * as echarts from 'echarts'
 import 'echarts-gl'
 
-// const max_component_threshold = ref(15)
-
 const max_node_size = 20
 const min_node_size = 7
 
@@ -200,10 +198,6 @@ const preprocess_2d_colorby_componentsize = () => {
     const array_col_2 = arrayColumnValue(this_2d_nodes)
     const min_color_by_value = Math.min.apply(null, array_col_2)
     const max_color_by_value = Math.max.apply(null, array_col_2)
-    // max_component_threshold.value = Math.min(
-    //     max_component_threshold.value,
-    //     Math.floor(max_color_by_value)
-    // )
 
     option_2d.value = {
         title: {

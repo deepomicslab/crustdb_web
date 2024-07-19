@@ -3,7 +3,7 @@
         <div class="flex flex-row">
             <h1 class="text-3xl mt-5 ml-5 font-500 text-[#3262a8]">GO vis info</h1>
         </div>
-        <div v-loading="loadtopologydata_vis" class="mt-8">
+        <div class="mt-8">
             <n-data-table
                 :data="goListVis"
                 :columns="columns_vis"
@@ -16,7 +16,7 @@
         <div class="flex flex-row">
             <h1 class="text-3xl mt-5 ml-5 font-500 text-[#3262a8]">GO full info</h1>
         </div>
-        <div v-loading="loadtopologydata_full" class="mt-8">
+        <div class="mt-8">
             <n-data-table
                 :data="goListFull"
                 :columns="columns_full"
