@@ -32,7 +32,6 @@
 <script setup lang="ts">
 // @ts-nocheck
 /* eslint-disable camelcase */
-// import axios from 'axios'
 import { reactive, toRefs } from 'vue'
 import { NTooltip } from 'naive-ui'
 

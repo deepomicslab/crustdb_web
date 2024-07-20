@@ -13,7 +13,6 @@
 // @ts-nocheck
 /* eslint-disable camelcase */
 //
-// import axios from 'axios'
 import { ref, toRefs, toRaw } from 'vue'
 import * as echarts from 'echarts'
 import 'echarts-gl'
@@ -148,6 +147,6 @@ onMounted(async () => {
 
 watch(go_info, () => {
     preprocess_2d()
-    chart2dOption()
+    setTimeout(chart2dOption, 1000)
 })
 </script>

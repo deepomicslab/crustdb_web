@@ -192,7 +192,6 @@ import { AddCircleOutline as selectIcon } from '@vicons/ionicons5'
 import { ref } from 'vue'
 import { decrypt } from '@/utils/crypto'
 import { StatusColor } from '@/utils/crustdb'
-// import topologyVis from './topology_vis.vue'
 import topologyVis3D from './topology_vis_3d.vue'
 import topologyVis2D from './topology_vis_2d.vue'
 import topologyVisGO from './topology_vis_go.vue'
@@ -305,6 +304,68 @@ const go_original_info = ref({
     Genes: [],
 })
 
+const helper_topology_graphlist = async () => {
+    const topology_list_response = await axios.get(`/tasks/vis/topology_graphlist/`, {
+        baseURL: '/api',
+        timeout: 10000,
+        params: {
+            taskid: taskid.value,
+        },
+    })
+    topologyselectiondata.value = topology_list_response.data // 返回该 repeat 对应的 graph list
+
+    // 默认展示第一个 graph (index 0) =================================================================================================
+    // index 6 is mst
+    const this_selection = topologyselectiondata.value[0]
+    graphSelectionStr.value = this_selection
+    checkIsMST()
+}
+
+const helper_topology = async () => {
+    const topology_response = await axios.get(`/tasks/vis/topology/`, {
+        baseURL: '/api',
+        timeout: 10000,
+        params: {
+            taskid: taskid.value,
+            graph_selection_str: graphSelectionStr.value,
+        },
+    })
+
+    const [topo_data, topo_data3, topo_data4, topo_data5] = topology_response.data
+    nodesCoord_3d.value = topo_data
+    edgeList_3d.value = topo_data3
+    graph_info.value = topo_data4
+    mst_parentchild_relation.value = topo_data5
+    max_component_threshold.value = Math.max.apply(null, toRaw(nodesCoord_3d.value.component_size))
+}
+
+const helper_topology_nodeattr = async () => {
+    const topology_nodeattr_response = await axios.get(`/tasks/vis/topology_nodeattr/`, {
+        baseURL: '/api',
+        timeout: 10000,
+        params: {
+            taskid: taskid.value,
+            graph_selection_str: graphSelectionStr.value,
+        },
+    })
+    const [topo_data6] = topology_nodeattr_response.data
+    nodeattr_data.value = topo_data6
+}
+
+const helper_topology_go = async () => {
+    const topology_go_response = await axios.get(`/tasks/vis/topology_go`, {
+        baseURL: '/api',
+        timeout: 10000,
+        params: {
+            graph_selection_str: graphSelectionStr.value,
+            taskid: taskid.value,
+        },
+    })
+    const [go_data1, go_data2] = topology_go_response.data
+    go_info.value = go_data1
+    go_original_info.value = go_data2
+}
+
 const selectGraphTypeRequest = async () => {
     if (selectGraphTypeCheckList.value.length === 0) {
         window.$message.warning('Please select one graph to display', {
@@ -316,49 +377,9 @@ const selectGraphTypeRequest = async () => {
         graphSelectionStr.value = this_selection
         checkIsMST()
 
-        const topology_response = await axios.get(`/tasks/vis/topology/`, {
-            baseURL: '/api',
-            timeout: 10000,
-            params: {
-                taskid: taskid.value,
-                graph_selection_str: this_selection,
-            },
-        })
+        helper_topology()
         selectGraphTypeCheckList.value.length = 0
         selectGraphTypeDialogVisible.value = false
-
-        const [topo_data, topo_data3, topo_data4, topo_data5] = topology_response.data
-
-        nodesCoord_3d.value = topo_data
-        edgeList_3d.value = topo_data3
-        graph_info.value = topo_data4
-        mst_parentchild_relation.value = topo_data5
-        max_component_threshold.value = Math.max.apply(
-            null,
-            toRaw(nodesCoord_3d.value.component_size)
-        )
-
-        const topology_nodeattr_response = await axios.get(`/tasks/vis/topology_nodeattr/`, {
-            baseURL: '/api',
-            timeout: 10000,
-            params: {
-                taskid: taskid.value,
-                graph_selection_str: this_selection,
-            },
-        })
-        const [topo_data6] = topology_nodeattr_response.data
-        nodeattr_data.value = topo_data6
-
-        const topology_go_response = await axios.get(`/tasks/vis/topology_go`, {
-            baseURL: '/api',
-            timeout: 10000,
-            params: {
-                graph_selection_str: graphSelectionStr.value,
-                taskid: taskid.value,
-            },
-        })
-        const go_data1 = topology_go_response.data
-        go_info.value = go_data1
     }
 }
 
@@ -391,62 +412,17 @@ onBeforeMount(async () => {
         craftsuccess.value = false
     }
 
-    // ============== topology data ==============
-    let topology_list_response = null
-    topology_list_response = await axios.get(`/tasks/vis/topology_graphlist/`, {
-        baseURL: '/api',
-        timeout: 10000,
-        params: {
-            taskid: taskid.value,
-        },
-    })
-    topologyselectiondata.value = topology_list_response.data // 返回该 repeat 对应的 graph list
-
-    // 默认展示第一个 graph (index 0) =================================================================================================
-    // index 6 is mst
-    const this_selection = topologyselectiondata.value[0]
-    graphSelectionStr.value = this_selection
-    checkIsMST()
-
-    const topology_response = await axios.get(`/tasks/vis/topology/`, {
-        baseURL: '/api',
-        timeout: 10000,
-        params: {
-            taskid: taskid.value,
-            graph_selection_str: this_selection,
-        },
-    })
-
-    const [topo_data, topo_data3, topo_data4, topo_data5] = topology_response.data
-    nodesCoord_3d.value = topo_data
-    edgeList_3d.value = topo_data3
-    graph_info.value = topo_data4
-    mst_parentchild_relation.value = topo_data5
-
-    max_component_threshold.value = Math.max.apply(null, toRaw(nodesCoord_3d.value.component_size))
-
-    const topology_nodeattr_response = await axios.get(`/tasks/vis/topology_nodeattr/`, {
-        baseURL: '/api',
-        timeout: 10000,
-        params: {
-            taskid: taskid.value,
-            graph_selection_str: this_selection,
-        },
-    })
-    const [topo_data6] = topology_nodeattr_response.data
-    nodeattr_data.value = topo_data6
-
-    // ------------------------------------- GO ------------------------------------------------
-    const topology_go_response = await axios.get(`/tasks/vis/topology_go`, {
-        baseURL: '/api',
-        timeout: 10000,
-        params: {
-            graph_selection_str: graphSelectionStr.value,
-            taskid: taskid.value,
-        },
-    })
-    const [go_data1, go_data2] = topology_go_response.data
-    go_info.value = go_data1
-    go_original_info.value = go_data2
+    helper_topology_graphlist()
+    // helper_topology()
+    // setTimeout(helper_topology_nodeattr, 500)
+    // setTimeout(helper_topology_go, 500)
+})
+watch(graphSelectionStr, async () => {
+    // helper_topology_graphlist()
+    helper_topology()
+    setTimeout(helper_topology_nodeattr, 500)
+    if (!isMST.value) {
+        setTimeout(helper_topology_go, 500)
+    }
 })
 </script>

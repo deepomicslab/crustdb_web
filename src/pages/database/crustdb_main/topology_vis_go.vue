@@ -24,11 +24,13 @@ const echart2dDom = ref<HTMLElement | null>(null)
 const option_2d = ref({})
 
 const props = defineProps<{
+    graphSelectionStr
     repeat_data_uid: String
     go_info
+    topoid
 }>()
 
-const { repeat_data_uid, go_info } = toRefs(props)
+const { graphSelectionStr, repeat_data_uid, go_info, topoid } = toRefs(props)
 
 const preprocess_2d = () => {
     const this_go_info = toRaw(go_info.value)
@@ -55,7 +57,7 @@ const preprocess_2d = () => {
 
     option_2d.value = {
         title: {
-            text: repeat_data_uid.value,
+            text: `${repeat_data_uid.value}\n${graphSelectionStr.value}`,
             left: 'center',
         },
         tooltip: {
@@ -146,6 +148,10 @@ onMounted(async () => {
 
 watch(go_info, async () => {
     preprocess_2d()
-    chart2dOption()
+    setTimeout(chart2dOption, 1000)
+})
+watch(topoid, async () => {
+    preprocess_2d()
+    setTimeout(chart2dOption, 1000)
 })
 </script>
