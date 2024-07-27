@@ -37,6 +37,10 @@ const preprocess_2d = () => {
     const { Gene_set, Term, p_inv, Hits_ratio } = this_go_info
     const Gene_set_uniq = Array.from(new Set(Gene_set))
 
+    // 在首位加空值，是为了在 scatter plot 左右留出空位，更好看一点
+    Gene_set_uniq.splice(0, 0, '') // .splice(idx, 0, element)
+    Gene_set_uniq.push('')
+
     const data = []
     p_inv.forEach((element, idx) => {
         data.push([Gene_set[idx], Term[idx], Hits_ratio[idx], element])

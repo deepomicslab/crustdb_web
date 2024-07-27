@@ -74,6 +74,7 @@
                 :row-key="rowKey"
                 :scroll-x="700"
                 @update:sorter="handleSorterChange"
+                :single-line="false"
             />
         </div>
     </div>

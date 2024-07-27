@@ -10,7 +10,8 @@
                 :pagination="pagination_vis"
                 :max-height="700"
                 :row-key="rowKeyVis"
-                :scroll-x="1200"
+                :scroll-x="1600"
+                :single-line="false"
             />
         </div>
         <div class="flex flex-row">
@@ -24,6 +25,7 @@
                 :max-height="700"
                 :row-key="rowKeyFull"
                 :scroll-x="2800"
+                :single-line="false"
             />
         </div>
     </div>
@@ -50,6 +52,8 @@ const goListVis = computed(() => {
             Term: go_info.value.Term[idx],
             p_inv: go_info.value.p_inv[idx],
             Hits_ratio: go_info.value.Hits_ratio[idx],
+            Combined_Score: go_info.value.Combined_Score[idx],
+            Genes: go_info.value.Genes[idx],
         })
     })
     return thisgoListVis
@@ -104,13 +108,15 @@ const pagination_full = reactive({
 
 const col_width_vis = {
     Gene_set: 80,
-    Term: 200,
+    Term: 180,
     p_inv: 60,
     Hits_ratio: 60,
+    Combined_Score: 60,
+    Genes: 100,
 }
 const col_width_full = {
     Gene_set: 80,
-    Term: 200,
+    Term: 180,
     Overlap: 60,
     P_value: 60,
     Adjusted_P_value: 60,
@@ -126,6 +132,8 @@ type RowDataVis = {
     Term: string
     p_inv: string
     Hits_ratio: string
+    Combined_Score: string
+    Genes: string
 }
 type RowDataFull = {
     Gene_set: string
@@ -182,7 +190,7 @@ const createColumnsVis = (): DataTableColumns<RowDataVis> => {
         },
         {
             title() {
-                return renderTooltip(h('div', null, { default: () => 'p_inv' }), 'p_inv')
+                return renderTooltip(h('div', null, { default: () => 'p inv' }), 'p inv')
             },
             key: 'p_inv',
             align: 'center',
@@ -194,7 +202,7 @@ const createColumnsVis = (): DataTableColumns<RowDataVis> => {
         },
         {
             title() {
-                return renderTooltip(h('div', null, { default: () => 'Hits_ratio' }), 'Hits_ratio')
+                return renderTooltip(h('div', null, { default: () => 'Hits ratio' }), 'Hits ratio')
             },
             key: 'Hits_ratio',
             align: 'center',
@@ -203,6 +211,33 @@ const createColumnsVis = (): DataTableColumns<RowDataVis> => {
                 tooltip: true,
             },
             width: col_width_vis.Hits_ratio,
+        },
+        {
+            title() {
+                return renderTooltip(
+                    h('div', null, { default: () => 'Combined Score' }),
+                    'Combined_Score'
+                )
+            },
+            key: 'Combined_Score',
+            align: 'center',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width_full.Combined_Score,
+        },
+        {
+            title() {
+                return renderTooltip(h('div', null, { default: () => 'Genes' }), 'Genes')
+            },
+            key: 'Genes',
+            align: 'center',
+            sorter: true,
+            ellipsis: {
+                tooltip: true,
+            },
+            width: col_width_full.Genes,
         },
     ]
 }
@@ -246,7 +281,7 @@ const createColumnsFull = (): DataTableColumns<RowDataFull> => {
         },
         {
             title() {
-                return renderTooltip(h('div', null, { default: () => 'P_value' }), 'P_value')
+                return renderTooltip(h('div', null, { default: () => 'P value' }), 'P value')
             },
             key: 'P_value',
             align: 'center',
@@ -259,7 +294,7 @@ const createColumnsFull = (): DataTableColumns<RowDataFull> => {
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'Adjusted_P_value' }),
+                    h('div', null, { default: () => 'Adjusted P value' }),
                     'Adjusted_P_value'
                 )
             },
@@ -274,7 +309,7 @@ const createColumnsFull = (): DataTableColumns<RowDataFull> => {
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'Old_P_value' }),
+                    h('div', null, { default: () => 'Old P value' }),
                     'Old_P_value'
                 )
             },
@@ -289,7 +324,7 @@ const createColumnsFull = (): DataTableColumns<RowDataFull> => {
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'Old_Adjusted_P_value' }),
+                    h('div', null, { default: () => 'Old Adjusted P value' }),
                     'Old_Adjusted_P_value'
                 )
             },
@@ -303,7 +338,7 @@ const createColumnsFull = (): DataTableColumns<RowDataFull> => {
         },
         {
             title() {
-                return renderTooltip(h('div', null, { default: () => 'Odds_Ratio' }), 'Odds_Ratio')
+                return renderTooltip(h('div', null, { default: () => 'Odds Ratio' }), 'Odds_Ratio')
             },
             key: 'Odds_Ratio',
             align: 'center',
@@ -316,7 +351,7 @@ const createColumnsFull = (): DataTableColumns<RowDataFull> => {
         {
             title() {
                 return renderTooltip(
-                    h('div', null, { default: () => 'Combined_Score' }),
+                    h('div', null, { default: () => 'Combined Score' }),
                     'Combined_Score'
                 )
             },
