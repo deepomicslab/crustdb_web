@@ -66,7 +66,7 @@
                 <div class="text-4xl font-500 mb-6">Graph Information</div>
                 <div class="mt-1.5 ml-0">
                     <n-space horizontal>
-                        <el-button class="ml-4" @click="selectGraphType">
+                        <el-button class="ml-2" @click="selectGraphType">
                             <template #icon>
                                 <n-icon>
                                     <selectIcon />
