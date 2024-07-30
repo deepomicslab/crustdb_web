@@ -70,10 +70,18 @@
                             Set component size threshold (max {{ max_component_threshold }})
                         </div>
                         <n-space vertical v-if="colorby == 'componentsize' && isMST == false">
-                            <n-slider v-model:value="component_threshold" :min="0" :max="max_component_threshold"
-                                :step="1" />
-                            <n-input-number v-model:value="component_threshold" :min="0" :max="max_component_threshold"
-                                size="small" />
+                            <n-slider
+                                v-model:value="component_threshold"
+                                :min="0"
+                                :max="max_component_threshold"
+                                :step="1"
+                            />
+                            <n-input-number
+                                v-model:value="component_threshold"
+                                :min="0"
+                                :max="max_component_threshold"
+                                size="small"
+                            />
                         </n-space>
                     </n-space>
                 </div>
@@ -84,36 +92,67 @@
                 <tbody>
                     <tr>
                         <td>
-                            <topologyVis3d :graphSelectionStr="graphSelectionStr" :nodesCoord_3d="nodesCoord_3d"
-                                :edgeList_3d="edgeList_3d" :colorby="colorby" :component_threshold="component_threshold"
-                                :repeat_data_uid="detailsdata.repeat_data_uid" />
+                            <topologyVis3d
+                                :graphSelectionStr="graphSelectionStr"
+                                :nodesCoord_3d="nodesCoord_3d"
+                                :edgeList_3d="edgeList_3d"
+                                :colorby="colorby"
+                                :component_threshold="component_threshold"
+                                :repeat_data_uid="detailsdata.repeat_data_uid"
+                            />
                         </td>
                         <td>
-                            <topologyVis2d :graphSelectionStr="graphSelectionStr" :nodesCoord_3d="nodesCoord_3d"
-                                :edgeList_3d="edgeList_3d" :mst_parentchild_relation="mst_parentchild_relation"
-                                :isMST="isMST" :colorby="colorby" :component_threshold="component_threshold"
-                                :repeat_data_uid="detailsdata.repeat_data_uid" />
+                            <topologyVis2d
+                                :graphSelectionStr="graphSelectionStr"
+                                :nodesCoord_3d="nodesCoord_3d"
+                                :edgeList_3d="edgeList_3d"
+                                :mst_parentchild_relation="mst_parentchild_relation"
+                                :isMST="isMST"
+                                :colorby="colorby"
+                                :component_threshold="component_threshold"
+                                :repeat_data_uid="detailsdata.repeat_data_uid"
+                            />
                         </td>
                     </tr>
                     <tr v-if="isMST == false">
                         <td colspan="2">
-                            <topologyVisGO :graphSelectionStr="graphSelectionStr"
-                                :repeat_data_uid="detailsdata.repeat_data_uid" :go_info="go_info" :topoid="topoid" />
+                            <topologyVisGO
+                                :graphSelectionStr="graphSelectionStr"
+                                :repeat_data_uid="detailsdata.repeat_data_uid"
+                                :go_info="go_info"
+                                :topoid="topoid"
+                            />
                         </td>
                     </tr>
                 </tbody>
             </n-table>
         </div>
 
-        <topologyGraphTable :graphSelectionStr="graphSelectionStr" :graph_info="graph_info"
-            :nodeattr_data="nodeattr_data" />
-        <topologyGoTable v-if="isMST == false" :go_info="go_info" :go_original_info="go_original_info" />
+        <topologyGraphTable
+            :graphSelectionStr="graphSelectionStr"
+            :graph_info="graph_info"
+            :nodeattr_data="nodeattr_data"
+        />
+        <topologyGoTable
+            v-if="isMST == false"
+            :go_info="go_info"
+            :go_original_info="go_original_info"
+        />
     </div>
 
-    <el-dialog v-model="downloadphagedialogVisible" title="Select download data" width="30%" align-center>
+    <el-dialog
+        v-model="downloadphagedialogVisible"
+        title="Select download data"
+        width="30%"
+        align-center
+    >
         <div>
             <el-checkbox-group v-model="checkList" :max="1">
-                <el-checkbox v-for="v in repeat_data_uid_list" :key="v" :label="'Download ' + v + '.zip'" />
+                <el-checkbox
+                    v-for="v in repeat_data_uid_list"
+                    :key="v"
+                    :label="'Download ' + v + '.zip'"
+                />
             </el-checkbox-group>
         </div>
         <template #footer>
@@ -126,8 +165,11 @@
     <el-dialog v-model="selectRepeatDialogVisible" title="Select repeat #" width="30%" align-center>
         <div>
             <el-checkbox-group v-model="selectRepeatCheckList" :max="1">
-                <el-checkbox v-for="(v, idx) in repeat_data_uid_list" :key="v"
-                    :label="'(Repeat #' + (idx + 1) + ') ' + v" />
+                <el-checkbox
+                    v-for="(v, idx) in repeat_data_uid_list"
+                    :key="v"
+                    :label="'(Repeat #' + (idx + 1) + ') ' + v"
+                />
             </el-checkbox-group>
         </div>
         <template #footer>
@@ -137,14 +179,22 @@
             </span>
         </template>
     </el-dialog>
-    <el-dialog v-model="selectGraphTypeDialogVisible" title="Select Graph Type" width="30%" align-center>
+    <el-dialog
+        v-model="selectGraphTypeDialogVisible"
+        title="Select Graph Type"
+        width="30%"
+        align-center
+    >
         <div>
             <el-checkbox-group v-model="selectGraphTypeCheckList" :max="1">
                 <!-- :cols does not work, only n-gi 限制所有选项在一列 -->
                 <n-grid :y-gap="8" :cols="10">
                     <n-gi>
-                        <el-checkbox v-for="(v, idx) in graph_type_list" :key="v"
-                            :label="'(Graph' + (idx + 1) + ') ' + v" />
+                        <el-checkbox
+                            v-for="(v, idx) in graph_type_list"
+                            :key="v"
+                            :label="'(Graph' + (idx + 1) + ') ' + v"
+                        />
                     </n-gi>
                 </n-grid>
             </el-checkbox-group>

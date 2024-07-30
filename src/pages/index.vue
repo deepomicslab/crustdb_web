@@ -149,47 +149,27 @@
                             <div class="text-3xl font-600 mt-4 ml-8">NEWS</div>
 
                             <el-steps direction="vertical" class="h-70 ml-8 mt-5 mb-10">
+                                <!-- <el-step :icon="Opportunity" status="process">
+                                    <template #title>
+                                        <div class="text-gray-700 font-600">
+                                            Version 1.0 (July 29, 2024)
+                                        </div>
+                                    </template>
+<template #description>
+                                        <div :class="descriptionClass">
+                                            CyGraph has been released. Welcome to use!
+                                        </div>
+                                    </template>
+</el-step> -->
                                 <el-step :icon="Opportunity" status="process">
                                     <template #title>
                                         <div class="text-gray-700 font-600">
-                                            Notice (2023.11.07)
+                                            Version 1.0 (July 29, 2024)
                                         </div>
                                     </template>
                                     <template #description>
                                         <div :class="descriptionClass">
-                                            We are in the process of updating some data on our
-                                            website, which may result in occasional issues or bugs.
-                                            We are addressing these and anticipate a resolution
-                                            within the next week.
-                                        </div>
-                                    </template>
-                                </el-step>
-                                <el-step :icon="Opportunity" status="process">
-                                    <template #title>
-                                        <div class="text-gray-700 font-600">
-                                            Version 1.1 (2023.10.10)
-                                        </div>
-                                    </template>
-                                    <template #description>
-                                        <div :class="descriptionClass">
-                                            Five additional phage datasets are incorporated into the
-                                            database.
-                                            <br />
-                                            Update the genome comparison modules to provide the
-                                            option to compare customized phage genomes with the
-                                            PhageScope database.
-                                        </div>
-                                    </template>
-                                </el-step>
-                                <el-step :icon="Opportunity" status="process">
-                                    <template #title>
-                                        <div class="text-gray-700 font-600">
-                                            Version 1.0 (2023.7.1)
-                                        </div>
-                                    </template>
-                                    <template #description>
-                                        <div :class="descriptionClass">
-                                            PhageScope has been released. Welcome to use!
+                                            CyGraph has been released. Welcome to use!
                                         </div>
                                     </template>
                                 </el-step>
@@ -200,22 +180,18 @@
                 <div class="flex flex-row w-full justify-center mb-10">
                     <div style="box-shadow: 0 0 64px #cfd5db" class="w-320 h-50 mb-10 rounded-7px">
                         <div class="text-[22px] px-9 py-2 leading-10 text-gray-700 bg-gray-300">
-                            If you want to use PhageScope,
+                            If you want to use CyGraph,
                             <strong class="text-[#ee7e7d] font-400 mx-1 text-[22px]">
-                                <a
-                                    href="https://academic.oup.com/nar/advance-article/doi/10.1093/nar/gkad979/7334092"
-                                >
-                                    please cite our publication.
-                                </a>
+                                <a href="#">please cite our publication.</a>
                             </strong>
                         </div>
-                        <div class="text-[18px] px-9 py-2 leading-10 text-gray-700">
+                        <!-- <div class="text-[18px] px-9 py-2 leading-10 text-gray-700">
                             Ruo Han Wang, Shuo Yang, Zhixuan Liu, Yuanzheng Zhang, Xueying Wang,
                             Zixin Xu, Jianping Wang, Shuai Cheng Li, PhageScope: a well-annotated
                             bacteriophage database with automatic analyses and visualizations,
                             Nucleic Acids Research, 2023;, gkad979,
                             https://doi.org/10.1093/nar/gkad979
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <el-footer

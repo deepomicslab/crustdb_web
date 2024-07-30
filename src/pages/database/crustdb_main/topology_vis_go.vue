@@ -36,7 +36,7 @@ const preprocess_2d = () => {
     const this_go_info = toRaw(go_info.value)
     const { Gene_set, Term, p_inv, Hits_ratio } = this_go_info
     const Gene_set_uniq = Array.from(new Set(Gene_set))
-    const Term_uniq = Array.from(new Set(Term_set))
+    const Term_uniq = Array.from(new Set(Term))
 
     // 在首位加空值，是为了在 scatter plot 左右留出空位，更好看一点
     Gene_set_uniq.splice(0, 0, '') // .splice(idx, 0, element)
