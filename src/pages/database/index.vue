@@ -142,10 +142,10 @@ mt-10 mr-10 w-40 mt-10 mr-10 w-40
             <div class="border-t-2"></div>
             <h1 class="text-4xl mt-8 ml-6 font-500">Species</h1>
             <div class="flex flex-row justify-start w-370 flex-wrap items-start ml-10 mt-6">
-                <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/stereo-seq.png" />
-                <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/stereo-seq.png" />
-                <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/stereo-seq.png" />
-                <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/stereo-seq.png" />
+                <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/human.png" />
+                <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/mice.png" />
+                <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/axolotls.png" />
+                <img class="mt-10 mr-10 w-80 h-62" src="../../../public/png/monkey.png" />
             </div>
             <div class="flex flex-row justify-start w-370 flex-wrap items-start ml-10 mt-6">
                 <n-button
