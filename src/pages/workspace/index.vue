@@ -98,15 +98,15 @@ const taskdata = ref([] as any[])
 const dialogVisible = ref(false)
 const taskid = ref('')
 
-const refreshTaskResultfromDB = async () => {
-    await axios.post(`/tasks/refresh/`, null, {
-        baseURL: '/api',
-        timeout: 10000,
-    })
-}
+// const refreshTaskResultfromDB = async () => {
+//     await axios.post(`/tasks/refresh/`, null, {
+//         baseURL: '/api',
+//         timeout: 10000,
+//     })
+// }
 
 onBeforeMount(async () => {
-    refreshTaskResultfromDB()
+    // refreshTaskResultfromDB()
 
     const { isCookieExist, userId, getUserIdFromCookie } = useUserIdGenerator()
 
@@ -177,7 +177,7 @@ const refreshfunction = async () => {
 const refresh = async (event: any) => {
     const ts = event.target
     ts.blur()
-    refreshTaskResultfromDB()
+    // refreshTaskResultfromDB()
     refreshfunction()
 }
 
